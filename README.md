@@ -1,0 +1,2 @@
+# Server
+Swiperewards Server API
