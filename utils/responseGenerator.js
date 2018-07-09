@@ -1,9 +1,9 @@
-exports.getResponse = function (success, msg,records) {
+exports.getResponse = function (success, msg,data) {
     
      var response={ 
             "success":success,
             "message" :msg,
-            "records":records
+            "data":data
      }
     return response;
     }
