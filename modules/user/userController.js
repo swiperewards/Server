@@ -1,5 +1,4 @@
 var path = require('path');
-var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var db = require(path.resolve('.', 'modules/database/databaseConnector.js'));
 var enums = require(path.resolve('.', 'modules/constant/enums.js'));
 var bcrypt = require('bcrypt');
@@ -10,27 +9,44 @@ var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
 var template = require(path.resolve('./', 'utils/emailTemplates.js'))
+var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 exports.registerUser = function (req, res) {
+    var a = {
+        "deviceId": "268eded3c05cf50e",
+        "lat": "",
+        "long": "",
+        "platform": "Android",
+        "requestData":
+            {
+                "emailId":
+                "vishalb@winjit.com",
+                "fullName": "vishal bharati",
+                "isSocialLogin": false,
+                "lat": "",
+                "long": "",
+                "password": "winjit@123"
+            }
+    }
 
     var user = {
         'fullName': req.body.requestData.fullName,
-        'mobileNumber': req.body.requestData.mobileNumber,
+        'mobileNumber': !req.body.requestData.mobileNumber ? null : req.body.requestData.mobileNumber,
         'emailId': req.body.requestData.emailId,
         'password': req.body.requestData.password,
-        'platformId': req.body.platformId,
+        'platform': req.body.platform,
         'deviceId': req.body.deviceId,
         'lat': req.body.requestData.lat,
         'long': req.body.requestData.long,
-        'pincode': req.body.requestData.pincode,
-        'city': req.body.requestData.city,
-        'isSocialLogin': req.body.requestData.isSocialLogin,
+        'pincode': !req.body.requestData.pincode ? null : req.body.requestData.pincode,
+        'city': !req.body.requestData.city ? null : req.body.requestData.city,
+        'isSocialLogin': (req.body.requestData.isSocialLogin == false) ? 0 : 1,
         'profilePicUrl': !req.body.requestData.isSocialLogin ? null : req.body.requestData.profilePicUrl,
         'socialToken': !req.body.requestData.isSocialLogin ? null : req.body.requestData.socialToken,
-        'referralCode': !req.body.requestData.referralCode ? null : req.body.requestData.referralCode
+        'referredBy': !req.body.requestData.referralCode ? null : req.body.requestData.referredBy
     }
 
-    db.query('call SignupUser("' + user.fullName + '","' + user.mobileNumber + '","' + user.emailId+ '","' + user.password + '","' + user.platformId + '","' + user.deviceId + '","' + user.lat + '","' + user.long + '","' + user.pincode + '","' + user.city + '","' + user.isSocialLogin + '","' + user.profilePicUrl + '","' + user.socialToken + '","' + user.referalCode + '")', function (error, results) {
+    db.query('call SignupUser("' + user.fullName + '","' + user.mobileNumber + '","' + user.emailId + '","' + user.password + '","' + user.platform + '","' + user.deviceId + '","' + user.lat + '","' + user.long + '","' + user.pincode + '","' + user.city + '","' + user.isSocialLogin + '","' + user.profilePicUrl + '","' + user.socialToken + '","' + user.referredBy + '")', function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsNewRecord == 1) {
@@ -57,7 +73,6 @@ exports.registerUser = function (req, res) {
                 emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
                     if (error) {
                         logger.warn("Failed to send Verification link to linked mail");
-
                         res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
                     } else {
                         logger.info("Verification link sent to mail");
@@ -65,8 +80,8 @@ exports.registerUser = function (req, res) {
                         res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
                             token: token,
                             name: results[0][0].name,
-                            email_id: results[0][0].emailId,
-                            user_id: results[0][0].userId
+                            emailId: results[0][0].emailId,
+                            userId: results[0][0].userId
                         }))
                     }
                 });
@@ -74,7 +89,7 @@ exports.registerUser = function (req, res) {
             }
         } else {
             logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, "Error while processing your request", null))
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     })
 }
@@ -90,8 +105,8 @@ exports.loginUser = function (req, res) {
 
     db.query(strQuery, function (error, results, fields) {
         if (error) {
-            console.log(error)
-            finalCallback("Please check username or password", results)
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
             if (results && results.length > 0) {
                 var data = {
@@ -105,18 +120,18 @@ exports.loginUser = function (req, res) {
                         expiresIn: 3600
                     });
                 // finalCallback(null, results)
-                if(!results[0].is_user_verified){
+                if (!results[0].is_user_verified) {
                     res.send(responseGenerator.getResponse(200, "Login successfull", {
                         token: token,
                         name: results[0].name,
                         emailId: results[0].emailId,
                         userId: results[0].userId
-                    })) 
+                    }))
                 }
-                else{
+                else {
                     res.send(responseGenerator.getResponse(1002, "Verification pending", null))
                 }
-                
+
             }
             else {
                 res.send(responseGenerator.getResponse(1003, "Please check username or password", null))
@@ -126,4 +141,6 @@ exports.loginUser = function (req, res) {
     });
 
 }
+
+
 

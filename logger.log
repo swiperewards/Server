@@ -79,3 +79,71 @@
 {"message":"Verification link sent to mail","level":"info"}
 {"message":"Created logger","level":"info"}
 {"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_WRONG_VALUE_COUNT_ON_ROW","errno":1136,"sqlMessage":"Column count doesn't match value count at row 1","sqlState":"21S01","index":0,"sql":"call AddCard('cardNumber','expiryMonthMM','expiryYearYYYY','cvv','nameOnCard',24)","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_SP_WRONG_NO_OF_ARGS","errno":1318,"sqlMessage":"Incorrect number of arguments for PROCEDURE swipe_rewards.AddCard; expected 6, got 5","sqlState":"42000","index":0,"sql":"call AddCard('cardNumber','expiryMonthMM','expiryYearYYYY','cvv','nameOnCard')","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_WRONG_VALUE_COUNT_ON_ROW","errno":1136,"sqlMessage":"Column count doesn't match value count at row 1","sqlState":"21S01","index":0,"sql":"call AddCard('cardNumber','expiryMonthMM','expiryYearYYYY','cvv','nameOnCard',24)","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Card added successfully - undefined","level":"info"}
+{"message":"Card added successfully - undefined","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Card already exists - 1","level":"info"}
+{"message":"Card added successfully - undefined","level":"info"}
+{"message":"Card already exists - 2","level":"info"}
+{"message":"Card added successfully - undefined","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Card fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Card fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Card fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"code":"ER_NO_SUCH_TABLE","errno":1146,"sqlMessage":"Table 'swipe_rewards.deals' doesn't exist","sqlState":"42S02","index":0,"sql":"select * from deals where location = 'new york' and isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"code":"ER_NO_SUCH_TABLE","errno":1146,"sqlMessage":"Table 'swipe_rewards.deals' doesn't exist","sqlState":"42S02","index":0,"sql":"select * from deals where location = 'new york' and isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'createdAt' in 'field list'","sqlState":"42S22","index":0,"sql":"call SignupUser(\"vishal bharati\",\"undefined\",\"vishalb@winjit.com\",\"winjit@123\",\"undefined\",\"268eded3c05cf50e\",\"\",\"\",\"undefined\",\"undefined\",\"false\",\"null\",\"null\",\"undefined\")","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'createdAt' in 'field list'","sqlState":"42S22","index":0,"sql":"call SignupUser(\"vishal bharati\",\"null\",\"vishalb@winjit.com\",\"winjit@123\",\"Android\",\"268eded3c05cf50e\",\"\",\"\",\"null\",\"null\",\"false\",\"null\",\"null\",\"null\")","level":"error","message":"Error while processing your request"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect integer value: 'false' for column 'isSocialLogin' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser(\"vishal bharati\",\"null\",\"vishalb@winjit.com\",\"winjit@123\",\"Android\",\"268eded3c05cf50e\",\"\",\"\",\"null\",\"null\",\"false\",\"null\",\"null\",\"null\")","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect integer value: 'false' for column 'isSocialLogin' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser(\"vishal bharati\",\"null\",\"vishalb@winjit.com\",\"winjit@123\",\"Android\",\"268eded3c05cf50e\",\"\",\"\",\"null\",\"null\",\"false\",\"null\",\"null\",\"null\")","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect integer value: 'false' for column 'p_isSocialLogin' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser(\"vishal bharati\",\"null\",\"vishalb@winjit.com\",\"winjit@123\",\"Android\",\"268eded3c05cf50e\",\"\",\"\",\"null\",\"null\",\"false\",\"null\",\"null\",\"null\")","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Created logger","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
