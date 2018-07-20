@@ -12,22 +12,6 @@ var template = require(path.resolve('./', 'utils/emailTemplates.js'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 exports.registerUser = function (req, res) {
-    var a = {
-        "deviceId": "268eded3c05cf50e",
-        "lat": "",
-        "long": "",
-        "platform": "Android",
-        "requestData":
-            {
-                "emailId":
-                "vishalb@winjit.com",
-                "fullName": "vishal bharati",
-                "isSocialLogin": false,
-                "lat": "",
-                "long": "",
-                "password": "winjit@123"
-            }
-    }
 
     var user = {
         'fullName': req.body.requestData.fullName,
@@ -144,3 +128,47 @@ exports.loginUser = function (req, res) {
 
 
 
+
+exports.changePassword = function (req, res) {
+
+    var token = req.headers.auth
+
+    if (token) {
+        jwt.verify(token, config.privateKey, function (err, result) {
+            if (err) {
+                logger.error(msg.tokenInvalid);
+                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+            } else {
+                var user = {
+                    'userId': result.userId,
+                    'password': req.body.requestData.password,
+                    'oldPassword': req.body.requestData.oldPassword,
+                }
+                // parameter to be passed to update password
+                params = [user.password,user.userId, user.oldPassword]
+                db.query("update users set password = ? where userId = ? and password = ?", params, function (error, results) {
+                    if (!error) {
+                        if(results.affectedRows == 0){
+                            logger.info("changePassword - Entered wrong old password for user - " + user.userId);
+                            res.send(responseGenerator.getResponse(1006, "Entered wrong old password", null))
+                        }
+                        else{
+                            logger.info("Password updated successfully for user - " + user.userId);
+                            res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                        }
+                        
+                    } else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                })
+            }
+        });
+    } else {
+        logger.error(msg.tokenInvalid);
+
+        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+
+    }
+
+}

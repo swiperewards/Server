@@ -20,7 +20,7 @@ exports.getDeals = function (req, res) {
                 res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
             } else {
                 var deal = {
-                    'location': req.query.city
+                    'location': req.body.requestData.location
                 }
                 // parameter to be passed to select deals query
                 params = [deal.location, 0]

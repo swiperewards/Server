@@ -10,6 +10,7 @@ var users = require('./routes/users');
 var userRoutes=require(path.resolve('.','modules/user/userRoutes'));
 var cardRoutes=require(path.resolve('.','modules/card/cardRoutes'));
 var dealRoutes=require(path.resolve('.','modules/deal/dealRoutes'));
+var ticketRoutes=require(path.resolve('.','modules/ticket/ticketRoutes'));
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use(morgan('dev'));
 app.use("/users", userRoutes);
 app.use("/user/cards", cardRoutes);
 app.use("/deals", dealRoutes);
+app.use("/tickets", ticketRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
