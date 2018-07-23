@@ -99,3 +99,48 @@ exports.getCards = function (req, res) {
     }
 
 }
+
+
+
+exports.deleteCard = function (req, res) {
+
+    var token = req.headers.auth
+
+    if (token) {
+        jwt.verify(token, config.privateKey, function (err, result) {
+            if (err) {
+                logger.error(msg.tokenInvalid);
+
+                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+            } else {
+                var card = {
+                    'userId': result.userId,
+                    'cardId': req.body.requestData.cardId
+                }
+                // parameter to be passed to select cards query
+                params = [1, card.cardId, 0]
+                db.query("update cards set isDeleted = ? where id = ? and isDeleted = ?", params, function (error, results) {
+                    if (!error) {
+                        if(results.affectedRows == 0){
+                            logger.info("deleteCard - Card not exists for user - " + card.userId);
+                            res.send(responseGenerator.getResponse(1052, "Card not exists", null))
+                        }
+                        else{
+                            logger.info("deleteCard - Card deleted successfully for user - " + card.userId);
+                            res.send(responseGenerator.getResponse(200, "Card deleted successfully", null))
+                        }
+                    } else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                })
+            }
+        });
+    } else {
+        logger.error(msg.tokenInvalid);
+
+        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+
+    }
+
+}

@@ -83,8 +83,8 @@ exports.registerUser = function (req, res) {
 exports.loginUser = function (req, res) {
 
     var strQuery = {
-        sql: "select * from users where emailId = ? and password = ?",
-        values: [req.body.requestData.emailId, req.body.requestData.password]
+        sql: "select * from users where emailId = ? and password = ? and isDeleted = ?",
+        values: [req.body.requestData.emailId, req.body.requestData.password, 0]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -104,8 +104,8 @@ exports.loginUser = function (req, res) {
                         expiresIn: 3600
                     });
                 // finalCallback(null, results)
-                if (!results[0].is_user_verified) {
-                    res.send(responseGenerator.getResponse(200, "Login successfull", {
+                if (results[0].isUserVerified) {
+                    res.send(responseGenerator.getResponse(200, "Login successful", {
                         token: token,
                         name: results[0].name,
                         emailId: results[0].emailId,
@@ -127,8 +127,6 @@ exports.loginUser = function (req, res) {
 }
 
 
-
-
 exports.changePassword = function (req, res) {
 
     var token = req.headers.auth
@@ -145,18 +143,18 @@ exports.changePassword = function (req, res) {
                     'oldPassword': req.body.requestData.oldPassword,
                 }
                 // parameter to be passed to update password
-                params = [user.password,user.userId, user.oldPassword]
+                params = [user.password, user.userId, user.oldPassword]
                 db.query("update users set password = ? where userId = ? and password = ?", params, function (error, results) {
                     if (!error) {
-                        if(results.affectedRows == 0){
+                        if (results.affectedRows == 0) {
                             logger.info("changePassword - Entered wrong old password for user - " + user.userId);
                             res.send(responseGenerator.getResponse(1006, "Entered wrong old password", null))
                         }
-                        else{
+                        else {
                             logger.info("Password updated successfully for user - " + user.userId);
                             res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
                         }
-                        
+
                     } else {
                         logger.error("Error while processing your request", error);
                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -172,3 +170,113 @@ exports.changePassword = function (req, res) {
     }
 
 }
+
+
+
+exports.toggleNotification = function (req, res) {
+    var token = req.headers.auth
+    if (token) {
+        jwt.verify(token, config.privateKey, function (err, result) {
+            if (err) {
+                logger.error(msg.tokenInvalid);
+                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+            } else {
+                var user = {
+                    'userId': result.userId,
+                    'enableNotification': req.body.requestData.enableNotification ? 1 : 0
+                }
+                // parameter to be passed to update password
+                params = [user.enableNotification, user.userId]
+                db.query("update users set isNotificationEnabled = ? where userId = ?", params, function (error, results) {
+                    if (!error) {
+                        logger.info("toggleNotification - Toggled notification for user - " + user.userId);
+                        res.send(responseGenerator.getResponse(200, "Success", {
+                            "enableNotification": user.enableNotification ? true : false
+                        }))
+
+                    } else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                })
+            }
+        });
+    } else {
+        logger.error(msg.tokenInvalid);
+        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+    }
+}
+
+
+
+
+exports.loginUserWeb = function (req, res) {
+
+    var strQuery = {
+        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, mr.name as role from users u join mst_role mr on u.roleId = mr.id where emailId = ? and password = ? and u.isDeleted = ?",
+        values: [req.body.requestData.emailId, req.body.requestData.password, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+
+            if (results && results.length > 0) {
+                if (results[0].roleId == 4) {
+                    res.send(responseGenerator.getResponse(1003, "Please check username or password", null))
+                }
+                else {
+                    var query = {
+                        sql: "select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = ? and p.isDeleted = ? and mp.isDeleted = ? and mr.isDeleted = ?",
+                        values: [results[0].roleId, 0, 0, 0]
+                    };
+
+                    db.query(query, function (errorPrivileges, resultsPrivileges, fieldsPrivileges) {
+                        if (errorPrivileges) {
+                            logger.error("Error while processing your request", errorPrivileges);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        } else {
+
+
+                            var dataForToken = {
+                                emailId: results[0].emailId,
+                                name: results[0].name,
+                                userId: results[0].userId,
+                                roleId: results[0].roleId,
+                            }
+                            // generation of jwt token
+                            var token = jwt.sign(
+                                dataForToken, config.privateKey, {
+                                    expiresIn: 3600
+                                });
+
+                            var userData = {
+                                emailId: results[0].emailId,
+                                name: results[0].fullName,
+                                userId: results[0].userId,
+                                role: results[0].role,
+                                menuList: resultsPrivileges,
+                                token: token
+                            }
+
+                            if (results[0].isUserVerified) {
+                                res.send(responseGenerator.getResponse(200, "Login successful", userData))
+                            }
+                            else {
+                                res.send(responseGenerator.getResponse(1002, "Verification pending", null))
+                            }
+
+                        }
+                    });
+                }
+            }
+            else {
+                res.send(responseGenerator.getResponse(1003, "Please check username or password", null))
+            }
+        }
+    });
+
+}
+

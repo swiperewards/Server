@@ -6,11 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 var userRoutes=require(path.resolve('.','modules/user/userRoutes'));
 var cardRoutes=require(path.resolve('.','modules/card/cardRoutes'));
 var dealRoutes=require(path.resolve('.','modules/deal/dealRoutes'));
 var ticketRoutes=require(path.resolve('.','modules/ticket/ticketRoutes'));
+var redeemRoutes=require(path.resolve('.','modules/redeem/redeemRoutes'));
 
 var app = express();
 
@@ -26,8 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', index);
-// app.use('/users', users);
+app.use('/', index);
 
 //log all the requests
 app.use(morgan('dev'));
@@ -37,6 +36,7 @@ app.use("/users", userRoutes);
 app.use("/user/cards", cardRoutes);
 app.use("/deals", dealRoutes);
 app.use("/tickets", ticketRoutes);
+app.use("/redeem", redeemRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

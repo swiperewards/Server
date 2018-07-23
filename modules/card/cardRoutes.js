@@ -5,5 +5,6 @@ var router=express.Router();
 
 router.post("/addCard", api.addCard);
 router.post("/getCards", api.getCards);
+router.post("/deleteCard", api.deleteCard);
 
 module.exports=router;
