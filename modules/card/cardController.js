@@ -27,7 +27,7 @@ exports.addCard = function (req, res) {
                     'nameOnCard': req.body.requestData.nameOnCard,
                     'userId': result.userId
                 }
-                // parameter to be passed to AddCard procedure
+                // parameters to be passed to AddCard procedure
                 var params = [card.cardNumber, card.expiryMonthMM, card.expiryYearYYYY,
                 card.cvv, card.nameOnCard, card.userId]
                 db.query("call AddCard(?,?,?,?,?,?)", params, function (error, results) {

@@ -16,7 +16,6 @@ exports.getDeals = function (req, res) {
         jwt.verify(token, config.privateKey, function (err, result) {
             if (err) {
                 logger.error(msg.tokenInvalid);
-
                 res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
             } else {
                 var deal = {
@@ -33,6 +32,46 @@ exports.getDeals = function (req, res) {
                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                     }
                 })
+            }
+        });
+    } else {
+        logger.error(msg.tokenInvalid);
+
+        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+
+    }
+
+}
+
+
+
+exports.getDealsWithPaging = function (req, res) {
+
+    var token = req.headers.auth
+
+    if (token) {
+        jwt.verify(token, config.privateKey, function (err, result) {
+            if (err) {
+                logger.error(msg.tokenInvalid);
+                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+            } else {
+                var deals = {
+                    'location': req.body.requestData.location,
+                    'pageNumber': req.body.requestData.pageNumber,
+                    'pageSize':  req.body.requestData.pageSize
+                }
+                // parameter to be passed to GetDeals procedure
+                params = [deals.location, deals.pageNumber, deals.pageSize]
+                db.query('call GetDeals(?,?,?)',params, function (error, results) {
+                    if (!error) {
+                        logger.error("getDealsWithPaging - success -" + result.userId);
+                        res.send(responseGenerator.getResponse(200, "Success", {"dealsCount": results[0][0].dealsCount, "deals": results[1]}))
+                    }
+                    else {
+                        logger.error("getDealsWithPaging - Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                });
             }
         });
     } else {

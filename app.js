@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var index = require('./routes/index');
 var userRoutes=require(path.resolve('.','modules/user/userRoutes'));
@@ -11,6 +12,7 @@ var cardRoutes=require(path.resolve('.','modules/card/cardRoutes'));
 var dealRoutes=require(path.resolve('.','modules/deal/dealRoutes'));
 var ticketRoutes=require(path.resolve('.','modules/ticket/ticketRoutes'));
 var redeemRoutes=require(path.resolve('.','modules/redeem/redeemRoutes'));
+var configRoutes=require(path.resolve('.','modules/config/configRoutes'));
 
 var app = express();
 
@@ -25,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors());
 app.use('/', index);
 
 //log all the requests
@@ -37,6 +39,7 @@ app.use("/user/cards", cardRoutes);
 app.use("/deals", dealRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/redeem", redeemRoutes);
+app.use("/config", configRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

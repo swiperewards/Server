@@ -95,7 +95,7 @@ exports.loginUser = function (req, res) {
             if (results && results.length > 0) {
                 var data = {
                     emailId: results[0].emailId,
-                    name: results[0].name,
+                    fullName: results[0].fullName,
                     userId: results[0].userId
                 }
                 //generation of jwt token
@@ -107,7 +107,7 @@ exports.loginUser = function (req, res) {
                 if (results[0].isUserVerified) {
                     res.send(responseGenerator.getResponse(200, "Login successful", {
                         token: token,
-                        name: results[0].name,
+                        fullName: results[0].fullName,
                         emailId: results[0].emailId,
                         userId: results[0].userId
                     }))
@@ -213,7 +213,7 @@ exports.toggleNotification = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, mr.name as role from users u join mst_role mr on u.roleId = mr.id where emailId = ? and password = ? and u.isDeleted = ?",
+        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where emailId = ? and password = ? and u.isDeleted = ?",
         values: [req.body.requestData.emailId, req.body.requestData.password, 0]
     };
 
@@ -242,7 +242,7 @@ exports.loginUserWeb = function (req, res) {
 
                             var dataForToken = {
                                 emailId: results[0].emailId,
-                                name: results[0].name,
+                                fullName: results[0].fullName,
                                 userId: results[0].userId,
                                 roleId: results[0].roleId,
                             }
@@ -254,9 +254,10 @@ exports.loginUserWeb = function (req, res) {
 
                             var userData = {
                                 emailId: results[0].emailId,
-                                name: results[0].fullName,
+                                fullName: results[0].fullName,
                                 userId: results[0].userId,
                                 role: results[0].role,
+                                profilePicUrl: results[0].profilePicUrl,
                                 menuList: resultsPrivileges,
                                 token: token
                             }
