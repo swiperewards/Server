@@ -4,12 +4,26 @@ var enums = require(path.resolve('.', 'modules/constant/enums.js'));
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var nodeMailer = require('nodemailer');
-var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
-var config = require(path.resolve('./', 'config'))
-var logger = require(path.resolve('./logger'))
+var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'));
+var config = require(path.resolve('./', 'config'));
+var logger = require(path.resolve('./logger'));
 var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
-var template = require(path.resolve('./', 'utils/emailTemplates.js'))
-var msg = require(path.resolve('./', 'utils/errorMessages.js'))
+var template = require(path.resolve('./', 'utils/emailTemplates.js'));
+var msg = require(path.resolve('./', 'utils/errorMessages.js'));
+var fs = require("fs");
+
+/*
+Codes used :
+1001 Failed to send Verification link to linked mail
+1004 Email Already Exists
+1005 db error
+1002 Verification pending
+1003 Please check username or password
+500 invalid token
+1006 Entered wrong old password
+1007 Please send profile image file
+1008 Error while uploading file
+*/
 
 exports.registerUser = function (req, res) {
 
@@ -137,83 +151,105 @@ exports.loginUser = function (req, res) {
 
 exports.changePassword = function (req, res) {
 
-    var token = req.headers.auth
-
-    if (token) {
-        jwt.verify(token, config.privateKey, function (err, result) {
-            if (err) {
-                logger.error(msg.tokenInvalid);
-                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-            } else {
-                var user = {
-                    'userId': result.userId,
-                    'password': req.body.requestData.password,
-                    'oldPassword': req.body.requestData.oldPassword,
-                }
-                // parameter to be passed to update password
-                params = [user.password, user.userId, user.oldPassword]
-                db.query("update users set password = ? where userId = ? and password = ?", params, function (error, results) {
-                    if (!error) {
-                        if (results.affectedRows == 0) {
-                            logger.info("changePassword - Entered wrong old password for user - " + user.userId);
-                            res.send(responseGenerator.getResponse(1006, "Entered wrong old password", null))
-                        }
-                        else {
-                            logger.info("Password updated successfully for user - " + user.userId);
-                            res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
-                        }
-
-                    } else {
-                        logger.error("Error while processing your request", error);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    }
-                })
-            }
-        });
-    } else {
-        logger.error(msg.tokenInvalid);
-
-        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-
+    var user = {
+        'userId': req.result.userId,
+        'password': req.body.requestData.password,
+        'oldPassword': req.body.requestData.oldPassword,
     }
+    // parameter to be passed to update password
+    params = [user.password, user.userId, user.oldPassword]
+    db.query("update users set password = ? where userId = ? and password = ?", params, function (error, results) {
+        if (!error) {
+            if (results.affectedRows == 0) {
+                logger.info("changePassword - Entered wrong old password for user - " + user.userId);
+                res.send(responseGenerator.getResponse(1006, "Entered wrong old password", null))
+            }
+            else {
+                logger.info("Password updated successfully for user - " + user.userId);
+                res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+            }
+
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
 
 }
 
 
 
 exports.toggleNotification = function (req, res) {
-    var token = req.headers.auth
-    if (token) {
-        jwt.verify(token, config.privateKey, function (err, result) {
-            if (err) {
-                logger.error(msg.tokenInvalid);
-                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-            } else {
-                var user = {
-                    'userId': result.userId,
-                    'enableNotification': req.body.requestData.enableNotification ? 1 : 0
-                }
-                // parameter to be passed to update password
-                params = [user.enableNotification, user.userId]
-                db.query("update users set isNotificationEnabled = ? where userId = ?", params, function (error, results) {
-                    if (!error) {
-                        logger.info("toggleNotification - Toggled notification for user - " + user.userId);
-                        res.send(responseGenerator.getResponse(200, "Success", {
-                            "enableNotification": user.enableNotification ? true : false
-                        }))
 
+    var user = {
+        'userId': req.result.userId,
+        'enableNotification': req.body.requestData.enableNotification ? 1 : 0
+    }
+    // parameter to be passed to update password
+    params = [user.enableNotification, user.userId]
+    db.query("update users set isNotificationEnabled = ? where userId = ?", params, function (error, results) {
+        if (!error) {
+            logger.info("toggleNotification - Toggled notification for user - " + user.userId);
+            res.send(responseGenerator.getResponse(200, "Success", {
+                "enableNotification": user.enableNotification ? true : false
+            }))
+
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
+
+exports.updateProfilePic = function (req, res) {
+
+    var user = {
+        'userId': req.result.userId
+    }
+    var ProfilePicImage = null;
+    var imgName = null;
+
+    if (!req.files.file) {
+        logger.error("updateProfilePic - no file received from " + req.result.userId);
+        res.send(responseGenerator.getResponse(1007, "Please send profile image file", null))
+    }
+    else {
+        ProfilePicImage = req.files.file;
+        imgName = "uid" + req.result.userId + "-" + ProfilePicImage.name;
+        imgName = imgName.replace(/\s/g, '');
+        ProfilePicUrl = "./public/ProfileImages/" + imgName;
+
+
+        if (Object.keys(req.files).length == 1) {
+            var newFile = fs.readFileSync(req.files.file.path);
+            writeFile();
+
+            function writeFile() {
+                fs.writeFile(ProfilePicUrl, newFile, function (err) {
+                    if (err) {
+                        logger.error("updateProfilePic - error while uploading file " + req.result.userId);
+                        res.send(responseGenerator.getResponse(1008, "Error while uploading file", null))
                     } else {
-                        logger.error("Error while processing your request", error);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        // parameter to be passed to update password
+                        params = [ProfilePicUrl, user.userId]
+                        db.query("update users set profilePicUrl = ? where userId = ?", params, function (error, results) {
+                            if (!error) {
+                                logger.info("updateProfilePic - Profile pic updated for user - " + user.userId);
+                                res.send(responseGenerator.getResponse(200, "Success", { "imagePath": config.localhost + "/user/profilepic/" + imgName }))
+
+                            } else {
+                                logger.error("updateProfilePic - Error while processing your request", error);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            }
+                        })
                     }
                 })
             }
-        });
-    } else {
-        logger.error(msg.tokenInvalid);
-        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+        }
     }
 }
+
 
 // Web api's below
 
@@ -281,7 +317,6 @@ exports.loginUserWeb = function (req, res) {
                             else {
                                 res.send(responseGenerator.getResponse(1002, "Verification pending", null))
                             }
-
                         }
                     });
                 }
@@ -357,27 +392,3 @@ exports.registerUserWeb = function (req, res) {
     })
 }
 
-
-
-exports.getJwtToken = function (req, res) {
-
-    var token = jwt.sign(
-        { "data": 1 }, config.privateKey, {
-            expiresIn: '3000ms'
-        });
-
-    res.send({ "token": token })
-}
-
-exports.validateToken = function (req, res) {
-
-    token = req.body.token;
-    jwt.verify(token, config.privateKey, function (err, result) {
-        if (err) {
-            logger.error(msg.tokenInvalid);
-            res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-        } else {
-            res.send({ "result": "verified" })
-        }
-    });
-}

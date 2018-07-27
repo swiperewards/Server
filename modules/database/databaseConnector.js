@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var path = require('path');
 var config = require(path.resolve('./', 'config'))
 
+
 var db_config = {
     host: config.databaseHost,
     user: config.databaseUser,

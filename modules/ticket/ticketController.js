@@ -10,73 +10,39 @@ var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 exports.getTicketTypes = function (req, res) {
 
-    var token = req.headers.auth
-
-    if (token) {
-        jwt.verify(token, config.privateKey, function (err, result) {
-            if (err) {
-                logger.error(msg.tokenInvalid);
-                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-            } else {
-                // parameter to be passed to select ticket types
-                params = [0, 1]
-                db.query("select id, ticketTypeName from mst_ticket_type where isDeleted = ? and status = ?", params, function (error, results) {
-                    if (!error) {
-                        logger.info("getTicketTypes - ticketTypeName fetched successfully for user - " + result.userId);
-                        res.send(responseGenerator.getResponse(200, "Success", results))
-                    } else {
-                        logger.error("getTicketTypes - Error while processing your request", error);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    }
-                })
-            }
-        });
-    } else {
-        logger.error(msg.tokenInvalid);
-
-        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-
-    }
-
+    // parameter to be passed to select ticket types
+    params = [0, 1]
+    db.query("select id, ticketTypeName from mst_ticket_type where isDeleted = ? and status = ?", params, function (error, results) {
+        if (!error) {
+            logger.info("getTicketTypes - ticketTypeName fetched successfully for user - " + req.result.userId);
+            res.send(responseGenerator.getResponse(200, "Success", results))
+        } else {
+            logger.error("getTicketTypes - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
 }
 
 
 exports.generateTicket = function (req, res) {
 
-    var token = req.headers.auth
-
-    if (token) {
-        jwt.verify(token, config.privateKey, function (err, result) {
-            if (err) {
-                logger.error(msg.tokenInvalid);
-                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-            } else {
-
-                var ticket = {
-                    "userId": result.userId,
-                    "ticketTypeId": req.body.requestData.ticketTypeId,
-                    "feedback": req.body.requestData.feedback,
-                    "userCategory": req.body.requestData.userCategory
-                }
-                // parameter to be passed to select ticket types
-                params = [ticket.userId, ticket.ticketTypeId, ticket.feedback, ticket.userCategory]
-                db.query('call GenerateTicket(?,?,?,?)',params, function (error, results) {
-                    if (!error) {
-                        logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
-                        res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
-                    }
-                    else {
-                        logger.error("Error while processing your request", error);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    }
-                });
-            }
-        });
-    } else {
-        logger.error(msg.tokenInvalid);
-
-        res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
-
+    var ticket = {
+        "userId": req.result.userId,
+        "ticketTypeId": req.body.requestData.ticketTypeId,
+        "feedback": req.body.requestData.feedback,
+        "userCategory": req.body.requestData.userCategory
     }
+    // parameter to be passed to select ticket types
+    params = [ticket.userId, ticket.ticketTypeId, ticket.feedback, ticket.userCategory]
+    db.query('call GenerateTicket(?,?,?,?)', params, function (error, results) {
+        if (!error) {
+            logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
+            res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
+        }
+        else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    });
 
 }

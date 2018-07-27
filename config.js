@@ -12,6 +12,8 @@ module.exports = {
     playStoreURL: "www.google.com",
     privacySecurityUrl: "www.google.com",
     termsOfUseUrl: "www.google.com",
-    maxRedeemCashBack: 5000
+    maxRedeemCashBack: 5000,
+    localhost: "http://192.168.0.198:5000"
+    // localhost: "http://winjitstaging.cloudapp.net:5000"
   };
   

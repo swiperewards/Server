@@ -1,6 +1,9 @@
 var path =require('path');
 var api=require(path.resolve('.','modules/user/userController.js'))
 var express = require('express');
+var multipart = require('connect-multiparty');
+var encDecController=require(path.resolve('.','modules/config/encryptDecryptController.js'))
+var multipartMiddleware = multipart();
 var router=express.Router();
 
 // api to register user
@@ -10,10 +13,10 @@ router.post("/registerUser", api.registerUser);
 router.post("/loginUser", api.loginUser);
 
 // api to change password for user
-router.post("/changePassword", api.changePassword);
+router.post("/changePassword", encDecController.verifyToken, api.changePassword);
 
 // api to toggle notification for user
-router.post("/toggleNotification", api.toggleNotification);
+router.post("/toggleNotification", encDecController.verifyToken, api.toggleNotification);
 
 // api to login for web user
 router.post("/loginUserWeb", api.loginUserWeb);
@@ -21,9 +24,8 @@ router.post("/loginUserWeb", api.loginUserWeb);
 // api to register for web user
 router.post("/registerUserWeb", api.registerUser);
 
-router.post("/getJwtToken", api.getJwtToken);
-
-router.post("/validateToken", api.validateToken);
+// api to update profile picture
+router.post("/updateProfilePic", encDecController.verifyToken, multipartMiddleware, api.updateProfilePic);
 
 
 module.exports=router;

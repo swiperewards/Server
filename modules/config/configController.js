@@ -6,7 +6,13 @@ var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
+var cron = require('node-cron');
 
+cron.schedule('0 0 * * * *', function () {
+    db.query("select 1", function (error, results) {
+        logger.info("configController - keep alive (mysql)- " + new Date(Date.now()));
+    });
+});
 
 exports.initSwipe = function (req, res) {
 
@@ -29,7 +35,7 @@ exports.initSwipe = function (req, res) {
                 };
                 // parameter to be passed to select deals query
                 params = [0, result.userId, 0];
-                db.query("select u.userId, u.fullName, u.city, u.latitude, u.longitude, u.userLevel, ml.levelValue, u.isNotificationEnabled, u.profilePicUrl from users u join mst_level ml on u.userLevel = ml.id where u.isDeleted = ? and u.userId = ? and ml.isDeleted = ?", params, function (error, results) {
+                db.query("select u.userId, u.fullName, u.city, u.latitude, u.longitude, u.userLevel, ml.description, u.isNotificationEnabled, u.profilePicUrl from users u join mst_level ml on u.userLevel between ml.minRange and ml.maxRange where u.isDeleted = ? and u.userId = ? and ml.isDeleted = ?", params, function (error, results) {
                     if (!error) {
                         var userData = {
                             "userId": results[0].userId,
