@@ -45,8 +45,12 @@ exports.registerUser = function (req, res) {
                 }
                 //generation of jwt token
                 var token = jwt.sign(
-                    data, config.privateKey, {
-                        expiresIn: 3600
+                    {
+                        emailId: results[0][0].emailId,
+                        name: results[0][0].name,
+                        userId: results[0][0].userId
+                    }, config.privateKey, {
+                        expiresIn: '365d'
                     });
 
                 //=======================================code to send verification email on signup========================================================
@@ -100,8 +104,12 @@ exports.loginUser = function (req, res) {
                 }
                 //generation of jwt token
                 var token = jwt.sign(
-                    data, config.privateKey, {
-                        expiresIn: 3600
+                    {
+                        emailId: results[0].emailId,
+                        fullName: results[0].fullName,
+                        userId: results[0].userId
+                    }, config.privateKey, {
+                        expiresIn: '365d'
                     });
                 // finalCallback(null, results)
                 if (results[0].isUserVerified) {
@@ -207,13 +215,13 @@ exports.toggleNotification = function (req, res) {
     }
 }
 
-
+// Web api's below
 
 
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where emailId = ? and password = ? and u.isDeleted = ?",
+        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.password = ? and u.isDeleted = ?",
         values: [req.body.requestData.emailId, req.body.requestData.password, 0]
     };
 
@@ -229,7 +237,7 @@ exports.loginUserWeb = function (req, res) {
                 }
                 else {
                     var query = {
-                        sql: "select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = ? and p.isDeleted = ? and mp.isDeleted = ? and mr.isDeleted = ?",
+                        sql: "select mp.text, mp.iconName, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = ? and p.isDeleted = ? and mp.isDeleted = ? and mr.isDeleted = ?",
                         values: [results[0].roleId, 0, 0, 0]
                     };
 
@@ -248,8 +256,13 @@ exports.loginUserWeb = function (req, res) {
                             }
                             // generation of jwt token
                             var token = jwt.sign(
-                                dataForToken, config.privateKey, {
-                                    expiresIn: 3600
+                                {
+                                    emailId: results[0].emailId,
+                                    fullName: results[0].fullName,
+                                    userId: results[0].userId,
+                                    roleId: results[0].roleId,
+                                }, config.privateKey, {
+                                    expiresIn: '365d'
                                 });
 
                             var userData = {
@@ -281,3 +294,90 @@ exports.loginUserWeb = function (req, res) {
 
 }
 
+
+exports.registerUserWeb = function (req, res) {
+
+    var user = {
+        'fullName': req.body.requestData.fullName,
+        'emailId': req.body.requestData.emailId,
+        'password': req.body.requestData.password,
+        'platform': req.body.platform,
+        'roleId': req.body.requestData.roleId
+    }
+
+    db.query('call SignupUserWeb(?,?,?,?,?)', [user.fullName, user.emailId, user.password, user.platform, user.roleId], function (error, results) {
+        if (!error) {
+            //check for email already exists in DB
+            if (results[0][0].IsNewRecord == 1) {
+                logger.warn("Email Already Exists");
+                res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+            }
+            else {
+                var data = {
+                    emailId: results[0][0].emailId,
+                    name: results[0][0].name,
+                    userId: results[0][0].userId
+                }
+                //generation of jwt token
+                var token = jwt.sign(
+                    {
+                        emailId: results[0][0].emailId,
+                        name: results[0][0].name,
+                        userId: results[0][0].userId
+                    }, config.privateKey, {
+                        expiresIn: '365d'
+                    });
+
+                //=======================================code to send verification email on signup========================================================
+                var message;
+                template.welcome(user.fullName, token, function (err, msg) {
+                    message = msg;
+                })
+                emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
+                    if (error) {
+                        logger.warn("Failed to send Verification link to linked mail");
+                        res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                    } else {
+                        logger.info("Verification link sent to mail");
+
+                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                            token: token,
+                            name: results[0][0].name,
+                            emailId: results[0][0].emailId,
+                            userId: results[0][0].userId
+                        }))
+                    }
+                });
+                //========================================end of code for mail verification=================================================================
+            }
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
+
+
+exports.getJwtToken = function (req, res) {
+
+    var token = jwt.sign(
+        { "data": 1 }, config.privateKey, {
+            expiresIn: '3000ms'
+        });
+
+    res.send({ "token": token })
+}
+
+exports.validateToken = function (req, res) {
+
+    token = req.body.token;
+    jwt.verify(token, config.privateKey, function (err, result) {
+        if (err) {
+            logger.error(msg.tokenInvalid);
+            res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+        } else {
+            res.send({ "result": "verified" })
+        }
+    });
+}

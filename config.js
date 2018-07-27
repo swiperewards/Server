@@ -14,3 +14,4 @@ module.exports = {
     termsOfUseUrl: "www.google.com",
     maxRedeemCashBack: 5000
   };
+  

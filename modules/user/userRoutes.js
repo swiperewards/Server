@@ -18,4 +18,12 @@ router.post("/toggleNotification", api.toggleNotification);
 // api to login for web user
 router.post("/loginUserWeb", api.loginUserWeb);
 
+// api to register for web user
+router.post("/registerUserWeb", api.registerUser);
+
+router.post("/getJwtToken", api.getJwtToken);
+
+router.post("/validateToken", api.validateToken);
+
+
 module.exports=router;

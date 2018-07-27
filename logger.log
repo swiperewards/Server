@@ -500,3 +500,146 @@
 {"message":"getDealsWithPaging - success -24","level":"error"}
 {"message":"getDealsWithPaging - success -24","level":"error"}
 {"message":"getDealsWithPaging - success -24","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"changePassword - Entered wrong old password for user - 34","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -24","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'mp.icon' in 'field list'","sqlState":"42S22","index":0,"sql":"select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = 1 and p.isDeleted = 0 and mp.isDeleted = 0 and mr.isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'mp.icon' in 'field list'","sqlState":"42S22","index":0,"sql":"select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = 1 and p.isDeleted = 0 and mp.isDeleted = 0 and mr.isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'mp.icon' in 'field list'","sqlState":"42S22","index":0,"sql":"select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = 1 and p.isDeleted = 0 and mp.isDeleted = 0 and mr.isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'mp.icon' in 'field list'","sqlState":"42S22","index":0,"sql":"select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = 1 and p.isDeleted = 0 and mp.isDeleted = 0 and mr.isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'mp.icon' in 'field list'","sqlState":"42S22","index":0,"sql":"select mp.text, mp.icon, mp.link, p.displayOrder from mst_role mr join privileges p on mr.id = p.roleId join mst_privileges mp on p.menuId = mp.id where mr.id = 1 and p.isDeleted = 0 and mp.isDeleted = 0 and mr.isDeleted = 0","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Deals fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}

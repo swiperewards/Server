@@ -94,11 +94,12 @@ exports.raiseRedeemRequest = function (req, res) {
                     "redeemModeOptionId": req.body.requestData.redeemModeOptionId,
                     "userId": result.userId,
                     "amount": req.body.requestData.amount,
-                    "details": req.body.requestData.details
+                    "details": req.body.requestData.details,
+                    "extraField": req.body.requestData.extraField ? req.body.requestData.extraField : null
                 }
                 // parameters to be passed to RaiseRedeemRequest procedure
-                params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.userId, redeemRequest.amount, redeemRequest.details]
-                db.query('call RaiseRedeemRequest(?,?,?,?,?)',params, function (error, results) {
+                params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.userId, redeemRequest.amount, redeemRequest.details, redeemRequest.extraField]
+                db.query('call RaiseRedeemRequest(?,?,?,?,?,?)',params, function (error, results) {
                     if (!error) {
                         logger.error("raiseRedeemRequest - redeem request generated successfully by -" + redeemRequest.userId);
                         res.send(responseGenerator.getResponse(200, "Redeem request generated successfully", results[0][0]))

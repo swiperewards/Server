@@ -39,7 +39,7 @@ exports.initSwipe = function (req, res) {
                             "longitude": results[0].longitude,
                             "userLevel": results[0].userLevel,
                             "levelValue": results[0].levelValue,
-                            "isNotificationEnabled": results[0].isNotificationEnabled,
+                            "isNotificationEnabled": results[0].isNotificationEnabled ? true : false,
                             "profilePicUrl": results[0].profilePicUrl
                         }
                         logger.info("initSwipe - userData fetched successfully by user - " + result.userId);
