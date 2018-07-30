@@ -1,46 +1,26 @@
 ﻿var nodemailer = require('nodemailer');
 var path = require('path');
+var config = require(path.resolve('./', 'config'))
 
 exports.sendEmail = function (to, subject, message, callback) {
 
-    var status = sendEmail(to, subject, message,callback);
+    var status = sendEmail(to, subject, message, callback);
 }
-
-
-// function sendEmail(to, subject, message, callback) {
-//     var transporter = nodemailer.createTransport({
-//         host: 'smtp.gmail.com',
-//         port: '587',
-//         auth: {
-//             user: 'testid.android@gmail.com',
-//             pass: 'winjit123'
-//         },
-//         secureConnection: 'false',
-//         tls: {
-//             ciphers: 'SSLv3'
-//         }
-
-//     });
 
 
 function sendEmail(to, subject, message, callback) {
     var transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
+        host: 'smtp.gmail.com',
         port: '587',
         auth: {
-            user: 'adnans@winjit.com',
-            pass: 'Adnan@2019'
-        },
-        secureConnection: 'false',
-        tls: {
-            ciphers: 'SSLv3'
+            user: config.emailAccountUserName,
+            pass: config.emailAccountPassword
         }
 
     });
 
     var mailOptions = {
-       // from: 'testid.android@gmail.com',
-       from: 'adnans@winjit.com',
+        from: config.emailAccountUserName,
         to: to,
         subject: subject,
         html: message
@@ -49,14 +29,15 @@ function sendEmail(to, subject, message, callback) {
 
     transporter.sendMail(mailOptions, function (err, info) {
 
-        if(err){
-            console.log("sending email error:"+err);
+        if (err) {
+
+            console.log("sending email error:" + err);
         }
-        if(callback){
+        if (callback) {
+
             callback(err, info);
-            console.log("email sent successfully");
         }
-       
+
     })
 
 }

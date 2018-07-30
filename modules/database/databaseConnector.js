@@ -1,10 +1,13 @@
 var mysql = require('mysql');
+var path = require('path');
+var config = require(path.resolve('./', 'config'))
+
 
 var db_config = {
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "swipe_rewards",
+    host: config.databaseHost,
+    user: config.databaseUser,
+    password: config.databasePassword,
+    database: config.databaseDatabaseName,
     multipleStatements: true
 }
 
