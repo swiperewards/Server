@@ -43,8 +43,8 @@ exports.registerUser = function (req, res) {
         'socialToken': !req.body.requestData.isSocialLogin ? null : req.body.requestData.socialToken,
         'referredBy': !req.body.requestData.referralCode ? null : req.body.requestData.referredBy
     }
-
-    db.query('call SignupUser("' + user.fullName + '","' + user.mobileNumber + '","' + user.emailId + '","' + user.password + '","' + user.platform + '","' + user.deviceId + '","' + user.lat + '","' + user.long + '","' + user.pincode + '","' + user.city + '","' + user.isSocialLogin + '","' + user.profilePicUrl + '","' + user.socialToken + '","' + user.referredBy + '")', function (error, results) {
+    var params = [user.fullName, user.mobileNumber, user.emailId, user.password, user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy]
+    db.query('call SignupUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsNewRecord == 1) {

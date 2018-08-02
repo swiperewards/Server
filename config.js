@@ -12,8 +12,12 @@ module.exports = {
     playStoreURL: "www.google.com",
     privacySecurityUrl: "www.google.com",
     termsOfUseUrl: "www.google.com",
+    minSupportedAndroidAppVersionCode: 4,
+    minSupportedIosAppVersionCode: 5,
     maxRedeemCashBack: 5000,
-    localhost: "http://192.168.0.198:5000"
-    // localhost: "http://winjitstaging.cloudapp.net:5000"
+    localhost: "http://192.168.0.198:5000",
+    // localhost: "http://winjitstaging.cloudapp.net:5000",
+    splashApiUrl: "https://test-api.splashpayments.com",
+    splashApiPrivateKey: "8692184dd2c90b53c8d1ddaf18e5bfab"
   };
   

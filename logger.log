@@ -1003,3 +1003,234 @@
 {"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
 {"message":"raiseRedeemRequest - redeem request generated successfully by -32","level":"error"}
 {"message":"getDealsWithPaging - success -32","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 12:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 13:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"error":{"code":"MODULE_NOT_FOUND"},"level":"error","message":"uncaughtException: Cannot find module 'request'\nError: Cannot find module 'request'\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:594:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:520:25)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:4:15)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)","stack":"Error: Cannot find module 'request'\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:594:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:520:25)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:4:15)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)","exception":true,"date":"Mon Jul 30 2018 13:30:46 GMT+0530 (India Standard Time)","process":{"pid":10112,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":41672704,"heapTotal":32800768,"heapUsed":17123656,"external":398654}},"os":{"loadavg":[0,0,0],"uptime":17981},"trace":[{"column":15,"file":"internal/modules/cjs/loader.js","function":"Module._resolveFilename","line":594,"method":"_resolveFilename","native":false},{"column":25,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":520,"method":"_load","native":false},{"column":17,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":650,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":20,"method":null,"native":false},{"column":15,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js","function":null,"line":4,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":702,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":713,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":612,"method":"load","native":false},{"column":12,"file":"internal/modules/cjs/loader.js","function":"tryModuleLoad","line":551,"method":null,"native":false},{"column":3,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":543,"method":"_load","native":false}]}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: err is not defined\nReferenceError: err is not defined\n    at D:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:14:9\n    at Request._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","stack":"ReferenceError: err is not defined\n    at D:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:14:9\n    at Request._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","exception":true,"date":"Mon Jul 30 2018 13:31:29 GMT+0530 (India Standard Time)","process":{"pid":9816,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":54239232,"heapTotal":35434496,"heapUsed":22650672,"external":656882}},"os":{"loadavg":[0,0,0],"uptime":18024},"trace":[{"column":9,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js","function":null,"line":14,"method":null,"native":false},{"column":9,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js","function":"Request._callback","line":18,"method":"_callback","native":false},{"column":22,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":"Request.self.callback","line":185,"method":"callback","native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":10,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1157,"method":null,"native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":12,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1079,"method":null,"native":false},{"column":13,"file":"events.js","function":"Object.onceWrapper","line":273,"method":"onceWrapper","native":false},{"column":15,"file":"events.js","function":"IncomingMessage.emit","line":187,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"endReadableNT","line":1081,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: err is not defined\nReferenceError: err is not defined\n    at d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:14:9\n    at Request._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","stack":"ReferenceError: err is not defined\n    at d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:14:9\n    at Request._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","exception":true,"date":"Mon Jul 30 2018 13:33:24 GMT+0530 (India Standard Time)","process":{"pid":8448,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":58073088,"heapTotal":28094464,"heapUsed":23070488,"external":154209}},"os":{"loadavg":[0,0,0],"uptime":18139},"trace":[{"column":9,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js","function":null,"line":14,"method":null,"native":false},{"column":9,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js","function":"Request._callback","line":18,"method":"_callback","native":false},{"column":22,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":"Request.self.callback","line":185,"method":"callback","native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":10,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1157,"method":null,"native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1079,"method":null,"native":false},{"column":13,"file":"events.js","function":"Object.onceWrapper","line":273,"method":"onceWrapper","native":false},{"column":15,"file":"events.js","function":"IncomingMessage.emit","line":187,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"endReadableNT","line":1081,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: user is not defined\nReferenceError: user is not defined\n    at d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:19:70\n    at Request._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","stack":"ReferenceError: user is not defined\n    at d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js:19:70\n    at Request._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js:18:9)\n    at Request.self.callback (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:185:22)\n    at Request.emit (events.js:182:13)\n    at Request.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1157:10)\n    at Request.emit (events.js:182:13)\n    at IncomingMessage.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js:1079:12)\n    at Object.onceWrapper (events.js:273:13)\n    at IncomingMessage.emit (events.js:187:15)\n    at endReadableNT (_stream_readable.js:1081:12)","exception":true,"date":"Mon Jul 30 2018 13:34:13 GMT+0530 (India Standard Time)","process":{"pid":4336,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":55320576,"heapTotal":22851584,"heapUsed":18982680,"external":160134}},"os":{"loadavg":[0,0,0],"uptime":18188},"trace":[{"column":70,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\merchant\\merchantController.js","function":null,"line":19,"method":null,"native":false},{"column":9,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\splash\\splashController.js","function":"Request._callback","line":18,"method":"_callback","native":false},{"column":22,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":"Request.self.callback","line":185,"method":"callback","native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":10,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1157,"method":null,"native":false},{"column":13,"file":"events.js","function":"Request.emit","line":182,"method":"emit","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\request\\request.js","function":null,"line":1079,"method":null,"native":false},{"column":13,"file":"events.js","function":"Object.onceWrapper","line":273,"method":"onceWrapper","native":false},{"column":15,"file":"events.js","function":"IncomingMessage.emit","line":187,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"endReadableNT","line":1081,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchant fetched successfully by user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchant fetched successfully by user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 14:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Merchant fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 15:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect string value: '\\xE2\\x82\\xB9())...' for column 'p_name' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser('@@#(##(₹())212288889999ahsjsjsjs @@#(₹(11288889ajsjdnxmxmxmkslldl',NULL,'qjajkababn@hsbsnsjj172728288.vkm','1234567890','Android','4de351ff64f0b228','','',NULL,NULL,0,NULL,NULL,NULL)","level":"error","message":"Error while processing your request"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect string value: '\\xE2\\x82\\xB9())...' for column 'p_name' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser('@@#(##(₹())212288889999ahsjsjsjs @@#(₹(11288889ajsjdnxmxmxmkslldl',NULL,'qjajkababn@hsbsnsjj172728288.vkm','1234567890','Android','4de351ff64f0b228','','',NULL,NULL,0,NULL,NULL,NULL)","level":"error","message":"Error while processing your request"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect string value: '\\xE2\\x82\\xB9())...' for column 'p_name' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser('@@#(##(₹())212288889999ahsjsjsjs @@#(₹(11288889ajsjdnxmxmxmkslldl',NULL,'qjajkababn@hsbsnsjj172728288.vkm','1234567890','Android','4de351ff64f0b228','','',NULL,NULL,0,NULL,NULL,NULL)","level":"error","message":"Error while processing your request"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect string value: '\\xE2\\x82\\xB9())...' for column 'p_name' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser('@@#(##(₹())212288889999ahsjsjsjs @@#(₹(11288889ajsjdnxmxmxmkslldl',NULL,'qjajkababn@hsbsnsjj172728288.vkm','1234567890','Android','4de351ff64f0b228','','',NULL,NULL,0,NULL,NULL,NULL)","level":"error","message":"Error while processing your request"}
+{"code":"ER_TRUNCATED_WRONG_VALUE_FOR_FIELD","errno":1366,"sqlMessage":"Incorrect string value: '\\xE2\\x82\\xB9())...' for column 'p_name' at row 1","sqlState":"HY000","index":0,"sql":"call SignupUser('@@#(##(₹())212288889999ahsjsjsjs @@#(₹(11288889ajsjdnxmxmxmkslldl',NULL,'qjajkababn@hsbsnsjj172728288.vkm','1234567890','Android','4de351ff64f0b228','','',NULL,NULL,0,NULL,NULL,NULL)","level":"error","message":"Error while processing your request"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 16:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Merchant fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 17:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 18:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Unexpected token o in JSON at position 1\nSyntaxError: Unexpected token o in JSON at position 1\n    at JSON.parse (<anonymous>)\n    at Query._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js:18:28)\n    at Query.Sequence.end (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.EofPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:123:8)\n    at Protocol._parsePacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)","stack":"SyntaxError: Unexpected token o in JSON at position 1\n    at JSON.parse (<anonymous>)\n    at Query._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js:18:28)\n    at Query.Sequence.end (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.EofPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:123:8)\n    at Protocol._parsePacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)","exception":true,"date":"Mon Jul 30 2018 18:04:22 GMT+0530 (India Standard Time)","process":{"pid":8452,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":52510720,"heapTotal":35434496,"heapUsed":22832240,"external":572349}},"os":{"loadavg":[0,0,0],"uptime":34397},"trace":[{"column":null,"file":null,"function":"JSON.parse","line":null,"method":"parse","native":false},{"column":28,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js","function":"Query._callback","line":18,"method":"_callback","native":false},{"column":24,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query._handleFinalResultPacket","line":139,"method":"_handleFinalResultPacket","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.EofPacket","line":123,"method":"EofPacket","native":false},{"column":23,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Unexpected token o in JSON at position 1\nSyntaxError: Unexpected token o in JSON at position 1\n    at JSON.parse (<anonymous>)\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js:18:28)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.EofPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:123:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)","stack":"SyntaxError: Unexpected token o in JSON at position 1\n    at JSON.parse (<anonymous>)\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js:18:28)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.EofPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:123:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)","exception":true,"date":"Mon Jul 30 2018 18:05:29 GMT+0530 (India Standard Time)","process":{"pid":9448,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":65376256,"heapTotal":42774528,"heapUsed":19761968,"external":146782}},"os":{"loadavg":[0,0,0],"uptime":34464},"trace":[{"column":null,"file":null,"function":"JSON.parse","line":null,"method":"parse","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\event\\eventController.js","function":"Query._callback","line":18,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query._handleFinalResultPacket","line":139,"method":"_handleFinalResultPacket","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.EofPacket","line":123,"method":"EofPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Jul 30 2018 19:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Jul 31 2018 13:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Cards fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Jul 31 2018 14:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 32","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Jul 31 2018 15:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Jul 31 2018 16:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Jul 31 2018 17:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 32","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Aug 02 2018 11:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"raiseRedeemRequest - redeem request generated successfully by -32","level":"error"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Aug 02 2018 12:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 24","level":"info"}
+{"message":"getEventNotifications - event notifications fetched successfully for user - 32","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"configController - keep alive (mysql)- Thu Aug 02 2018 13:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Aug 02 2018 14:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Deals fetched successfully by user - 32","level":"info"}

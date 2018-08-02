@@ -25,8 +25,16 @@ exports.initSwipe = function (req, res) {
 
                 res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
             } else {
+                /* check whether appVersionCode is supported or not and 
+                   set isForcedUpdate true, if appVersionCode is not supported */
+                var isForcedUpdate = (req.body.requestData.platform == "Android"
+                    && req.body.requestData.appVersionCode < config.minSupportedAndroidAppVersionCode) ||
+                    (req.body.requestData.platform == "IOS"
+                        && req.body.requestData.appVersionCode < config.minSupportedIosAppVersionCode)
+
                 var configData = {
-                    "isForcedUpdate": (req.body.requestData.appVersionCode >= config.appVersionCode) ? false : true,
+                    "platform": req.body.requestData.platform,
+                    "isForcedUpdate": isForcedUpdate,
                     "playStoreURL": config.playStoreURL,
                     "privacySecurityUrl": config.privacySecurityUrl,
                     "termsOfUseUrl": config.termsOfUseUrl,
