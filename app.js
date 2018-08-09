@@ -32,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/', index);
 
+app.use(bodyParser.json({limit: '50mb'}));
 //log all the requests
 app.use(morgan('dev'));
 //app.use(morgan('combined'));

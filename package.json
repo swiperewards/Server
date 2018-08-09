@@ -12,6 +12,8 @@
     "connect-multiparty": "^2.1.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
+    "crypto-js": "^3.1.9-1",
+    "date-diff": "^0.2.0",
     "debug": "~2.6.9",
     "express": "^4.15.5",
     "fs": "0.0.1-security",
@@ -21,6 +23,7 @@
     "mysql": "^2.15.0",
     "node-cron": "^1.2.1",
     "nodemailer": "^4.6.7",
+    "randomstring": "^1.1.5",
     "request": "^2.87.0",
     "serve-favicon": "~2.4.5",
     "winston": "^3.0.0"

@@ -7,7 +7,7 @@ var multipartMiddleware = multipart();
 var router=express.Router();
 
 // api to register user
-router.post("/registerUser", api.registerUser);
+router.post('/registerUser', api.registerUser);
 
 // api to login for android / ios app user
 router.post("/loginUser", api.loginUser);
@@ -26,6 +26,12 @@ router.post("/registerUserWeb", api.registerUser);
 
 // api to update profile picture
 router.post("/updateProfilePic", encDecController.verifyToken, multipartMiddleware, api.updateProfilePic);
+
+// api to send forgot password link to user
+router.post("/forgotPassword", api.forgotPassword);
+
+// api to set new password for user
+router.post("/setPassword", api.setPassword);
 
 
 module.exports=router;

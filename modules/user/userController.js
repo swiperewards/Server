@@ -10,7 +10,10 @@ var logger = require(path.resolve('./logger'));
 var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
 var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 var msg = require(path.resolve('./', 'utils/errorMessages.js'));
+var functions = require(path.resolve('./', 'utils/functions.js'));
 var fs = require("fs");
+var randomstring = require("randomstring");
+var DateDiff = require('date-diff');
 
 /*
 Codes used :
@@ -23,15 +26,20 @@ Codes used :
 1006 Entered wrong old password
 1007 Please send profile image file
 1008 Error while uploading file
+1009 Invalid email id
+1010 You are not authorized
+1011 Token expired
+1012 No email found
+1013 Failed to send Password reset link to linked mail
+1014 Invalid email address
 */
 
 exports.registerUser = function (req, res) {
-
     var user = {
         'fullName': req.body.requestData.fullName,
         'mobileNumber': !req.body.requestData.mobileNumber ? null : req.body.requestData.mobileNumber,
         'emailId': req.body.requestData.emailId,
-        'password': req.body.requestData.password,
+        'password': req.body.requestData.password ? req.body.requestData.password : null,
         'platform': req.body.platform,
         'deviceId': req.body.deviceId,
         'lat': req.body.requestData.lat,
@@ -47,7 +55,7 @@ exports.registerUser = function (req, res) {
     db.query('call SignupUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
-            if (results[0][0].IsNewRecord == 1) {
+            if (results[0][0].IsOldRecord == 1) {
                 logger.warn("Email Already Exists");
                 res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
             }
@@ -249,6 +257,140 @@ exports.updateProfilePic = function (req, res) {
         }
     }
 }
+
+
+
+exports.forgotPassword = function (req, res) {
+    var strQuery = {
+        sql: "select userId, fullName from users where emailId = ? and isDeleted = ?",
+        values: [req.body.requestData.emailId, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+
+                var user = {
+                    'emailId': req.body.requestData.emailId,
+                    'fullName': results[0].fullName,
+                    'platform': req.body.platform,
+                    'deviceId': req.body.deviceId
+                };
+                var reqIdGenerated = randomstring.generate(6);
+                var query = "insert into password_reset_requests (requestId, emailId) values (?,?)";
+                var params = [reqIdGenerated, user.emailId];
+
+                db.query(query, params, function (error, results) {
+                    if (!error) {
+                        var message;
+                        template.forgotPassword(user.fullName, reqIdGenerated, function (err, msg) {
+                            message = msg;
+                        })
+                        emailHandler.sendEmail(user.emailId, "Swipe Rewards, Forgot password link", message, function (error, callback) {
+                            if (error) {
+                                logger.warn("Failed to send Password reset link to linked mail");
+                                res.send(responseGenerator.getResponse(1013, "Failed to send Password reset link to linked mail", null))
+                            } else {
+                                logger.info("Password reset link sent to mail");
+                                res.send(responseGenerator.getResponse(200, "Success", null))
+                            }
+                        });
+                    } else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                })
+            }
+            else {
+                res.send(responseGenerator.getResponse(1014, "Invalid email address", null))
+                // finalCallback("Please check username or password", null)
+            }
+        }
+    });
+}
+
+
+exports.setPassword = function (req, res) {
+
+    var strQuery = {
+        sql: "select emailId, createdDate from password_reset_requests where requestId = ? and isDeleted = ?",
+        values: [req.body.requestData.resetToken, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+                if (req.body.requestData.emailId == results[0].emailId) {
+                    var tokenCreatedDate = new Date(results[0].createdDate);
+                    var currentDate = Date.now();
+                    var diff = new DateDiff(currentDate, tokenCreatedDate);
+                    var diffInMinutes = diff.minutes();
+                    if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
+
+                        var user = {
+                            'emailId': req.body.requestData.emailId,
+                            'password': req.body.requestData.password
+                        }
+                        // parameter to be passed to update password
+                        params = [user.password, user.emailId]
+                        db.query("update users set password = ? where emailId = ?", params, function (error, results) {
+                            if (!error) {
+                                if (results.affectedRows == 0) {
+                                    logger.info("setPassword - email not found - " + user.emailId);
+                                    res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                }
+                                else {
+                                    // parameter to be passed to update password
+                                    params = [1, user.emailId]
+                                    db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
+                                        if (!error) {
+                                            if (results.affectedRows == 0) {
+                                                logger.info("setPassword - email not found - " + user.emailId);
+                                                res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                            }
+                                            else {
+                                                logger.info("Password updated successfully for user - " + user.emailId);
+                                                res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                                            }
+
+                                        } else {
+                                            logger.error("Error while processing your request", error);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                        }
+                                    })
+                                }
+
+                            } else {
+                                logger.error("Error while processing your request", error);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            }
+                        })
+                    }
+                    else {
+                        res.send(responseGenerator.getResponse(1011, "Token expired", null))
+                    }
+                }
+                else {
+                    res.send(responseGenerator.getResponse(1010, "You are not authorized", null))
+                }
+
+            }
+            else {
+                res.send(responseGenerator.getResponse(1010, "You are not authorized", null))
+                // finalCallback("Please check username or password", null)
+            }
+        }
+    });
+
+
+}
+
 
 
 // Web api's below

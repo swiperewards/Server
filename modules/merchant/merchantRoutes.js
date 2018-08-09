@@ -9,9 +9,6 @@ var express = require('express');
 var encDecController=require(path.resolve('.','modules/config/encryptDecryptController.js'));
 var router=express.Router();
 
-// api to get merchants
-router.post("/getMerchants", encDecController.verifyToken, api.getMerchants);
-
 // api to create merchant
 router.post("/createMerchant", encDecController.verifyToken, api.createMerchant);
 
