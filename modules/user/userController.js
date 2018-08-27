@@ -15,6 +15,31 @@ var fs = require("fs");
 var randomstring = require("randomstring");
 var DateDiff = require('date-diff');
 
+// npm required for the s3 storage
+var aws = require('aws-sdk');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+
+aws.config.update({
+    secretAccessKey: config.s3SecreateAccessKey,
+    accessKeyId: config.s3accessKeyId,
+    region: config.region
+
+});
+// S3 variable declarations
+var s3 = new aws.S3();
+
+exports.listBuckets = function (req, res) {
+    s3.listBuckets({}, function (err, data) {
+        if (err) {
+            return res.send({ "error": err });
+        }
+        res.send({ data });
+    });
+}
+
+
+
 /*
 Codes used :
 1001 Failed to send Verification link to linked mail
@@ -22,7 +47,6 @@ Codes used :
 1005 db error
 1002 Verification pending
 1003 Please check username or password
-500 invalid token
 1006 Entered wrong old password
 1007 Please send profile image file
 1008 Error while uploading file
@@ -32,6 +56,7 @@ Codes used :
 1012 No email found
 1013 Failed to send Password reset link to linked mail
 1014 Invalid email address
+1050 invalid token
 */
 
 exports.registerUser = function (req, res) {
@@ -52,7 +77,7 @@ exports.registerUser = function (req, res) {
         'referredBy': !req.body.requestData.referralCode ? null : req.body.requestData.referredBy
     }
     var params = [user.fullName, user.mobileNumber, user.emailId, user.password, user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy]
-    db.query('call SignupUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsOldRecord == 1) {
@@ -75,27 +100,41 @@ exports.registerUser = function (req, res) {
                         expiresIn: '365d'
                     });
 
-                //=======================================code to send verification email on signup========================================================
-                var message;
-                template.welcome(user.fullName, token, function (err, msg) {
-                    message = msg;
-                })
-                emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
-                    if (error) {
-                        logger.warn("Failed to send Verification link to linked mail");
-                        res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                    } else {
-                        logger.info("Verification link sent to mail");
 
-                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                            token: token,
-                            name: results[0][0].name,
-                            emailId: results[0][0].emailId,
-                            userId: results[0][0].userId
-                        }))
-                    }
-                });
-                //========================================end of code for mail verification=================================================================
+                if (results[0][0].modifiedDate) {
+                    logger.info("registerUser - Success " + results[0][0].userId);
+
+                    res.send(responseGenerator.getResponse(200, "Success", {
+                        token: token,
+                        name: results[0][0].name,
+                        emailId: results[0][0].emailId,
+                        userId: results[0][0].userId
+                    }))
+                }
+                else {
+                    //=======================================code to send verification email on signup========================================================
+                    var message;
+                    template.welcome(user.fullName, token, function (err, msg) {
+                        message = msg;
+                    })
+                    emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
+                        if (error) {
+                            logger.warn("Failed to send Verification link to linked mail");
+                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                        } else {
+                            logger.info("Verification link sent to mail");
+
+                            res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                token: token,
+                                name: results[0][0].name,
+                                emailId: results[0][0].emailId,
+                                userId: results[0][0].userId
+                            }))
+                        }
+                    });
+                    //========================================end of code for mail verification=================================================================
+                }
+
             }
         } else {
             logger.error("Error while processing your request", error);
@@ -210,52 +249,46 @@ exports.toggleNotification = function (req, res) {
 }
 
 
+
+
+
+
+
 exports.updateProfilePic = function (req, res) {
 
     var user = {
         'userId': req.result.userId
     }
-    var ProfilePicImage = null;
-    var imgName = null;
+    var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/"+user.userId+".jpg";
 
-    if (!req.files.file) {
-        logger.error("updateProfilePic - no file received from " + req.result.userId);
-        res.send(responseGenerator.getResponse(1007, "Please send profile image file", null))
-    }
-    else {
-        ProfilePicImage = req.files.file;
-        imgName = "uid" + req.result.userId + "-" + ProfilePicImage.name;
-        imgName = imgName.replace(/\s/g, '');
-        ProfilePicUrl = "./public/ProfileImages/" + imgName;
+    buf = new Buffer(req.body.requestData.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+    var data = {
+        Key: user.userId +".jpg",
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/jpeg',
+        Bucket: config.bucketName,
+        ACL:'public-read'
+    };
 
+    s3.putObject(data, function (err, data) {
+        if (err) {
+            console.log(err);
+            console.log('Error uploading data: ', data);
+        } else {
+            params = [ProfilePicUrl, user.userId]
+            db.query("update users set profilePicUrl = ? where userId = ?", params, function (error, results) {
+                if (!error) {
+                    logger.info("updateProfilePic - Profile pic updated for user - " + user.userId);
+                    res.send(responseGenerator.getResponse(200, "Success", { "imageUrl": ProfilePicUrl }))
 
-        if (Object.keys(req.files).length == 1) {
-            var newFile = fs.readFileSync(req.files.file.path);
-            writeFile();
-
-            function writeFile() {
-                fs.writeFile(ProfilePicUrl, newFile, function (err) {
-                    if (err) {
-                        logger.error("updateProfilePic - error while uploading file " + req.result.userId);
-                        res.send(responseGenerator.getResponse(1008, "Error while uploading file", null))
-                    } else {
-                        // parameter to be passed to update password
-                        params = [ProfilePicUrl, user.userId]
-                        db.query("update users set profilePicUrl = ? where userId = ?", params, function (error, results) {
-                            if (!error) {
-                                logger.info("updateProfilePic - Profile pic updated for user - " + user.userId);
-                                res.send(responseGenerator.getResponse(200, "Success", { "imagePath": config.localhost + "/user/profilepic/" + imgName }))
-
-                            } else {
-                                logger.error("updateProfilePic - Error while processing your request", error);
-                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                            }
-                        })
-                    }
-                })
-            }
+                } else {
+                    logger.error("updateProfilePic - Error while processing your request", error);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                }
+            })
         }
-    }
+    });
 }
 
 
@@ -377,12 +410,12 @@ exports.setPassword = function (req, res) {
                     }
                 }
                 else {
-                    res.send(responseGenerator.getResponse(1010, "You are not authorized", null))
+                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
                 }
 
             }
             else {
-                res.send(responseGenerator.getResponse(1010, "You are not authorized", null))
+                res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
                 // finalCallback("Please check username or password", null)
             }
         }

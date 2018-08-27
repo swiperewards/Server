@@ -25,7 +25,7 @@ router.post("/loginUserWeb", api.loginUserWeb);
 router.post("/registerUserWeb", api.registerUser);
 
 // api to update profile picture
-router.post("/updateProfilePic", encDecController.verifyToken, multipartMiddleware, api.updateProfilePic);
+router.post("/updateProfilePic", encDecController.verifyToken, api.updateProfilePic);
 
 // api to send forgot password link to user
 router.post("/forgotPassword", api.forgotPassword);
@@ -33,5 +33,7 @@ router.post("/forgotPassword", api.forgotPassword);
 // api to set new password for user
 router.post("/setPassword", api.setPassword);
 
+// api to list Buckets
+router.post("/listBuckets", encDecController.verifyToken, api.listBuckets);
 
 module.exports=router;

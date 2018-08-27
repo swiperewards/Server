@@ -22,7 +22,7 @@ exports.initSwipe = function (req, res) {
         jwt.verify(token, config.privateKey, function (err, result) {
             if (err) {
                 logger.error(msg.tokenInvalid);
-                res.send(responseGenerator.getResponse(500, msg.tokenInvalid, null))
+                res.send(responseGenerator.getResponse(1050, msg.tokenInvalid, null))
             } else {
                 var query = "select u.userId, u.fullName, u.city, u.latitude, u.longitude, u.userXP, ml.id as userLevel, ml.minRange, ml.maxRange,"+
                 "u.isNotificationEnabled, u.profilePicUrl, w.balance from users u join mst_level ml on u.userXP "+
@@ -106,4 +106,21 @@ exports.initSwipe = function (req, res) {
 
     }
 
+}
+
+
+
+exports.getCities = function (req, res) {
+
+    // parameter to be passed to select ticket types
+    params = [0]
+    db.query("select id, name from mst_cities where isDeleted = ?", params, function (error, results) {
+        if (!error) {
+            logger.info("getCities - cities list fetched successfully by user - " + req.result.userId);
+            res.send(responseGenerator.getResponse(200, "Success", results))
+        } else {
+            logger.error("getCities - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
 }

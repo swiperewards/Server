@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "all": "0.0.0",
+    "aws-sdk": "^2.300.0",
     "bcrypt": "^3.0.0",
     "body-parser": "~1.18.2",
     "connect-multiparty": "^2.1.1",
@@ -20,12 +21,15 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.3.0",
     "morgan": "~1.9.0",
+    "multer": "^1.3.1",
+    "multer-s3": "^2.7.0",
     "mysql": "^2.15.0",
     "node-cron": "^1.2.1",
     "nodemailer": "^4.6.7",
     "randomstring": "^1.1.5",
     "request": "^2.87.0",
     "serve-favicon": "~2.4.5",
+    "sync-each": "^1.0.1",
     "winston": "^3.0.0"
   }
 }
