@@ -57,6 +57,7 @@ function isAuthorized(req, res, next) {
     db.query(query, params, function (error, results) {
         if (!error) {
             if ((results[0].roleId == 1) || (results[0].roleId == 2) || (results[0].roleId == 3)) {
+                req.result.roleId = results[0].roleId;
                 next();
             }
             else {

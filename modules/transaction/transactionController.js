@@ -186,7 +186,7 @@ function updateMember(Reqbody, callback) {
 
 function updateAccount(Reqbody, callback) {
 
-    if (Reqbody.requestData.isRecordUpdated == 1) {
+    if (Reqbody.requestData.isRecordUpdated == "1") {
         request({
             url: config.transactionApiUrl + "/account/updateAccount",
             method: 'POST',
