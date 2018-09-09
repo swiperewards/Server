@@ -10,7 +10,35 @@ var logger = require(path.resolve('./logger'));
 var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
 var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 var msg = require(path.resolve('./', 'utils/errorMessages.js'));
+var functions = require(path.resolve('./', 'utils/functions.js'));
 var fs = require("fs");
+var randomstring = require("randomstring");
+var DateDiff = require('date-diff');
+
+// npm required for the s3 storage
+var aws = require('aws-sdk');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+
+aws.config.update({
+    secretAccessKey: config.s3SecreateAccessKey,
+    accessKeyId: config.s3accessKeyId,
+    region: config.region
+
+});
+// S3 variable declarations
+var s3 = new aws.S3();
+
+exports.listBuckets = function (req, res) {
+    s3.listBuckets({}, function (err, data) {
+        if (err) {
+            return res.send({ "error": err });
+        }
+        res.send({ data });
+    });
+}
+
+
 
 /*
 Codes used :
@@ -19,19 +47,24 @@ Codes used :
 1005 db error
 1002 Verification pending
 1003 Please check username or password
-500 invalid token
 1006 Entered wrong old password
 1007 Please send profile image file
 1008 Error while uploading file
+1009 Invalid email id
+1010 You are not authorized
+1011 Token expired
+1012 No email found
+1013 Failed to send Password reset link to linked mail
+1014 Invalid email address
+1050 invalid token
 */
 
 exports.registerUser = function (req, res) {
-
     var user = {
         'fullName': req.body.requestData.fullName,
         'mobileNumber': !req.body.requestData.mobileNumber ? null : req.body.requestData.mobileNumber,
         'emailId': req.body.requestData.emailId,
-        'password': req.body.requestData.password,
+        'password': req.body.requestData.password ? req.body.requestData.password : null,
         'platform': req.body.platform,
         'deviceId': req.body.deviceId,
         'lat': req.body.requestData.lat,
@@ -43,11 +76,11 @@ exports.registerUser = function (req, res) {
         'socialToken': !req.body.requestData.isSocialLogin ? null : req.body.requestData.socialToken,
         'referredBy': !req.body.requestData.referralCode ? null : req.body.requestData.referredBy
     }
-
-    db.query('call SignupUser("' + user.fullName + '","' + user.mobileNumber + '","' + user.emailId + '","' + user.password + '","' + user.platform + '","' + user.deviceId + '","' + user.lat + '","' + user.long + '","' + user.pincode + '","' + user.city + '","' + user.isSocialLogin + '","' + user.profilePicUrl + '","' + user.socialToken + '","' + user.referredBy + '")', function (error, results) {
+    var params = [user.fullName, user.mobileNumber, user.emailId, user.password, user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy]
+    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
-            if (results[0][0].IsNewRecord == 1) {
+            if (results[0][0].IsOldRecord == 1) {
                 logger.warn("Email Already Exists");
                 res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
             }
@@ -67,27 +100,41 @@ exports.registerUser = function (req, res) {
                         expiresIn: '365d'
                     });
 
-                //=======================================code to send verification email on signup========================================================
-                var message;
-                template.welcome(user.fullName, token, function (err, msg) {
-                    message = msg;
-                })
-                emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
-                    if (error) {
-                        logger.warn("Failed to send Verification link to linked mail");
-                        res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                    } else {
-                        logger.info("Verification link sent to mail");
 
-                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                            token: token,
-                            name: results[0][0].name,
-                            emailId: results[0][0].emailId,
-                            userId: results[0][0].userId
-                        }))
-                    }
-                });
-                //========================================end of code for mail verification=================================================================
+                if (results[0][0].modifiedDate) {
+                    logger.info("registerUser - Success " + results[0][0].userId);
+
+                    res.send(responseGenerator.getResponse(200, "Success", {
+                        token: token,
+                        name: results[0][0].name,
+                        emailId: results[0][0].emailId,
+                        userId: results[0][0].userId
+                    }))
+                }
+                else {
+                    //=======================================code to send verification email on signup========================================================
+                    var message;
+                    template.welcome(user.fullName, token, function (err, msg) {
+                        message = msg;
+                    })
+                    emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
+                        if (error) {
+                            logger.warn("Failed to send Verification link to linked mail");
+                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                        } else {
+                            logger.info("Verification link sent to mail");
+
+                            res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                token: token,
+                                name: results[0][0].name,
+                                emailId: results[0][0].emailId,
+                                userId: results[0][0].userId
+                            }))
+                        }
+                    });
+                    //========================================end of code for mail verification=================================================================
+                }
+
             }
         } else {
             logger.error("Error while processing your request", error);
@@ -96,6 +143,64 @@ exports.registerUser = function (req, res) {
     })
 }
 
+
+exports.registerUserWeb = function (req, res) {
+    var user = {
+        'fullName': req.body.requestData.fullName,
+        'emailId': req.body.requestData.emailId,
+        'password': req.body.requestData.password ? req.body.requestData.password : null,
+        'platform': req.body.platform
+    }
+    var params = [user.fullName, user.emailId, user.password, user.platform]
+    db.query('call SignupUserWeb(?,?,?,?)', params, function (error, results) {
+        if (!error) {
+            //check for email already exists in DB
+            if (results[0][0].IsOldRecord == 1) {
+                logger.warn("Email Already Exists");
+                res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+            }
+            else {
+                var token = randomstring.generate(6);
+                var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                var params = [token, user.emailId];
+                //=======================================code to send verification email on signup========================================================
+                db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                    if (!errorInsertActivateToken) {
+                        var message;
+                        fullName = "";
+                        if (user.fullName) {
+                            fullName = user.fullName;
+                        }
+                        template.activateAccount(fullName, token, 3, function (err, msg) {
+                            message = msg;
+                        })
+                        emailHandler.sendEmail(user.emailId, "Welcome to Nouvo!", message, function (error, callback) {
+                            if (error) {
+                                logger.warn("Failed to send Verification link to linked mail");
+                                res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                            } else {
+                                logger.info("Verification link sent to mail");
+                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                    name: results[0][0].name,
+                                    emailId: results[0][0].emailId,
+                                    userId: results[0][0].userId
+                                }))
+                            }
+                        });
+                        //========================================end of code for mail verification=================================================================
+                    } else {
+                        logger.error("Error while processing your request", errorInsertActivateToken);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                    }
+                })
+
+            }
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
 
 
 exports.loginUser = function (req, res) {
@@ -147,6 +252,108 @@ exports.loginUser = function (req, res) {
     });
 
 }
+
+
+
+exports.getUserProfile = function (req, res) {
+
+    var user = {
+        'userId': req.result.userId
+    }
+
+    var strQuery = {
+        sql: "select * from users where userId = ?",
+        values: [user.userId]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+                res.send(responseGenerator.getResponse(200, "Success", results[0]))
+            }
+            else {
+                res.send(responseGenerator.getResponse(1092, "Account does not exist", null))
+            }
+        }
+    });
+
+}
+
+
+
+exports.activateAccount = function (req, res) {
+
+    var strQuery = {
+        sql: "select emailId, createdDate from account_activation_requests where requestId = ? and isDeleted = ?",
+        values: [req.body.requestData.activateToken, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+                var tokenCreatedDate = new Date(results[0].createdDate);
+                var currentDate = Date.now();
+                var diff = new DateDiff(currentDate, tokenCreatedDate);
+                var diffInMinutes = diff.minutes();
+                if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
+
+                    var user = {
+                        'requestId': req.body.requestData.activateToken,
+                        'emailId': results[0].emailId
+                    }
+                    // parameter to be passed to update password
+                    params = [1, user.emailId]
+                    db.query("update users set isUserVerified = ? where emailId = ?", params, function (errorActivation, resultsActivation) {
+                        if (!errorActivation) {
+                            if (resultsActivation.affectedRows == 0) {
+                                logger.info("setPassword - email not found - " + user.emailId);
+                                res.send(responseGenerator.getResponse(1012, "No email found", null))
+                            }
+                            else {
+                                // parameter to be passed to update password
+                                params = [1, user.emailId, user.requestId]
+                                db.query("update account_activation_requests set isDeleted = ? where emailId = ? and requestId = ?", params, function (errorDeleteToken, resultsDeleteToken) {
+                                    if (!errorDeleteToken) {
+                                        if (resultsDeleteToken.affectedRows == 0) {
+                                            logger.info("activateAccount - email not found - " + user.emailId);
+                                            res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                        }
+                                        else {
+                                            logger.info("activateAccount -Account activated successfully - " + user.emailId);
+                                            res.send(responseGenerator.getResponse(200, "Success", null))
+                                        }
+
+                                    } else {
+                                        logger.error("Error while processing your request", errorDeleteToken);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorDeleteToken))
+                                    }
+                                })
+                            }
+
+                        } else {
+                            logger.error("Error while processing your request", errorActivation);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errorActivation))
+                        }
+                    })
+                }
+                else {
+                    res.send(responseGenerator.getResponse(1011, "Token expired", null))
+                }
+            }
+            else {
+                res.send(responseGenerator.getResponse(1092, "Account does not exist", null))
+            }
+        }
+    });
+
+}
+
 
 
 exports.changePassword = function (req, res) {
@@ -202,53 +409,208 @@ exports.toggleNotification = function (req, res) {
 }
 
 
+
 exports.updateProfilePic = function (req, res) {
 
     var user = {
         'userId': req.result.userId
     }
-    var ProfilePicImage = null;
-    var imgName = null;
+    var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + user.userId + ".jpg";
 
-    if (!req.files.file) {
-        logger.error("updateProfilePic - no file received from " + req.result.userId);
-        res.send(responseGenerator.getResponse(1007, "Please send profile image file", null))
+    buf = new Buffer(req.body.requestData.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+    var data = {
+        Key: user.userId + ".jpg",
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/jpeg',
+        Bucket: config.bucketName,
+        ACL: 'public-read'
+    };
+
+    s3.putObject(data, function (err, data) {
+        if (err) {
+            console.log(err);
+            console.log('Error uploading data: ', data);
+        } else {
+            params = [ProfilePicUrl, user.userId]
+            db.query("update users set profilePicUrl = ? where userId = ?", params, function (error, results) {
+                if (!error) {
+                    logger.info("updateProfilePic - Profile pic updated for user - " + user.userId);
+                    res.send(responseGenerator.getResponse(200, "Success", { "imageUrl": ProfilePicUrl }))
+
+                } else {
+                    logger.error("updateProfilePic - Error while processing your request", error);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                }
+            })
+        }
+    });
+}
+
+
+
+
+exports.updateUserProfile = function (req, res) {
+
+    var user = {
+        'userId': req.result.userId,
+        'fullName': req.body.requestData.fullName,
+        'password': req.body.requestData.password
     }
-    else {
-        ProfilePicImage = req.files.file;
-        imgName = "uid" + req.result.userId + "-" + ProfilePicImage.name;
-        imgName = imgName.replace(/\s/g, '');
-        ProfilePicUrl = "./public/ProfileImages/" + imgName;
+
+    query = "update users set fullName = ? ";
+    params = [user.fullName];
+
+    user.password ? ((query = query + ", password = ? ") && params.push(user.password)) : 0;
+    query = query + "where userId = ?";
+    params.push(user.userId);
 
 
-        if (Object.keys(req.files).length == 1) {
-            var newFile = fs.readFileSync(req.files.file.path);
-            writeFile();
+    db.query(query, params, function (error, results) {
+        if (!error) {
+            logger.info("updateUserProfile - Profile updated for user - " + user.userId);
+            res.send(responseGenerator.getResponse(200, "Success", null));
+        } else {
+            logger.error("updateUserProfile - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error));
+        }
+    });
+}
 
-            function writeFile() {
-                fs.writeFile(ProfilePicUrl, newFile, function (err) {
-                    if (err) {
-                        logger.error("updateProfilePic - error while uploading file " + req.result.userId);
-                        res.send(responseGenerator.getResponse(1008, "Error while uploading file", null))
+
+
+
+exports.forgotPassword = function (req, res) {
+    var strQuery = {
+        sql: "select userId, fullName from users where emailId = ? and isDeleted = ?",
+        values: [req.body.requestData.emailId, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+
+                var user = {
+                    'emailId': req.body.requestData.emailId,
+                    'fullName': results[0].fullName,
+                    'platform': req.body.platform,
+                    'deviceId': req.body.deviceId
+                };
+                var reqIdGenerated = randomstring.generate(6);
+                var query = "insert into password_reset_requests (requestId, emailId) values (?,?)";
+                var params = [reqIdGenerated, user.emailId];
+
+                db.query(query, params, function (error, results) {
+                    if (!error) {
+                        var message;
+                        template.forgotPassword(user.fullName, reqIdGenerated, function (err, msg) {
+                            message = msg;
+                        })
+                        emailHandler.sendEmail(user.emailId, "Swipe Rewards, Forgot password link", message, function (error, callback) {
+                            if (error) {
+                                logger.warn("Failed to send Password reset link to linked mail");
+                                res.send(responseGenerator.getResponse(1013, "Failed to send Password reset link to linked mail", null))
+                            } else {
+                                logger.info("Password reset link sent to mail");
+                                res.send(responseGenerator.getResponse(200, "Success", null))
+                            }
+                        });
                     } else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                })
+            }
+            else {
+                res.send(responseGenerator.getResponse(1014, "Invalid email address", null))
+                // finalCallback("Please check username or password", null)
+            }
+        }
+    });
+}
+
+
+exports.setPassword = function (req, res) {
+
+    var strQuery = {
+        sql: "select emailId, createdDate from password_reset_requests where requestId = ? and isDeleted = ?",
+        values: [req.body.requestData.resetToken, 0]
+    };
+
+    db.query(strQuery, function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (results && results.length > 0) {
+                if (req.body.requestData.emailId == results[0].emailId) {
+                    var tokenCreatedDate = new Date(results[0].createdDate);
+                    var currentDate = Date.now();
+                    var diff = new DateDiff(currentDate, tokenCreatedDate);
+                    var diffInMinutes = diff.minutes();
+                    if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
+
+                        var user = {
+                            'emailId': req.body.requestData.emailId,
+                            'password': req.body.requestData.password
+                        }
                         // parameter to be passed to update password
-                        params = [ProfilePicUrl, user.userId]
-                        db.query("update users set profilePicUrl = ? where userId = ?", params, function (error, results) {
+                        params = [user.password, user.emailId]
+                        db.query("update users set password = ? where emailId = ?", params, function (error, results) {
                             if (!error) {
-                                logger.info("updateProfilePic - Profile pic updated for user - " + user.userId);
-                                res.send(responseGenerator.getResponse(200, "Success", { "imagePath": config.localhost + "/user/profilepic/" + imgName }))
+                                if (results.affectedRows == 0) {
+                                    logger.info("setPassword - email not found - " + user.emailId);
+                                    res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                }
+                                else {
+                                    // parameter to be passed to update password
+                                    params = [1, user.emailId]
+                                    db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
+                                        if (!error) {
+                                            if (results.affectedRows == 0) {
+                                                logger.info("setPassword - email not found - " + user.emailId);
+                                                res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                            }
+                                            else {
+                                                logger.info("Password updated successfully for user - " + user.emailId);
+                                                res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                                            }
+
+                                        } else {
+                                            logger.error("Error while processing your request", error);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                        }
+                                    })
+                                }
 
                             } else {
-                                logger.error("updateProfilePic - Error while processing your request", error);
+                                logger.error("Error while processing your request", error);
                                 res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                             }
                         })
                     }
-                })
+                    else {
+                        res.send(responseGenerator.getResponse(1011, "Token expired", null))
+                    }
+                }
+                else {
+                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                }
+
+            }
+            else {
+                res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                // finalCallback("Please check username or password", null)
             }
         }
-    }
+    });
+
+
 }
+
 
 
 // Web api's below
@@ -257,7 +619,7 @@ exports.updateProfilePic = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.password = ? and u.isDeleted = ?",
+        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, u.merchantId, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.password = ? and u.isDeleted = ?",
         values: [req.body.requestData.emailId, req.body.requestData.password, 0]
     };
 
@@ -307,7 +669,9 @@ exports.loginUserWeb = function (req, res) {
                                 userId: results[0].userId,
                                 role: results[0].role,
                                 profilePicUrl: results[0].profilePicUrl,
+                                merchantId: results[0].merchantId,
                                 menuList: resultsPrivileges,
+                                isUserVerified: results[0].isUserVerified,
                                 token: token
                             }
 
@@ -330,37 +694,25 @@ exports.loginUserWeb = function (req, res) {
 }
 
 
-exports.registerUserWeb = function (req, res) {
+exports.resendVerificationEmail = function (req, res) {
+
 
     var user = {
-        'fullName': req.body.requestData.fullName,
-        'emailId': req.body.requestData.emailId,
-        'password': req.body.requestData.password,
-        'platform': req.body.platform,
-        'roleId': req.body.requestData.roleId
+        'emailId': req.body.requestData.emailId
     }
 
-    db.query('call SignupUserWeb(?,?,?,?,?)', [user.fullName, user.emailId, user.password, user.platform, user.roleId], function (error, results) {
+    db.query('select * from users where emailId = ?', [user.emailId], function (error, results) {
         if (!error) {
-            //check for email already exists in DB
-            if (results[0][0].IsNewRecord == 1) {
-                logger.warn("Email Already Exists");
-                res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
-            }
-            else {
-                var data = {
-                    emailId: results[0][0].emailId,
-                    name: results[0][0].name,
-                    userId: results[0][0].userId
-                }
+            if (results.length > 0) {
+
                 //generation of jwt token
                 var token = jwt.sign(
                     {
-                        emailId: results[0][0].emailId,
-                        name: results[0][0].name,
-                        userId: results[0][0].userId
+                        emailId: results[0].emailId,
+                        name: results[0].fullName,
+                        userId: results[0].userId
                     }, config.privateKey, {
-                        expiresIn: '365d'
+                        expiresIn: '1d'
                     });
 
                 //=======================================code to send verification email on signup========================================================
@@ -376,19 +728,170 @@ exports.registerUserWeb = function (req, res) {
                         logger.info("Verification link sent to mail");
 
                         res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                            token: token,
-                            name: results[0][0].name,
-                            emailId: results[0][0].emailId,
-                            userId: results[0][0].userId
+                            fullName: results[0].fullName,
+                            emailId: results[0].emailId,
+                            userId: results[0].userId
                         }))
                     }
                 });
-                //========================================end of code for mail verification=================================================================
             }
-        } else {
+            else {
+
+            }
+
+        }
+        else {
             logger.error("Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     })
+
 }
 
+//not used
+// exports.registerUserWeb = function (req, res) {
+
+//     var user = {
+//         'fullName': req.body.requestData.fullName,
+//         'emailId': req.body.requestData.emailId,
+//         'password': req.body.requestData.password,
+//         'platform': req.body.platform,
+//         'roleId': req.body.requestData.roleId
+//     }
+
+//     db.query('call SignupUserWeb(?,?,?,?,?)', [user.fullName, user.emailId, user.password, user.platform, user.roleId], function (error, results) {
+//         if (!error) {
+//             //check for email already exists in DB
+//             if (results[0][0].IsNewRecord == 1) {
+//                 logger.warn("Email Already Exists");
+//                 res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+//             }
+//             else {
+//                 var data = {
+//                     emailId: results[0][0].emailId,
+//                     name: results[0][0].name,
+//                     userId: results[0][0].userId
+//                 }
+//                 //generation of jwt token
+//                 var token = jwt.sign(
+//                     {
+//                         emailId: results[0][0].emailId,
+//                         name: results[0][0].name,
+//                         userId: results[0][0].userId
+//                     }, config.privateKey, {
+//                         expiresIn: '1d'
+//                     });
+
+//                 //=======================================code to send verification email on signup========================================================
+//                 var message;
+//                 template.welcome(user.fullName, token, function (err, msg) {
+//                     message = msg;
+//                 })
+//                 emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
+//                     if (error) {
+//                         logger.warn("Failed to send Verification link to linked mail");
+//                         res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+//                     } else {
+//                         logger.info("Verification link sent to mail");
+
+//                         res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+//                             name: results[0][0].name,
+//                             emailId: results[0][0].emailId,
+//                             userId: results[0][0].userId
+//                         }))
+//                     }
+//                 });
+//                 //========================================end of code for mail verification=================================================================
+//             }
+//         } else {
+//             logger.error("Error while processing your request", error);
+//             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+//         }
+//     })
+// }
+
+
+
+
+exports.addAdmin = function (req, res) {
+    var admin = {
+        "fullName": req.body.requestData.fullName,
+        "emailId": req.body.requestData.emailId,
+        "contactNumber": req.body.requestData.contactNumber,
+
+    }
+    Reqbody.userId = req.result.userId;
+    var query = {
+        sql: "select userId, fullName from users where emailId = ?",
+        values: [Reqbody.requestData.entityEmail]
+    };
+
+    db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
+        if (errorEmailCheck) {
+            logger.error("Error while processing your request", errorEmailCheck);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        } else {
+            if (resultsEmailCheck.length == 0) {
+                transaction.createMerchant(Reqbody, function (error, response) {
+                    if (error) {
+                        logger.info("Error while creating merchants - " + req.result.userId);
+                        res.send(responseGenerator.getResponse(200, "Error while fetching merchants", error));
+                    }
+                    else if (response) {
+                        if (response.body.status == 200) {
+                            logger.info("Merchant added successfully by user - " + req.result.userId);
+                            var randomPassword = randomstring.generate(8);
+                            var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
+                            response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
+                            db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+                                if (!error) {
+
+                                    //generation of jwt token
+                                    var token = jwt.sign(
+                                        {
+                                            emailId: results[0][0].emailId,
+                                            name: results[0][0].name,
+                                            userId: results[0][0].userId
+                                        }, config.privateKey, {
+                                            expiresIn: '365d'
+                                        });
+                                    //=======================================code to send verification email on signup========================================================
+                                    var message;
+                                    template.welcome(response.body.responseData.fullName, token, function (err, msg) {
+                                        message = msg;
+                                    });
+                                    emailHandler.sendEmail(results[0][0].emailId, "Welcome to Swipe Rewards", message, function (errorEmailHandler) {
+                                        if (errorEmailHandler) {
+                                            logger.warn("Failed to send Verification link to linked mail");
+                                            res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
+                                        } else {
+                                            logger.info("Verification link sent to mail");
+                                            res.send(response.body);
+                                        }
+                                    });
+                                    //========================================end of code for mail verification=================================================================
+
+                                } else {
+                                    logger.error("Error while processing your request", error);
+                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                }
+                            })
+                        }
+                        else {
+                            logger.info("Create merchant - something went wrong" + req.result.userId);
+                            res.send(response.body);
+                        }
+
+                    }
+                });
+            }
+            else {
+                logger.warn("Email Already Exists");
+                res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+            }
+
+        }
+    });
+
+
+}

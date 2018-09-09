@@ -7,7 +7,7 @@ var multipartMiddleware = multipart();
 var router=express.Router();
 
 // api to register user
-router.post("/registerUser", api.registerUser);
+router.post('/registerUser', api.registerUser);
 
 // api to login for android / ios app user
 router.post("/loginUser", api.loginUser);
@@ -21,11 +21,31 @@ router.post("/toggleNotification", encDecController.verifyToken, api.toggleNotif
 // api to login for web user
 router.post("/loginUserWeb", api.loginUserWeb);
 
+// api to resend verification email for web user
+router.post("/resendVerificationEmail", api.resendVerificationEmail);
+
+// api to get user profile
+router.post("/getUserProfile", encDecController.verifyToken, api.getUserProfile);
+
 // api to register for web user
-router.post("/registerUserWeb", api.registerUser);
+router.post("/registerUserWeb", api.registerUserWeb);
+
+// api to get user profile
+router.post("/activateAccount", api.activateAccount);
 
 // api to update profile picture
-router.post("/updateProfilePic", encDecController.verifyToken, multipartMiddleware, api.updateProfilePic);
+router.post("/updateProfilePic", encDecController.verifyToken, api.updateProfilePic);
 
+// api to update profile
+router.post("/updateUserProfile", encDecController.verifyToken, api.updateUserProfile);
+
+// api to send forgot password link to user
+router.post("/forgotPassword", api.forgotPassword);
+
+// api to set new password for user
+router.post("/setPassword", api.setPassword);
+
+// api to list Buckets
+router.post("/listBuckets", encDecController.verifyToken, api.listBuckets);
 
 module.exports=router;

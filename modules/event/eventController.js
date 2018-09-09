@@ -9,18 +9,17 @@ var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 
 exports.getEventNotifications = function (req, res) {
-
     // parameter to be passed to select ticket types
     params = [req.result.userId, 0]
-    db.query("select eventId, eventType, notificationDate, notificationDetails, transactionAmount, isCredit from event_notification where userId = ? and isDeleted = ?", params, function (error, results) {
+    db.query("select eventId, eventType, notificationDate, notificationDetails, transactionAmount, case when isCredit = 1 then 'true' when isCredit = 0 then 'false' else null end isCredit from event_notification where userId = ? and isDeleted = ?", params, function (error, results) {
         if (!error) {
             logger.info("getEventNotifications - event notifications fetched successfully for user - " + req.result.userId);
-            res.send(responseGenerator.getResponse(200, "Success", results))
+            results = JSON.parse(JSON.stringify(results));
+            res.send(responseGenerator.getResponse(200, "Success", results));
         } else {
             logger.error("getEventNotifications - Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null));
         }
     })
-
 }
 

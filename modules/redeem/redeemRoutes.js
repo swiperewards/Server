@@ -10,4 +10,10 @@ router.post("/getRedeemOptions", encDecController.verifyToken, api.getRedeemOpti
 // api to raise redeem request for user
 router.post("/raiseRedeemRequest", encDecController.verifyToken, api.raiseRedeemRequest);
 
+// api to get redeem requests
+router.post("/getRedeemRequests", encDecController.verifyToken, api.getRedeemRequests);
+
+// api to raise redeem request for user
+router.post("/raiseRedeemRequest", encDecController.verifyToken, api.raiseRedeemRequest);
+
 module.exports=router;

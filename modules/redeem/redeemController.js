@@ -87,3 +87,30 @@ exports.raiseRedeemRequest = function (req, res) {
     });
 
 }
+
+
+
+exports.getRedeemRequests = function (req, res) {
+
+    filterStrings = {
+        name: req.body.requestData.nameFilter ? "%" + req.body.requestData.nameFilter + "%" : "%%",
+        status: req.body.requestData.statusFilter ? "%" + req.body.requestData.statusFilter + "%" : "%%",
+        amount: req.body.requestData.amountFilter ? "%" + req.body.requestData.amountFilter + "%" : "%%",
+        mode: req.body.requestData.modeFilter ? "%" + req.body.requestData.modeFilter + "%" : "%%",
+        fromDate: req.body.requestData.fromDateFilter ? "%" + req.body.requestData.fromDateFilter + "%" : "%%",
+        toDate: req.body.requestData.toDateFilter ? "%" + req.body.requestData.toDateFilter + "%" : "%%"
+    }
+
+    // parameters to be passed to select redeem requests
+    params = [0]
+    db.query("select r.id, u.fullName, u.emailId, r.amount, mr.mode, r.status from redeem_requests r left join users u on r.userId = u.userId left join mst_redeem_modes mr on r.redeemModeId = mr.id where r.isDeleted = ?", params, function (error, results) {
+        if (!error) {
+            logger.info("getRedeemRequests - Redeem requests fetched successfully for user - " + req.result.userId);
+            res.send(responseGenerator.getResponse(200, "Success", results))
+        } else {
+            logger.error("getRedeemRequests - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
