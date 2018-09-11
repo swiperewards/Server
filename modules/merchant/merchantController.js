@@ -14,79 +14,122 @@ var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 
 exports.createMerchant = function (req, res) {
     var Reqbody = req.body;
-    Reqbody.userId = req.result.userId;
-    var query = {
-        sql: "select userId, fullName from users where emailId = ?",
-        values: [Reqbody.requestData.entityEmail]
-    };
+    var registeredWithNouvo = req.body.requestData.registeredWithNouvo;
+    var registeredEmail = req.body.requestData.registeredEmail;
+    if (registeredWithNouvo) {
 
-    db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
-        if (errorEmailCheck) {
-            logger.error("Error while processing your request", errorEmailCheck);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-        } else {
-            if (resultsEmailCheck.length == 0) {
-                transaction.createMerchant(Reqbody, function (error, response) {
-                    if (error) {
-                        logger.info("Error while creating merchants - " + req.result.userId);
-                        res.send(responseGenerator.getResponse(1081, msg.splashError, error));
+        if (registeredEmail == Reqbody.requestData.entityEmail) {
+            Reqbody.userId = req.result.userId;
+
+            transaction.createMerchant(Reqbody, function (error, response) {
+                if (error) {
+                    logger.info("Error while creating merchants - " + req.result.userId);
+                    res.send(responseGenerator.getResponse(1081, msg.splashError, error));
+                }
+                else if (response) {
+                    if (response.body.status == 200) {
+                        logger.info("Merchant added successfully by user - " + req.result.userId);
+                        var randomPassword = randomstring.generate(8);
+                        var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
+                        response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
+                        db.query('call UpdateMerchant(?,?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
+                            if (!errorUpdateMerchant) {
+                                res.send(response.body);
+                            } else {
+                                logger.error("Error while processing your request", errorUpdateMerchant);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            }
+                        })
                     }
-                    else if (response) {
-                        if (response.body.status == 200) {
-                            logger.info("Merchant added successfully by user - " + req.result.userId);
-                            var randomPassword = randomstring.generate(8);
-                            var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
-                            response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
-                            db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                                if (!error) {
-
-                                    //generation of jwt token
-                                    var token = jwt.sign(
-                                        {
-                                            emailId: results[0][0].emailId,
-                                            name: results[0][0].name,
-                                            userId: results[0][0].userId
-                                        }, config.privateKey, {
-                                            expiresIn: '365d'
-                                        });
-                                    //=======================================code to send verification email on signup========================================================
-                                    var message;
-                                    template.welcome(response.body.responseData.fullName, token, function (err, msg) {
-                                        message = msg;
-                                    });
-                                    emailHandler.sendEmail(results[0][0].emailId, "Welcome to Swipe Rewards", message, function (errorEmailHandler) {
-                                        if (errorEmailHandler) {
-                                            logger.warn("Failed to send Verification link to linked mail");
-                                            // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
-                                            res.send(response.body);
-                                        } else {
-                                            logger.info("Verification link sent to mail");
-                                            res.send(response.body);
-                                        }
-                                    });
-                                    //========================================end of code for mail verification=================================================================
-
-                                } else {
-                                    logger.error("Error while processing your request", error);
-                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                                }
-                            })
-                        }
-                        else {
-                            logger.info("Create merchant - something went wrong" + req.result.userId);
-                            res.send(response.body);
-                        }
-
+                    else {
+                        logger.info("Create merchant - something went wrong" + req.result.userId);
+                        res.send(response.body);
                     }
-                });
-            }
-            else {
-                logger.warn("Email Already Exists");
-                res.send(responseGenerator.getResponse(1004, "Could not able to create new merchant as this mail id is already exists, please use different mail id", null));
-            }
 
+                }
+            });
         }
-    });
+        else {
+            logger.warn("Business email must be same as registered email address");
+            res.send(responseGenerator.getResponse(1093, "Business email must be same as registered email address", null));
+        }
+    }
+    else {
+        Reqbody.userId = req.result.userId;
+        var query = {
+            sql: "select userId, fullName from users where emailId = ?",
+            values: [Reqbody.requestData.entityEmail]
+        };
+
+        db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
+            if (errorEmailCheck) {
+                logger.error("Error while processing your request", errorEmailCheck);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            } else {
+                if (resultsEmailCheck.length == 0) {
+                    transaction.createMerchant(Reqbody, function (error, response) {
+                        if (error) {
+                            logger.info("Error while creating merchants - " + req.result.userId);
+                            res.send(responseGenerator.getResponse(1081, msg.splashError, error));
+                        }
+                        else if (response) {
+                            if (response.body.status == 200) {
+                                logger.info("Merchant added successfully by user - " + req.result.userId);
+                                var randomPassword = randomstring.generate(8);
+                                var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
+                                response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
+                                db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+                                    if (!error) {
+
+                                        //generation of jwt token
+                                        var token = jwt.sign(
+                                            {
+                                                emailId: results[0][0].emailId,
+                                                name: results[0][0].name,
+                                                userId: results[0][0].userId
+                                            }, config.privateKey, {
+                                                expiresIn: '365d'
+                                            });
+                                        //=======================================code to send verification email on signup========================================================
+                                        var message;
+                                        template.welcome(response.body.responseData.fullName, token, function (err, msg) {
+                                            message = msg;
+                                        });
+                                        emailHandler.sendEmail(results[0][0].emailId, "Welcome to Swipe Rewards", message, function (errorEmailHandler) {
+                                            if (errorEmailHandler) {
+                                                logger.warn("Failed to send Verification link to linked mail");
+                                                // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
+                                                res.send(response.body);
+                                            } else {
+                                                logger.info("Verification link sent to mail");
+                                                res.send(response.body);
+                                            }
+                                        });
+                                        //========================================end of code for mail verification=================================================================
+
+                                    } else {
+                                        logger.error("Error while processing your request", error);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                })
+                            }
+                            else {
+                                logger.info("Create merchant - something went wrong" + req.result.userId);
+                                res.send(response.body);
+                            }
+
+                        }
+                    });
+                }
+                else {
+                    logger.warn("Email Already Exists");
+                    res.send(responseGenerator.getResponse(1004, "Could not able to create new merchant as this mail id is already exists, please use different mail id", null));
+                }
+
+            }
+        });
+
+    }
 
 
 }

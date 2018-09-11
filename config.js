@@ -12,7 +12,9 @@ module.exports = {
   // databasePort: 5000,
   databaseName: 'swipe_rewards',
   emailAccountUserName: 'pavan.winjit@gmail.com',
+  // emailAccountUserName: 'donotreply@nouvo.io',
   emailAccountPassword: 'PavanOffice@1992',
+  // emailAccountPassword: 'swipe2019',
   privatekey: "ba546ad603a69c3830eed33f690f8e5b93e36cea3cd37ed9604f71b95a5ae1e3",
   cryptokey: "jrwe5rwe56r6rwe051",
   frontEndHost: "http://localhost:3000",
@@ -32,8 +34,8 @@ module.exports = {
   splashApiPrivateKey: "8692184dd2c90b53c8d1ddaf18e5bfab",
 
   // S3 storage
-  s3SecreateAccessKey: "J2XcLrUcvfxPjzduhVqgLlMYM7SW6ibkLBgaq00d", // created from username - chetan
-  s3accessKeyId: "AKIAIDOBSG7AKNRDN6AQ", // created from username - chetan
+  s3SecreateAccessKey: "J2XcLrUcvfxPjzduhVqgLlMYM7SW6ibkLBgaq00d",
+  s3accessKeyId: "AKIAIDOBSG7AKNRDN6AQ",
   bucketName: "swipe-webpage-pictures", // staging bucket
   s3Url: "https://s3-us-west-1.amazonaws.com/"
 };

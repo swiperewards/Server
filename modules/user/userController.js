@@ -509,7 +509,7 @@ exports.forgotPassword = function (req, res) {
                         template.forgotPassword(user.fullName, reqIdGenerated, function (err, msg) {
                             message = msg;
                         })
-                        emailHandler.sendEmail(user.emailId, "Swipe Rewards, Forgot password link", message, function (error, callback) {
+                        emailHandler.sendEmail(user.emailId, "Nouvo, Forgot password link", message, function (error, callback) {
                             if (error) {
                                 logger.warn("Failed to send Password reset link to linked mail");
                                 res.send(responseGenerator.getResponse(1013, "Failed to send Password reset link to linked mail", null))
@@ -545,60 +545,56 @@ exports.setPassword = function (req, res) {
             logger.error("Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
-            if (results && results.length > 0) {
-                if (req.body.requestData.emailId == results[0].emailId) {
-                    var tokenCreatedDate = new Date(results[0].createdDate);
-                    var currentDate = Date.now();
-                    var diff = new DateDiff(currentDate, tokenCreatedDate);
-                    var diffInMinutes = diff.minutes();
-                    if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
+            if (results && (results.length > 0)) {
+                var tokenCreatedDate = new Date(results[0].createdDate);
+                var currentDate = Date.now();
+                var diff = new DateDiff(currentDate, tokenCreatedDate);
+                var diffInMinutes = diff.minutes();
+                if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
 
-                        var user = {
-                            'emailId': req.body.requestData.emailId,
-                            'password': req.body.requestData.password
-                        }
-                        // parameter to be passed to update password
-                        params = [user.password, user.emailId]
-                        db.query("update users set password = ? where emailId = ?", params, function (error, results) {
-                            if (!error) {
-                                if (results.affectedRows == 0) {
-                                    logger.info("setPassword - email not found - " + user.emailId);
-                                    res.send(responseGenerator.getResponse(1012, "No email found", null))
-                                }
-                                else {
-                                    // parameter to be passed to update password
-                                    params = [1, user.emailId]
-                                    db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
-                                        if (!error) {
-                                            if (results.affectedRows == 0) {
-                                                logger.info("setPassword - email not found - " + user.emailId);
-                                                res.send(responseGenerator.getResponse(1012, "No email found", null))
-                                            }
-                                            else {
-                                                logger.info("Password updated successfully for user - " + user.emailId);
-                                                res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
-                                            }
-
-                                        } else {
-                                            logger.error("Error while processing your request", error);
-                                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                                        }
-                                    })
-                                }
-
-                            } else {
-                                logger.error("Error while processing your request", error);
-                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    var user = {
+                        'emailId': results[0].emailId,
+                        'password': req.body.requestData.password
+                    }
+                    // parameter to be passed to update password
+                    params = [user.password, user.emailId]
+                    db.query("update users set password = ? where emailId = ?", params, function (error, results) {
+                        if (!error) {
+                            if (results.affectedRows == 0) {
+                                logger.info("setPassword - email not found - " + user.emailId);
+                                res.send(responseGenerator.getResponse(1012, "No email found", null))
                             }
-                        })
-                    }
-                    else {
-                        res.send(responseGenerator.getResponse(1011, "Token expired", null))
-                    }
+                            else {
+                                // parameter to be passed to update password
+                                params = [1, user.emailId]
+                                db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
+                                    if (!error) {
+                                        if (results.affectedRows == 0) {
+                                            logger.info("setPassword - email not found - " + user.emailId);
+                                            res.send(responseGenerator.getResponse(1012, "No email found", null))
+                                        }
+                                        else {
+                                            logger.info("Password updated successfully for user - " + user.emailId);
+                                            res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                                        }
+
+                                    } else {
+                                        logger.error("Error while processing your request", error);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                })
+                            }
+
+                        } else {
+                            logger.error("Error while processing your request", error);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        }
+                    })
                 }
                 else {
-                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                    res.send(responseGenerator.getResponse(1011, "Token expired", null))
                 }
+
 
             }
             else {
@@ -701,49 +697,49 @@ exports.resendVerificationEmail = function (req, res) {
         'emailId': req.body.requestData.emailId
     }
 
-    db.query('select * from users where emailId = ?', [user.emailId], function (error, results) {
-        if (!error) {
-            if (results.length > 0) {
+    var token = randomstring.generate(6);
+    var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+    var params = [token, user.emailId];
+    //=======================================code to send verification email on signup========================================================
+    db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+        var query = "select userId, fullName from users where emailId = ?";
+        var params = [user.emailId];
 
-                //generation of jwt token
-                var token = jwt.sign(
-                    {
-                        emailId: results[0].emailId,
-                        name: results[0].fullName,
-                        userId: results[0].userId
-                    }, config.privateKey, {
-                        expiresIn: '1d'
-                    });
-
-                //=======================================code to send verification email on signup========================================================
-                var message;
-                template.welcome(user.fullName, token, function (err, msg) {
-                    message = msg;
-                })
-                emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
-                    if (error) {
-                        logger.warn("Failed to send Verification link to linked mail");
-                        res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                    } else {
-                        logger.info("Verification link sent to mail");
-
-                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                            fullName: results[0].fullName,
-                            emailId: results[0].emailId,
-                            userId: results[0].userId
-                        }))
+        db.query(query, params, function (errorGetData, resultsGetData) {
+            if (!errorGetData) {
+                if (!errorInsertActivateToken) {
+                    var message;
+                    fullName = "";
+                    if (resultsGetData[0].fullName) {
+                        fullName = resultsGetData[0].fullName;
                     }
-                });
+                    template.activateAccount(resultsGetData[0].fullName, token, 3, function (err, msg) {
+                        message = msg;
+                    })
+                    emailHandler.sendEmail(user.emailId, "Welcome to Nouvo!", message, function (error, callback) {
+                        if (error) {
+                            logger.warn("Failed to send Verification link to linked mail");
+                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                        } else {
+                            logger.info("Verification link sent to mail");
+                            res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                name: resultsGetData[0].fullName,
+                                emailId: user.emailId,
+                                userId: resultsGetData[0].userId
+                            }))
+                        }
+                    });
+                    //========================================end of code for mail verification=================================================================
+                } else {
+                    logger.error("Error while processing your request", errorInsertActivateToken);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                }
             }
             else {
-
+                logger.error("Error while processing your request", errorInsertActivateToken);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
             }
-
-        }
-        else {
-            logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-        }
+        })
     })
 
 }

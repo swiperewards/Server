@@ -149,13 +149,14 @@ exports.addDeal = function (req, res) {
         "createdBy": req.result.userId,
         "location": req.body.requestData.location ? req.body.requestData.location : null,
         "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null
+        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+        "status": (req.body.requestData.status != null) ? req.body.requestData.status : 1
     }
     // parameter to be passed
     params = [deal.merchantId, deal.shortDescription, deal.longDescription,
     deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
-    deal.latitude, deal.longitude]
-    db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+    deal.latitude, deal.longitude, deal.status]
+    db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             logger.error("addDeal - ticket generated successfully by -" + deal.userId);
             res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))

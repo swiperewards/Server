@@ -11,7 +11,7 @@ var functions=require(path.resolve('.','utils/functions.js'));
 var router=express.Router();
 
 // api to create merchant
-router.post("/createMerchant", encDecController.verifyToken, functions.isAdminAuthorized, api.createMerchant);
+router.post("/createMerchant", encDecController.verifyToken, functions.isAuthorized, api.createMerchant);
 
 // api to get merchants list
 router.post("/getMerchants", encDecController.verifyToken, functions.isAdminAuthorized, api.getMerchants);
