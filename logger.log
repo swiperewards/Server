@@ -8317,3 +8317,4 @@
 {"message":"Created logger","level":"info"}
 {"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'username' in 'where clause'","sqlState":"42S22","index":0,"sql":"select userId, fullName from users where emailId = `username` = 'vsbagale@gmail.com' and isDeleted = 0","level":"error","message":"Error while processing your request"}
 {"message":"Password reset link sent to mail","level":"info"}
+{"message":"Password reset link sent to mail","level":"info"}
