@@ -87,14 +87,14 @@ exports.registerUser = function (req, res) {
             else {
                 var data = {
                     emailId: results[0][0].emailId,
-                    name: results[0][0].name,
+                    name: results[0][0].fullName,
                     userId: results[0][0].userId
                 }
                 //generation of jwt token
                 var token = jwt.sign(
                     {
                         emailId: results[0][0].emailId,
-                        name: results[0][0].name,
+                        name: results[0][0].fullName,
                         userId: results[0][0].userId
                     }, config.privateKey, {
                         expiresIn: '365d'
@@ -106,33 +106,64 @@ exports.registerUser = function (req, res) {
 
                     res.send(responseGenerator.getResponse(200, "Success", {
                         token: token,
-                        name: results[0][0].name,
+                        name: results[0][0].fullName,
                         emailId: results[0][0].emailId,
                         userId: results[0][0].userId
                     }))
                 }
                 else {
-                    //=======================================code to send verification email on signup========================================================
-                    var message;
-                    template.welcome(user.fullName, token, function (err, msg) {
-                        message = msg;
-                    })
-                    emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
-                        if (error) {
-                            logger.warn("Failed to send Verification link to linked mail");
-                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                        } else {
-                            logger.info("Verification link sent to mail");
+                    var reqId = randomstring.generate(6);
+                    var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                    var params = [reqId, results[0][0].emailId];
+                    db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                        if (!errorInsertActivateToken) {
 
-                            res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                token: token,
-                                name: results[0][0].name,
-                                emailId: results[0][0].emailId,
-                                userId: results[0][0].userId
-                            }))
+                            var message;
+                            template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
+                                message = msg;
+                            })
+                            emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                if (errorEmailHandler) {
+                                    logger.warn("Failed to send Verification link to linked mail");
+                                    res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                } else {
+                                    logger.info("Verification link sent to mail");
+
+                                    res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                        name: results[0][0].name,
+                                        emailId: results[0][0].emailId,
+                                        userId: results[0][0].userId
+                                    }))
+                                }
+                            });
+                            //=======================================code to send verification email on signup========================================================
+                            // var message;
+                            // template.welcome(user.fullName, token, function (err, msg) {
+                            //     message = msg;
+                            // })
+                            // emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
+                            //     if (error) {
+                                    // logger.warn("Failed to send Verification link to linked mail");
+                                    // res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                            //     } else {
+                                    // logger.info("Verification link sent to mail");
+
+                                    // res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                    //     token: token,
+                                    //     name: results[0][0].name,
+                                    //     emailId: results[0][0].emailId,
+                                    //     userId: results[0][0].userId
+                                    // }))
+                            //     }
+                            // });
+                            //========================================end of code for mail verification=================================================================
+
+                        } else {
+                            logger.error("Error while processing your request", errorInsertActivateToken);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
                         }
-                    });
-                    //========================================end of code for mail verification=================================================================
+                    })
+
                 }
 
             }
@@ -171,7 +202,7 @@ exports.registerUserWeb = function (req, res) {
                         if (user.fullName) {
                             fullName = user.fullName;
                         }
-                        template.activateAccount(fullName, token, 3, function (err, msg) {
+                        template.activateAccount(fullName, token, 3, null, function (err, msg) {
                             message = msg;
                         })
                         emailHandler.sendEmail(user.emailId, "Welcome to Nouvo!", message, function (error, callback) {
@@ -515,7 +546,7 @@ exports.forgotPassword = function (req, res) {
                                 res.send(responseGenerator.getResponse(1013, "Failed to send Password reset link to linked mail", null))
                             } else {
                                 logger.info("Password reset link sent to mail");
-                                res.send(responseGenerator.getResponse(200, "Success", null))
+                                res.send(responseGenerator.getResponse(200, "Success", { 'emailId': req.body.requestData.emailId }))
                             }
                         });
                     } else {
@@ -577,14 +608,12 @@ exports.setPassword = function (req, res) {
                                             logger.info("Password updated successfully for user - " + user.emailId);
                                             res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
                                         }
-
                                     } else {
                                         logger.error("Error while processing your request", error);
                                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                                     }
                                 })
                             }
-
                         } else {
                             logger.error("Error while processing your request", error);
                             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -594,8 +623,6 @@ exports.setPassword = function (req, res) {
                 else {
                     res.send(responseGenerator.getResponse(1011, "Token expired", null))
                 }
-
-
             }
             else {
                 res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
@@ -603,9 +630,8 @@ exports.setPassword = function (req, res) {
             }
         }
     });
-
-
 }
+
 
 
 
@@ -615,8 +641,8 @@ exports.setPassword = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, u.merchantId, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.password = ? and u.isDeleted = ?",
-        values: [req.body.requestData.emailId, req.body.requestData.password, 0]
+        sql: "select u.emailId, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, u.merchantId, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.password = ? and u.isDeleted = ? and u.status = ?",
+        values: [req.body.requestData.emailId, req.body.requestData.password, 0, 1]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -713,7 +739,7 @@ exports.resendVerificationEmail = function (req, res) {
                     if (resultsGetData[0].fullName) {
                         fullName = resultsGetData[0].fullName;
                     }
-                    template.activateAccount(resultsGetData[0].fullName, token, 3, function (err, msg) {
+                    template.activateAccount(resultsGetData[0].fullName, token, 3, null, function (err, msg) {
                         message = msg;
                     })
                     emailHandler.sendEmail(user.emailId, "Welcome to Nouvo!", message, function (error, callback) {
@@ -810,16 +836,17 @@ exports.resendVerificationEmail = function (req, res) {
 
 
 exports.addAdmin = function (req, res) {
-    var admin = {
-        "fullName": req.body.requestData.fullName,
-        "emailId": req.body.requestData.emailId,
-        "contactNumber": req.body.requestData.contactNumber,
+    var admin =
+        {
+            'fullName': req.body.requestData.fullName,
+            'contactNumber': req.body.requestData.contactNumber ? req.body.requestData.contactNumber : null,
+            'emailId': req.body.requestData.emailId,
+            'status': req.body.requestData.status
+        }
 
-    }
-    Reqbody.userId = req.result.userId;
     var query = {
         sql: "select userId, fullName from users where emailId = ?",
-        values: [Reqbody.requestData.entityEmail]
+        values: [admin.emailId]
     };
 
     db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
@@ -828,58 +855,69 @@ exports.addAdmin = function (req, res) {
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
             if (resultsEmailCheck.length == 0) {
-                transaction.createMerchant(Reqbody, function (error, response) {
-                    if (error) {
-                        logger.info("Error while creating merchants - " + req.result.userId);
-                        res.send(responseGenerator.getResponse(200, "Error while fetching merchants", error));
-                    }
-                    else if (response) {
-                        if (response.body.status == 200) {
-                            logger.info("Merchant added successfully by user - " + req.result.userId);
-                            var randomPassword = randomstring.generate(8);
-                            var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
-                            response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
-                            db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                                if (!error) {
+                var randomPassword = randomstring.generate(8);
+                var token = randomstring.generate(6);
+                var params = [admin.fullName, admin.contactNumber, admin.emailId, admin.status, randomPassword, token];
+                db.query('call CreateAdmin(?,?,?,?,?,?)', params, function (errorCreateAdmin, resultsCreateAdmin) {
+                    if (!errorCreateAdmin) {
+                        var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + resultsCreateAdmin[0][0].userId + ".jpg";
 
-                                    //generation of jwt token
-                                    var token = jwt.sign(
-                                        {
-                                            emailId: results[0][0].emailId,
-                                            name: results[0][0].name,
-                                            userId: results[0][0].userId
-                                        }, config.privateKey, {
-                                            expiresIn: '365d'
-                                        });
-                                    //=======================================code to send verification email on signup========================================================
-                                    var message;
-                                    template.welcome(response.body.responseData.fullName, token, function (err, msg) {
-                                        message = msg;
-                                    });
-                                    emailHandler.sendEmail(results[0][0].emailId, "Welcome to Swipe Rewards", message, function (errorEmailHandler) {
-                                        if (errorEmailHandler) {
-                                            logger.warn("Failed to send Verification link to linked mail");
-                                            res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
-                                        } else {
-                                            logger.info("Verification link sent to mail");
-                                            res.send(response.body);
+                        buf = new Buffer(req.body.requestData.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                        var data = {
+                            Key: resultsCreateAdmin[0][0].userId + ".jpg",
+                            Body: buf,
+                            ContentEncoding: 'base64',
+                            ContentType: 'image/jpeg',
+                            Bucket: config.bucketName,
+                            ACL: 'public-read'
+                        };
+
+                        s3.putObject(data, function (err, data) {
+                            if (err) {
+                                logger.error("addAdmin - ", err.message);
+                                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+                            } else {
+                                params = [ProfilePicUrl, resultsCreateAdmin[0][0].userId]
+                                db.query("update users set profilePicUrl = ? where userId = ?", params, function (errorProfilePicUrlUpdate, resultsProfilePicUrlUpdate) {
+                                    if (!errorProfilePicUrlUpdate) {
+                                        var message;
+                                        fullName = "";
+                                        if (req.body.requestData.fullName) {
+                                            fullName = req.body.requestData.fullName;
                                         }
-                                    });
-                                    //========================================end of code for mail verification=================================================================
+                                        template.activateAccount(fullName, token, 2, randomPassword, function (err, msg) {
+                                            message = msg;
+                                        })
+                                        emailHandler.sendEmail(admin.emailId, "Welcome to Nouvo!", message, function (error, callback) {
+                                            if (error) {
+                                                logger.warn("Failed to send Verification link to linked mail");
+                                                res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                            } else {
+                                                logger.info("Verification link sent to mail");
+                                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                    name: resultsCreateAdmin[0][0].fullName,
+                                                    emailId: resultsCreateAdmin[0][0].emailId,
+                                                    userId: resultsCreateAdmin[0][0].userId,
+                                                    profilePicUrl: ProfilePicUrl
+                                                }))
+                                            }
+                                        });
 
-                                } else {
-                                    logger.error("Error while processing your request", error);
-                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                                }
-                            })
-                        }
-                        else {
-                            logger.info("Create merchant - something went wrong" + req.result.userId);
-                            res.send(response.body);
-                        }
 
+                                    } else {
+                                        logger.error("updateProfilePic - Error while processing your request", errorProfilePicUrlUpdate);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                })
+                            }
+                        });
+
+
+                    } else {
+                        logger.error("Error while processing your request", errorCreateAdmin);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                     }
-                });
+                })
             }
             else {
                 logger.warn("Email Already Exists");
@@ -889,5 +927,343 @@ exports.addAdmin = function (req, res) {
         }
     });
 
+
+}
+
+
+
+exports.updateAdmin = function (req, res) {
+    var admin =
+        {
+            'userId': req.body.requestData.userId,
+            'fullName': req.body.requestData.fullName,
+            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+            'emailId': req.body.requestData.emailId,
+            'status': (req.body.requestData.status == "1") ? "1" : "0",
+            'profilePic': req.body.requestData.profilePic
+        }
+    if (admin.profilePic.length > 100) {
+        var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + admin.userId + ".jpg";
+
+        buf = new Buffer(admin.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+        var data = {
+            Key: admin.userId + ".jpg",
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/jpeg',
+            Bucket: config.bucketName,
+            ACL: 'public-read'
+        };
+
+        s3.putObject(data, function (err, data) {
+            if (err) {
+                logger.error("updateAdmin - ", err.message);
+                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+            } else {
+                var query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+                var params = [ProfilePicUrl, admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.userId, 0, 2];
+
+                db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+                    if (errorUpdateAdmin) {
+                        logger.error("Error while processing your request", errorUpdateAdmin);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    } else {
+                        if (resultsUpdateAdmin.affectedRows == 1) {
+                            logger.info("admin updated successfully");
+                            res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                        }
+                        else {
+                            logger.warn("Invalid email");
+                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+    else {
+        var query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+        var params = [admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.userId, 0, 2];
+
+        db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+            if (errorUpdateAdmin) {
+                logger.error("Error while processing your request", errorUpdateAdmin);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            } else {
+                if (resultsUpdateAdmin.affectedRows == 1) {
+                    logger.info("admin updated successfully");
+                    res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                }
+                else {
+                    logger.warn("Invalid email");
+                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                }
+            }
+        });
+    }
+}
+
+
+
+exports.updateUser = function (req, res) {
+    var User =
+        {
+            'userId': req.body.requestData.userId,
+            'fullName': req.body.requestData.fullName,
+            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+            'emailId': req.body.requestData.emailId,
+            'status': (req.body.requestData.status == "Active") ? "1" : "0",
+            'profilePic': req.body.requestData.profilePic
+        }
+    if (User.profilePic.length > 100) {
+        var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + User.userId + ".jpg";
+
+        buf = new Buffer(User.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+        var data = {
+            Key: User.userId + ".jpg",
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/jpeg',
+            Bucket: config.bucketName,
+            ACL: 'public-read'
+        };
+
+        s3.putObject(data, function (err, data) {
+            if (err) {
+                logger.error("updateUser - ", err.message);
+                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+            } else {
+                var query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+                var params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, User.userId, 0, 2];
+
+                db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+                    if (errorUpdateUser) {
+                        logger.error("Error while processing your request", errorUpdateUser);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    } else {
+                        if (resultsUpdateUser.affectedRows == 1) {
+                            logger.info("User updated successfully");
+                            res.send(responseGenerator.getResponse(200, "Success", null));
+                        }
+                        else {
+                            logger.warn("Invalid email");
+                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+    else {
+        var query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+        var params = [User.fullName, User.emailId, User.status, User.contactNumber, User.userId, 0, 2];
+
+        db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+            if (errorUpdateUser) {
+                logger.error("Error while processing your request", errorUpdateUser);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            } else {
+                if (resultsUpdateUser.affectedRows == 1) {
+                    logger.info("User updated successfully");
+                    res.send(responseGenerator.getResponse(200, "Success", null));
+                }
+                else {
+                    logger.warn("Invalid email");
+                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                }
+            }
+        });
+    }
+}
+
+
+
+exports.deleteAdmin = function (req, res) {
+
+    var admin = {
+        "id": req.body.requestData.id ? req.body.requestData.id : null
+    }
+
+    // parameter to be passed
+    params = [1, admin.id, 0, 2];
+
+    var query = "update users set isDeleted = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+    db.query(query, params, function (errorDeleteAdmin, resultsDeleteAdmin) {
+        if (!errorDeleteAdmin) {
+            if (resultsDeleteAdmin.affectedRows == 1) {
+                logger.info("Admin deleted successfully");
+                res.send(responseGenerator.getResponse(200, "Admin deleted successfully", admin));
+            }
+            else {
+                logger.info("deleteAdmin - Invalid id - " + admin.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+        }
+        else {
+            logger.error("deleteAdmin - Error while processing your request", errorDeleteAdmin);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorDeleteAdmin))
+        }
+    });
+}
+
+
+exports.deleteUser = function (req, res) {
+
+    var User = {
+        "id": req.body.requestData.id ? req.body.requestData.id : null
+    }
+
+    // parameter to be passed
+    params = [1, User.id, 0, 3, 4];
+
+    var query = "update users set isDeleted = ? where userId = ? and isDeleted = ? and (roleId = ? or roleId = ?)";
+
+    db.query(query, params, function (errorDeleteUser, resultsDeleteUser) {
+        if (!errorDeleteUser) {
+            if (resultsDeleteUser.affectedRows == 1) {
+                logger.info("User deleted successfully");
+                res.send(responseGenerator.getResponse(200, "User deleted successfully", User));
+            }
+            else {
+                logger.info("deleteUser - Invalid id - " + User.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+        }
+        else {
+            logger.error("deleteUser - Error while processing your request", errorDeleteUser);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorDeleteUser))
+        }
+    });
+}
+
+
+exports.getAdminDetails = function (req, res) {
+
+    var admin = {
+        "id": req.body.requestData.id ? req.body.requestData.id : null
+    }
+
+    // parameter to be passed
+    params = [admin.id];
+
+    var query = "select * from users where userId = ?";
+
+    db.query(query, params, function (errorGetAdminDetails, resultsGetAdminDetails) {
+        if (!errorGetAdminDetails) {
+            if (resultsGetAdminDetails.length == 1) {
+                logger.info("Admin details fetched successfully");
+                res.send(responseGenerator.getResponse(200, "Success", resultsGetAdminDetails[0]));
+            }
+            else {
+                logger.info("getAdminDetails - Invalid id - " + admin.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+        }
+        else {
+            logger.error("getAdminDetails - Error while processing your request", errorGetAdminDetails);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorGetAdminDetails))
+        }
+    });
+}
+
+
+
+exports.getUserDetails = function (req, res) {
+
+    var User = {
+        "id": req.body.requestData.id ? req.body.requestData.id : null
+    }
+
+    // parameter to be passed
+    params = [User.id, 3, 4];
+
+    var query = "select * from users where userId = ? and (roleId = ? or roleId = ?)";
+
+    db.query(query, params, function (errorGetUserDetails, resultsGetUserDetails) {
+        if (!errorGetUserDetails) {
+            if (resultsGetUserDetails.length == 1) {
+                logger.info("User details fetched successfully");
+                res.send(responseGenerator.getResponse(200, "Success", resultsGetUserDetails[0]));
+            }
+            else {
+                logger.info("getUserDetails - Invalid id - " + User.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+        }
+        else {
+            logger.error("getUserDetails - Error while processing your request", errorGetUserDetails);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorGetUserDetails))
+        }
+    });
+}
+
+
+
+exports.getAdmins = function (req, res) {
+
+    var data = {
+        'name': req.body.requestData.name ? ('%' + req.body.requestData.name + '%') : '%%',
+        'status': req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
+        'pageNumber': req.body.requestData.pageNumber ? req.body.requestData.pageNumber : 0,
+        'pageSize': req.body.requestData.pageSize ? req.body.requestData.pageSize : 0
+    }
+
+    // parameter to be passed to GetDeals procedure
+    params = [data.name, data.status, data.pageNumber, data.pageSize]
+    db.query('call GetAdmins(?,?,?,?)', params, function (errorGetAdmins, resultsGetAdmins) {
+        if (!errorGetAdmins) {
+            logger.error("getAdmins - success -" + req.result.userId);
+            var admins = [];
+            for (var i = 0; i < resultsGetAdmins[0].length; i++) {
+                var obj = resultsGetAdmins[0][i];
+                obj.serial_number = i + 1;
+                admins.push(obj);
+            }
+            res.send(responseGenerator.getResponse(200, "Success", admins))
+        }
+        else {
+            logger.error("getDealsWeb - Error while processing your request", errorGetAdmins);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    });
+
+}
+
+
+exports.getUsers = function (req, res) {
+
+    var data = {
+        'name': req.body.requestData.name ? ('%' + req.body.requestData.name + '%') : '%%',
+        'status': req.body.requestData.status ? ((req.body.requestData.status == 'Active') ? '%1%' : '%0%') : '%%',
+        'pageNumber': req.body.requestData.pageNumber ? req.body.requestData.pageNumber : 0,
+        'pageSize': req.body.requestData.pageSize ? req.body.requestData.pageSize : 0,
+        'type': ((req.body.requestData.type == "Customer") || (req.body.requestData.type == "Merchant")) ? req.body.requestData.type : "Both"
+    }
+
+    // parameter to be passed to GetDeals procedure
+    params = [data.name, data.status, data.pageNumber, data.pageSize, data.type]
+    db.query('call GetUsers(?,?,?,?,?)', params, function (errorGetUsers, resultsGetUsers) {
+        if (!errorGetUsers) {
+            logger.error("getUsers - success -" + req.result.userId);
+            var Users = [];
+            for (var i = 0; i < resultsGetUsers[0].length; i++) {
+                var obj = resultsGetUsers[0][i];
+                obj.serial_number = i + 1;
+                Users.push(obj);
+            }
+            res.send(responseGenerator.getResponse(200, "Success", Users))
+        }
+        else {
+            logger.error("getDealsWeb - Error while processing your request", errorGetUsers);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    });
 
 }

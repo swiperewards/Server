@@ -51,6 +51,26 @@ function isAdminAuthorized(req, res, next) {
 }
 
 
+function isSuperAdminAuthorized(req, res, next) {
+    var query = "select roleId from users where userId = ?";
+    var params = [req.result.userId];
+    db.query(query, params, function (error, results) {
+        if (!error) {
+            if (results[0].roleId == 1) {
+                next();
+            }
+            else {
+                logger.error(msg.notAuthorized);
+                res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+            }
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
+
 function isAuthorized(req, res, next) {
     var query = "select roleId from users where userId = ?";
     var params = [req.result.userId];
@@ -76,5 +96,6 @@ module.exports = {
     encryptData: encryptData,
     decryptData: decryptData,
     isAdminAuthorized: isAdminAuthorized,
-    isAuthorized: isAuthorized
+    isAuthorized: isAuthorized,
+    isSuperAdminAuthorized: isSuperAdminAuthorized
 };

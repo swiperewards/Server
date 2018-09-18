@@ -93,20 +93,21 @@ exports.raiseRedeemRequest = function (req, res) {
 exports.getRedeemRequests = function (req, res) {
 
     filterStrings = {
-        name: req.body.requestData.nameFilter ? "%" + req.body.requestData.nameFilter + "%" : "%%",
-        status: req.body.requestData.statusFilter ? "%" + req.body.requestData.statusFilter + "%" : "%%",
-        amount: req.body.requestData.amountFilter ? "%" + req.body.requestData.amountFilter + "%" : "%%",
-        mode: req.body.requestData.modeFilter ? "%" + req.body.requestData.modeFilter + "%" : "%%",
-        fromDate: req.body.requestData.fromDateFilter ? "%" + req.body.requestData.fromDateFilter + "%" : "%%",
-        toDate: req.body.requestData.toDateFilter ? "%" + req.body.requestData.toDateFilter + "%" : "%%"
+        name: req.body.requestData.name ? "%" + req.body.requestData.name + "%" : "%%",
+        status: req.body.requestData.status ? "%" + req.body.requestData.status + "%" : "%%",
+        amount: req.body.requestData.amount ? "%" + req.body.requestData.amount + "%" : "%%",
+        mode: req.body.requestData.mode ? "%" + req.body.requestData.mode + "%" : "%%",
+        fromDate: req.body.requestData.fromDate ? req.body.requestData.fromDate : "",
+        toDate: req.body.requestData.toDate ? req.body.requestData.toDate : ""
     }
 
     // parameters to be passed to select redeem requests
-    params = [0]
-    db.query("select r.id, u.fullName, u.emailId, r.amount, mr.mode, r.status from redeem_requests r left join users u on r.userId = u.userId left join mst_redeem_modes mr on r.redeemModeId = mr.id where r.isDeleted = ?", params, function (error, results) {
+    params = [filterStrings.name, filterStrings.status, filterStrings.amount,
+    filterStrings.mode, filterStrings.fromDate, filterStrings.toDate]
+    db.query("call GetRedeemRequests(?,?,?,?,?,?)", params, function (error, results) {
         if (!error) {
             logger.info("getRedeemRequests - Redeem requests fetched successfully for user - " + req.result.userId);
-            res.send(responseGenerator.getResponse(200, "Success", results))
+            res.send(responseGenerator.getResponse(200, "Success", results[0]))
         } else {
             logger.error("getRedeemRequests - Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -114,3 +115,131 @@ exports.getRedeemRequests = function (req, res) {
     })
 }
 
+
+
+exports.getRedeemReqDetails = function (req, res) {
+
+    var redeemRequest = {
+        "id": req.body.requestData.id
+    }
+
+    // parameter to be passed
+    params = [redeemRequest.id, 0];
+
+    var query = "select * from redeem_requests where id = ? and isDeleted = ?";
+
+    db.query(query, params, function (errorRedeemReqDetails, resultsRedeemReqDetails) {
+        if (!errorRedeemReqDetails) {
+            if (resultsRedeemReqDetails.length == 1) {
+                logger.info("RedeemReq Details details fetched successfully");
+                res.send(responseGenerator.getResponse(200, "Success", resultsRedeemReqDetails[0]));
+            }
+            else {
+                logger.info("getRedeemReqDetails - Invalid id - " + admin.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+        }
+        else {
+            logger.error("getRedeemReqDetails - Error while processing your request", errorRedeemReqDetails);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorRedeemReqDetails))
+        }
+    });
+}
+
+
+//need to update this api after wallet balance check, max limit
+exports.updateRedeemRequest = function (req, res) {
+
+    var redeemRequest = {
+        "id": req.body.requestData.id,
+        "redeemModeId": req.body.requestData.redeemModeId ? req.body.requestData.redeemModeId : null,
+        "redeemModeOptionId": req.body.requestData.redeemModeOptionId ? req.body.requestData.redeemModeOptionId : null,
+        "amount": req.body.requestData.amount ? req.body.requestData.amount : null,
+        "details": req.body.requestData.details ? req.body.requestData.details : null,
+        "extraField": req.body.requestData.extraField ? req.body.requestData.extraField : null
+    }
+    // parameters to be passed to RaiseRedeemRequest procedure
+    params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.amount, redeemRequest.details, redeemRequest.extraField, redeemRequest.id]
+    var query = "update redeem_requests set redeemModeId = ?, redeemModeOptionId = ?, amount = ?, details = ?, extraField = ? where id = ?"
+    db.query(query, params, function (error, results) {
+        if (!error) {
+            if (results.affectedRows == 0) {
+                logger.info("updateRedeemRequest - Invalid id - " + redeemRequest.id);
+                res.send(responseGenerator.getResponse(1085, "Invalid id", null));
+            }
+            else {
+                logger.error("updateRedeemRequest - redeem request updated successfully by -" + req.result.userId);
+                res.send(responseGenerator.getResponse(200, "Redeem request updated successfully", null))
+            }
+
+        }
+        else {
+            logger.error("updateRedeemRequest - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+        }
+    });
+
+}
+
+
+exports.createRedeemMode = function (req, res) {
+
+    var redeemMode = {
+        'mode': req.body.requestData.mode,
+        'options': req.body.requestData.options
+    }
+    // parameters to be passed to AddCard procedure
+    var params = [redeemMode.mode]
+    db.query("call CreateRedeemMode(?)", params, function (error, results) {
+        if (!error) {
+            if (results[0][0].IsRecordExists) {
+                logger.info("Mode already exists - " + results[0][0].id);
+                res.send(responseGenerator.getResponse(1051, "Mode already exists", {
+                    cardId: results[0][0].id
+                }))
+            }
+            else {
+                if (redeemMode.options.length > 0) {
+                    var params = [];
+                    var query = "insert into mst_redeem_mode_options (redeemModeId, name) values";
+                    for (var i = 0; i < redeemMode.options.length; i++) {
+                        if (i == redeemMode.options.length - 1) {
+                            query = query + " (?, ?)";
+                            params.push(results[0][0].id);
+                            params.push(redeemMode.options[i]);
+                        }
+                        else {
+                            query = query + " (?, ?),";
+                            params.push(results[0][0].id);
+                            params.push(redeemMode.options[i]);
+                        }
+                    }
+                    db.query(query, params, function (errorAddOptions, resultsAddOptions) {
+                        if (!errorAddOptions) {
+                            logger.info("Mode added successfully - " + results[0][0].id);
+                            res.send(responseGenerator.getResponse(200, "Mode added successfully", {
+                                modeId: results[0][0].id,
+                                createdDate: results[0][0].createdDate
+                            }))
+                        } else {
+                            logger.error("Error while processing your request", errorAddOptions);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        }
+                    })
+                }
+                else {
+                    logger.info("Mode added successfully - " + results[0][0].id);
+                    res.send(responseGenerator.getResponse(200, "Mode added successfully", {
+                        modeId: results[0][0].id,
+                        createdDate: results[0][0].createdDate
+                    }))
+                }
+            }
+
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+
+}

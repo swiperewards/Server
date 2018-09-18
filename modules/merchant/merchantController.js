@@ -29,10 +29,9 @@ exports.createMerchant = function (req, res) {
                 else if (response) {
                     if (response.body.status == 200) {
                         logger.info("Merchant added successfully by user - " + req.result.userId);
-                        var randomPassword = randomstring.generate(8);
-                        var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
+                        var params = [response.body.responseData.fullName, response.body.responseData.email, "Web",
                         response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
-                        db.query('call UpdateMerchant(?,?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
+                        db.query('call UpdateMerchant(?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
                             if (!errorUpdateMerchant) {
                                 res.send(response.body);
                             } else {
@@ -80,32 +79,31 @@ exports.createMerchant = function (req, res) {
                                 response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
                                 db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
                                     if (!error) {
+                                        var token = randomstring.generate(6);
 
-                                        //generation of jwt token
-                                        var token = jwt.sign(
-                                            {
-                                                emailId: results[0][0].emailId,
-                                                name: results[0][0].name,
-                                                userId: results[0][0].userId
-                                            }, config.privateKey, {
-                                                expiresIn: '365d'
-                                            });
-                                        //=======================================code to send verification email on signup========================================================
-                                        var message;
-                                        template.welcome(response.body.responseData.fullName, token, function (err, msg) {
-                                            message = msg;
-                                        });
-                                        emailHandler.sendEmail(results[0][0].emailId, "Welcome to Swipe Rewards", message, function (errorEmailHandler) {
-                                            if (errorEmailHandler) {
-                                                logger.warn("Failed to send Verification link to linked mail");
-                                                // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
-                                                res.send(response.body);
+                                        query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                                        params = [token, Reqbody.requestData.entityEmail];
+                                        db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                                            if (!errorInsertActivateToken) {
+                                                var message;
+                                                template.activateAccount(response.body.responseData.fullName, token, 3, randomPassword, function (err, msg) {
+                                                    message = msg;
+                                                })
+                                                emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                                    if (errorEmailHandler) {
+                                                        logger.warn("Failed to send Verification link to linked mail");
+                                                        // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
+                                                        res.send(response.body);
+                                                    } else {
+                                                        logger.info("Verification link sent to mail");
+                                                        res.send(response.body);
+                                                    }
+                                                });
                                             } else {
-                                                logger.info("Verification link sent to mail");
-                                                res.send(response.body);
+                                                logger.error("Error while processing your request", errorInsertActivateToken);
+                                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
                                             }
-                                        });
-                                        //========================================end of code for mail verification=================================================================
+                                        })
 
                                     } else {
                                         logger.error("Error while processing your request", error);
