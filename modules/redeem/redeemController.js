@@ -159,8 +159,8 @@ exports.updateRedeemRequest = function (req, res) {
         "extraField": req.body.requestData.extraField ? req.body.requestData.extraField : null
     }
     // parameters to be passed to RaiseRedeemRequest procedure
-    params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.amount, redeemRequest.details, redeemRequest.extraField, redeemRequest.id]
-    var query = "update redeem_requests set redeemModeId = ?, redeemModeOptionId = ?, amount = ?, details = ?, extraField = ? where id = ?"
+    params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.amount, redeemRequest.details, redeemRequest.extraField, new Date(Date.now()), redeemRequest.id]
+    var query = "update redeem_requests set redeemModeId = ?, redeemModeOptionId = ?, amount = ?, details = ?, extraField = ?, modifiedDate = ? where id = ?"
     db.query(query, params, function (error, results) {
         if (!error) {
             if (results.affectedRows == 0) {

@@ -14,7 +14,10 @@ exports.welcome = function (username, token, callback) {
 exports.activateAccount = function (username, token, roleId, password, callback) {
   if (roleId == 4) {
     if (password) {
-
+      link = config.frontEndHost + "/#/activateAccount/" + token;
+      var template = fs.readFileSync('./static/activateAccountUserWithPassword.html', 'utf8').toString();
+      template = template.replace("$link", link).replace("$password", password);
+      callback(null, template)
     }
     else {
       link = config.frontEndHost + "/#/activateAccount/" + token;

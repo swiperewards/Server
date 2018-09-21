@@ -140,34 +140,40 @@ exports.addDeal = function (req, res) {
     params = [req.body.requestData.merchantId]
     db.query('select userId from users where merchantId = ?', params, function (errorGetUserId, resultsGetUserId) {
         if (!errorGetUserId) {
-            var deal = {
-                "merchantUserId": resultsGetUserId[0].userId,
-                "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
-                "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
-                "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
-                "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
-                "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
-                "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
-                "createdBy": req.result.userId,
-                "location": req.body.requestData.location ? req.body.requestData.location : null,
-                "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-                "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
-                "status": (req.body.requestData.status == "1") ? "1" : "0"
+            if(resultsGetUserId.length > 0){
+                var deal = {
+                    "merchantUserId": resultsGetUserId[0].userId,
+                    "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
+                    "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
+                    "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
+                    "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
+                    "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
+                    "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
+                    "createdBy": req.result.userId,
+                    "location": req.body.requestData.location ? req.body.requestData.location : null,
+                    "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
+                    "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+                    "status": (req.body.requestData.status == "1") ? "1" : "0"
+                }
+                // parameter to be passed
+                params = [deal.merchantUserId, deal.shortDescription, deal.longDescription,
+                deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
+                deal.latitude, deal.longitude, deal.status]
+                db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+                    if (!error) {
+                        logger.error("addDeal - ticket generated successfully by -" + deal.userId);
+                        res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
+                    }
+                    else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                });
             }
-            // parameter to be passed
-            params = [deal.merchantUserId, deal.shortDescription, deal.longDescription,
-            deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
-            deal.latitude, deal.longitude, deal.status]
-            db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                if (!error) {
-                    logger.error("addDeal - ticket generated successfully by -" + deal.userId);
-                    res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
-                }
-                else {
-                    logger.error("Error while processing your request", error);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                }
-            });
+            else {
+                logger.error("Something went wrong", null);
+                res.send(responseGenerator.getResponse(1083, "Something went wrong", null))
+            }
         }
         else {
             logger.error("Error while processing your request", errorGetUserId);

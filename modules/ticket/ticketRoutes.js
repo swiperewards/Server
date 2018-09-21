@@ -16,13 +16,23 @@ router.post("/updateTicketType", encDecController.verifyToken, api.updateTicketT
 // api to update ticket type
 router.post("/deleteTicketType", encDecController.verifyToken, api.deleteTicketType);
 
-// api to get ticket types
-router.post("/getTicketDetails", encDecController.verifyToken, api.getTicketDetails);
+// api to get ticket type details
+router.post("/getTicketTypeDetails", encDecController.verifyToken, api.getTicketTypeDetails);
 
 // api to generate ticket for user
 router.post("/generateTicket", encDecController.verifyToken, api.generateTicket);
 
 // api to generate ticket for user
 router.post("/updateTicket", encDecController.verifyToken, api.updateTicket);
+
+// api to generate ticket for user
+router.post("/getTickets", encDecController.verifyToken, api.getTickets);
+
+// api to resolve ticket for user
+router.post("/resolveTicket", encDecController.verifyToken, api.resolveTicket);
+
+// api to get ticket details
+router.post("/getTicketDetails", encDecController.verifyToken, api.getTicketDetails);
+
 
 module.exports=router;

@@ -76,4 +76,7 @@ router.post("/getUsers", encDecController.verifyToken, functions.isAdminAuthoriz
 // api to list Buckets
 router.post("/listBuckets", encDecController.verifyToken, api.listBuckets);
 
+// api to apply referral code
+router.post("/applyReferralCode", encDecController.verifyToken, api.applyReferralCode);
+
 module.exports=router;

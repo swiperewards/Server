@@ -74,21 +74,34 @@ exports.registerUser = function (req, res) {
         'isSocialLogin': (req.body.requestData.isSocialLogin == false) ? 0 : 1,
         'profilePicUrl': !req.body.requestData.isSocialLogin ? null : req.body.requestData.profilePicUrl,
         'socialToken': !req.body.requestData.isSocialLogin ? null : req.body.requestData.socialToken,
-        'referredBy': !req.body.requestData.referralCode ? null : req.body.requestData.referredBy
+        'referredBy': !req.body.requestData.referredBy ? null : req.body.requestData.referredBy
     }
-    var params = [user.fullName, user.mobileNumber, user.emailId, user.password, user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy]
-    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+
+    var randomNumForReferral = randomstring.generate({
+        length: 8,
+        charset: 'numeric'
+    });
+    randomNumForReferral = randomNumForReferral + "";
+
+    var params = [user.fullName, user.mobileNumber, user.emailId, user.password, user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy, randomNumForReferral]
+
+    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsOldRecord == 1) {
                 logger.warn("Email Already Exists");
                 res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
             }
+            else if (results[0][0].InvalidReferralCode == 1) {
+                logger.warn("Invalid referral code");
+                res.send(responseGenerator.getResponse(1096, "Invalid referral code", null));
+            }
             else {
                 var data = {
                     emailId: results[0][0].emailId,
                     name: results[0][0].fullName,
-                    userId: results[0][0].userId
+                    userId: results[0][0].userId,
+                    isNewRecord: results[0][0].isNewRecord
                 }
                 //generation of jwt token
                 var token = jwt.sign(
@@ -108,7 +121,8 @@ exports.registerUser = function (req, res) {
                         token: token,
                         name: results[0][0].fullName,
                         emailId: results[0][0].emailId,
-                        userId: results[0][0].userId
+                        userId: results[0][0].userId,
+                        isNewRecord: results[0][0].isNewRecord
                     }))
                 }
                 else {
@@ -132,32 +146,12 @@ exports.registerUser = function (req, res) {
                                     res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
                                         name: results[0][0].name,
                                         emailId: results[0][0].emailId,
-                                        userId: results[0][0].userId
+                                        userId: results[0][0].userId,
+                                        isNewRecord: results[0][0].isNewRecord
                                     }))
                                 }
                             });
-                            //=======================================code to send verification email on signup========================================================
-                            // var message;
-                            // template.welcome(user.fullName, token, function (err, msg) {
-                            //     message = msg;
-                            // })
-                            // emailHandler.sendEmail(user.emailId, "Welcome to Swipe Rewards", message, function (error, callback) {
-                            //     if (error) {
-                                    // logger.warn("Failed to send Verification link to linked mail");
-                                    // res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                            //     } else {
-                                    // logger.info("Verification link sent to mail");
-
-                                    // res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                    //     token: token,
-                                    //     name: results[0][0].name,
-                                    //     emailId: results[0][0].emailId,
-                                    //     userId: results[0][0].userId
-                                    // }))
-                            //     }
-                            // });
-                            //========================================end of code for mail verification=================================================================
-
+                            
                         } else {
                             logger.error("Error while processing your request", errorInsertActivateToken);
                             res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
@@ -237,8 +231,8 @@ exports.registerUserWeb = function (req, res) {
 exports.loginUser = function (req, res) {
 
     var strQuery = {
-        sql: "select * from users where emailId = ? and password = ? and isDeleted = ?",
-        values: [req.body.requestData.emailId, req.body.requestData.password, 0]
+        sql: "select * from users where emailId = ? and password = ? and isDeleted = ? and roleId = ? and isUserVerified = ?",
+        values: [req.body.requestData.emailId, req.body.requestData.password, 0, 4, 1]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -862,57 +856,80 @@ exports.addAdmin = function (req, res) {
                     if (!errorCreateAdmin) {
                         var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + resultsCreateAdmin[0][0].userId + ".jpg";
 
-                        buf = new Buffer(req.body.requestData.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
-                        var data = {
-                            Key: resultsCreateAdmin[0][0].userId + ".jpg",
-                            Body: buf,
-                            ContentEncoding: 'base64',
-                            ContentType: 'image/jpeg',
-                            Bucket: config.bucketName,
-                            ACL: 'public-read'
-                        };
+                        if (req.body.requestData.profilePic) {
+                            buf = new Buffer(req.body.requestData.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                            var data = {
+                                Key: resultsCreateAdmin[0][0].userId + ".jpg",
+                                Body: buf,
+                                ContentEncoding: 'base64',
+                                ContentType: 'image/jpeg',
+                                Bucket: config.bucketName,
+                                ACL: 'public-read'
+                            };
 
-                        s3.putObject(data, function (err, data) {
-                            if (err) {
-                                logger.error("addAdmin - ", err.message);
-                                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
-                            } else {
-                                params = [ProfilePicUrl, resultsCreateAdmin[0][0].userId]
-                                db.query("update users set profilePicUrl = ? where userId = ?", params, function (errorProfilePicUrlUpdate, resultsProfilePicUrlUpdate) {
-                                    if (!errorProfilePicUrlUpdate) {
-                                        var message;
-                                        fullName = "";
-                                        if (req.body.requestData.fullName) {
-                                            fullName = req.body.requestData.fullName;
-                                        }
-                                        template.activateAccount(fullName, token, 2, randomPassword, function (err, msg) {
-                                            message = msg;
-                                        })
-                                        emailHandler.sendEmail(admin.emailId, "Welcome to Nouvo!", message, function (error, callback) {
-                                            if (error) {
-                                                logger.warn("Failed to send Verification link to linked mail");
-                                                res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                                            } else {
-                                                logger.info("Verification link sent to mail");
-                                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                                    name: resultsCreateAdmin[0][0].fullName,
-                                                    emailId: resultsCreateAdmin[0][0].emailId,
-                                                    userId: resultsCreateAdmin[0][0].userId,
-                                                    profilePicUrl: ProfilePicUrl
-                                                }))
+                            s3.putObject(data, function (err, data) {
+                                if (err) {
+                                    logger.error("addAdmin - ", err.message);
+                                    res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+                                } else {
+                                    params = [ProfilePicUrl, resultsCreateAdmin[0][0].userId]
+                                    db.query("update users set profilePicUrl = ? where userId = ?", params, function (errorProfilePicUrlUpdate, resultsProfilePicUrlUpdate) {
+                                        if (!errorProfilePicUrlUpdate) {
+                                            var message;
+                                            fullName = "";
+                                            if (req.body.requestData.fullName) {
+                                                fullName = req.body.requestData.fullName;
                                             }
-                                        });
+                                            template.activateAccount(fullName, token, 2, randomPassword, function (err, msg) {
+                                                message = msg;
+                                            })
+                                            emailHandler.sendEmail(admin.emailId, "Welcome to Nouvo!", message, function (error, callback) {
+                                                if (error) {
+                                                    logger.warn("Failed to send Verification link to linked mail");
+                                                    res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                                } else {
+                                                    logger.info("Verification link sent to mail");
+                                                    res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                        name: resultsCreateAdmin[0][0].fullName,
+                                                        emailId: resultsCreateAdmin[0][0].emailId,
+                                                        userId: resultsCreateAdmin[0][0].userId,
+                                                        profilePicUrl: ProfilePicUrl
+                                                    }))
+                                                }
+                                            });
 
 
-                                    } else {
-                                        logger.error("updateProfilePic - Error while processing your request", errorProfilePicUrlUpdate);
-                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                                    }
-                                })
+                                        } else {
+                                            logger.error("updateProfilePic - Error while processing your request", errorProfilePicUrlUpdate);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                        else {
+                            var message;
+                            fullName = "";
+                            if (req.body.requestData.fullName) {
+                                fullName = req.body.requestData.fullName;
                             }
-                        });
-
-
+                            template.activateAccount(fullName, token, 2, randomPassword, function (err, msg) {
+                                message = msg;
+                            })
+                            emailHandler.sendEmail(admin.emailId, "Welcome to Nouvo!", message, function (error, callback) {
+                                if (error) {
+                                    logger.warn("Failed to send Verification link to linked mail");
+                                    res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                } else {
+                                    logger.info("Verification link sent to mail");
+                                    res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                        name: resultsCreateAdmin[0][0].fullName,
+                                        emailId: resultsCreateAdmin[0][0].emailId,
+                                        userId: resultsCreateAdmin[0][0].userId
+                                    }))
+                                }
+                            });
+                        }
                     } else {
                         logger.error("Error while processing your request", errorCreateAdmin);
                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -1012,73 +1029,220 @@ exports.updateUser = function (req, res) {
     var User =
         {
             'userId': req.body.requestData.userId,
+            'isEmailUpdated': req.body.requestData.isEmailUpdated,
             'fullName': req.body.requestData.fullName,
             'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
             'emailId': req.body.requestData.emailId,
-            'status': (req.body.requestData.status == "Active") ? "1" : "0",
-            'profilePic': req.body.requestData.profilePic
+            'status': (req.body.requestData.status == "1") ? "1" : "0",
+            'profilePic': req.body.requestData.profilePic,
+            "password": req.body.requestData.password,
+            "city": req.body.requestData.city,
+            "zipcode": req.body.requestData.zipcode,
+            "roleId": req.body.requestData.roleId,
+            "isPasswordUpdated": req.body.requestData.isPasswordUpdated
         }
-    if (User.profilePic.length > 100) {
-        var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + User.userId + ".jpg";
+    var query = "";
+    var params;
+    var returned = false;
+    var password = "";
+    if (User.isPasswordUpdated == "1"){
+        password = User.password;
+    }
+    else {
+        password = randomstring.generate(8);
+    }
+    if (User.isEmailUpdated == "1") {
+        query = "SELECT emailId FROM users WHERE emailId = ?";
+        params = [User.emailId];
+        db.query(query, params, function (errorEmailCheck, resultsEmailCheck) {
+            if (!errorEmailCheck) {
+                if (resultsEmailCheck.length > 0) {
+                    logger.warn("Email Already Exists");
+                    returned = true;
+                    res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+                }
+                else {
+                    if (User.profilePic.length > 100) {
+                        var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + User.userId + ".jpg";
+                        buf = new Buffer(User.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                        var data = {
+                            Key: User.userId + ".jpg",
+                            Body: buf,
+                            ContentEncoding: 'base64',
+                            ContentType: 'image/jpeg',
+                            Bucket: config.bucketName,
+                            ACL: 'public-read'
+                        };
 
-        buf = new Buffer(User.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
-        var data = {
-            Key: User.userId + ".jpg",
-            Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/jpeg',
-            Bucket: config.bucketName,
-            ACL: 'public-read'
-        };
+                        s3.putObject(data, function (err, data) {
+                            if (err) {
+                                logger.error("updateUser - ", err.message);
+                                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+                            } else {
+                                query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
 
-        s3.putObject(data, function (err, data) {
-            if (err) {
-                logger.error("updateUser - ", err.message);
-                res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
-            } else {
-                var query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+                                params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, User.password, User.city, User.zipcode, 0, new Date(Date.now()), User.userId, 0];
 
-                var params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, User.userId, 0, 2];
+                                db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+                                    if (errorUpdateUser) {
+                                        logger.error("Error while processing your request", errorUpdateUser);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    } else {
+                                        if (resultsUpdateUser.affectedRows == 1) {
+                                            var reqId = randomstring.generate(6);
+                                            query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                                            params = [reqId, results[0][0].emailId];
+                                            db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                                                if (!errorInsertActivateToken) {
+                                                    var message;
+                                                    var fullName = User.fullName;
+                                                    if(!fullName){
+                                                        fullName = "";
+                                                    }
+                                                    template.activateAccount(fullName, reqId, User.roleId, password, function (err, msg) {
+                                                        message = msg;
+                                                    })
+                                                    emailHandler.sendEmail(User.emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                                        if (errorEmailHandler) {
+                                                            logger.warn("Failed to send Verification link to linked mail");
+                                                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                                        } else {
+                                                            logger.info("Verification link sent to mail");
+                                                            logger.info("User updated successfully");
+                                                            res.send(responseGenerator.getResponse(200, "User updated successfully, Verification link sent to mail", null));
+                                                        }
+                                                    });
+                                                } else {
+                                                    logger.error("Error while processing your request", errorInsertActivateToken);
+                                                    res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            logger.warn("Invalid email");
+                                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                                        }
+                                    }
+                                });
 
-                db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
-                    if (errorUpdateUser) {
-                        logger.error("Error while processing your request", errorUpdateUser);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    } else {
-                        if (resultsUpdateUser.affectedRows == 1) {
-                            logger.info("User updated successfully");
-                            res.send(responseGenerator.getResponse(200, "Success", null));
-                        }
-                        else {
-                            logger.warn("Invalid email");
-                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
-                        }
+                            }
+                        });
                     }
-                });
+                    else {
+                        query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
 
+                        params = [User.fullName, User.emailId, User.status, User.contactNumber, User.password, User.city, User.zipcode, 0, new Date(Date.now()), User.userId, 0];
+
+                        db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+                            if (errorUpdateUser) {
+                                logger.error("Error while processing your request", errorUpdateUser);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            } else {
+                                if (resultsUpdateUser.affectedRows == 1) {
+                                    var reqId = randomstring.generate(6);
+                                    query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                                    params = [reqId, User.emailId];
+                                    db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                                        if (!errorInsertActivateToken) {
+
+                                            var message;var fullName = User.fullName;
+                                            if(!fullName){
+                                                fullName = "";
+                                            }
+                                            template.activateAccount(fullName, reqId, User.roleId, password, function (err, msg) {
+                                                message = msg;
+                                            })
+                                            emailHandler.sendEmail(User.emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                                if (errorEmailHandler) {
+                                                    logger.warn("Failed to send Verification link to linked mail");
+                                                    res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                                } else {
+                                                    logger.info("Verification link sent to mail");
+
+                                                    logger.info("User updated successfully");
+                                                    res.send(responseGenerator.getResponse(200, "User updated successfully, Verification link sent to mail", null));
+                                                }
+                                            });
+                                        } else {
+                                            logger.error("Error while processing your request", errorInsertActivateToken);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                                        }
+                                    })
+                                }
+                                else {
+                                    logger.warn("Invalid email");
+                                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                                }
+                            }
+                        });
+                    }
+                }
             }
         });
     }
     else {
-        var query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+        if (User.profilePic.length > 100) {
+            var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + User.userId + ".jpg";
 
-        var params = [User.fullName, User.emailId, User.status, User.contactNumber, User.userId, 0, 2];
+            buf = new Buffer(User.profilePic.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+            var data = {
+                Key: User.userId + ".jpg",
+                Body: buf,
+                ContentEncoding: 'base64',
+                ContentType: 'image/jpeg',
+                Bucket: config.bucketName,
+                ACL: 'public-read'
+            };
 
-        db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
-            if (errorUpdateUser) {
-                logger.error("Error while processing your request", errorUpdateUser);
-                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-            } else {
-                if (resultsUpdateUser.affectedRows == 1) {
-                    logger.info("User updated successfully");
-                    res.send(responseGenerator.getResponse(200, "Success", null));
+            s3.putObject(data, function (err, data) {
+                if (err) {
+                    logger.error("updateUser - ", err.message);
+                    res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
+                } else {
+                    query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+
+                    params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, User.password, User.city, User.zipcode, new Date(Date.now()), User.userId, 0];
+
+                    db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+                        if (errorUpdateUser) {
+                            logger.error("Error while processing your request", errorUpdateUser);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        } else {
+                            if (resultsUpdateUser.affectedRows == 1) {
+                                logger.info("User updated successfully");
+                                res.send(responseGenerator.getResponse(200, "User updated successfully", null));
+                            }
+                            else {
+                                logger.warn("Invalid email");
+                                res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                            }
+                        }
+                    });
+
                 }
-                else {
-                    logger.warn("Invalid email");
-                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+            });
+        }
+        else {
+            query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+
+            params = [User.fullName, User.emailId, User.status, User.contactNumber, User.password, User.city, User.zipcode, new Date(Date.now()), User.userId, 0];
+
+            db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
+                if (errorUpdateUser) {
+                    logger.error("Error while processing your request", errorUpdateUser);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                } else {
+                    if (resultsUpdateUser.affectedRows == 1) {
+                        logger.info("User updated successfully");
+                        res.send(responseGenerator.getResponse(200, "User updated successfully", null));
+                    }
+                    else {
+                        logger.warn("Invalid email");
+                        res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
 
@@ -1241,7 +1405,7 @@ exports.getUsers = function (req, res) {
 
     var data = {
         'name': req.body.requestData.name ? ('%' + req.body.requestData.name + '%') : '%%',
-        'status': req.body.requestData.status ? ((req.body.requestData.status == 'Active') ? '%1%' : '%0%') : '%%',
+        'status': req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
         'pageNumber': req.body.requestData.pageNumber ? req.body.requestData.pageNumber : 0,
         'pageSize': req.body.requestData.pageSize ? req.body.requestData.pageSize : 0,
         'type': ((req.body.requestData.type == "Customer") || (req.body.requestData.type == "Merchant")) ? req.body.requestData.type : "Both"
@@ -1259,6 +1423,41 @@ exports.getUsers = function (req, res) {
                 Users.push(obj);
             }
             res.send(responseGenerator.getResponse(200, "Success", Users))
+        }
+        else {
+            logger.error("getDealsWeb - Error while processing your request", errorGetUsers);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    });
+
+}
+
+
+
+exports.applyReferralCode = function (req, res) {
+
+    var data = {
+        'userId': req.result.userId,
+        'referredBy': req.body.requestData.referredBy
+    }
+
+    // parameter to be passed to GetDeals procedure
+    params = [data.userId, data.referredBy]
+    db.query('call ApplyReferralCode(?,?)', params, function (errorApplyReferral, resultsApplyReferral) {
+        if (!errorApplyReferral) {
+            if (resultsApplyReferral[0][0].Success == 1) {
+                logger.warn("ApplyReferralCode - success");
+                res.send(responseGenerator.getResponse(200, "Success", null));
+            }
+            else if (resultsApplyReferral[0][0].InvalidReferralCode == 1) {
+                logger.warn("Invalid referral code");
+                res.send(responseGenerator.getResponse(1004, "Invalid referral code", null));
+            }
+            else {
+                logger.warn("Already referred " + data.userId);
+                res.send(responseGenerator.getResponse(1095, "Unable to refer", null));
+            }
+
         }
         else {
             logger.error("getDealsWeb - Error while processing your request", errorGetUsers);
