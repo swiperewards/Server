@@ -11,6 +11,7 @@ var each = require('sync-each');
 var randomstring = require("randomstring");
 var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
 var template = require(path.resolve('./', 'utils/emailTemplates.js'));
+var functions = require(path.resolve('./', 'utils/functions.js'));
 
 exports.createMerchant = function (req, res) {
     var Reqbody = req.body;
@@ -75,7 +76,8 @@ exports.createMerchant = function (req, res) {
                             if (response.body.status == 200) {
                                 logger.info("Merchant added successfully by user - " + req.result.userId);
                                 var randomPassword = randomstring.generate(8);
-                                var params = [response.body.responseData.fullName, response.body.responseData.email, randomPassword, "Web",
+                                var encPass = functions.encrypt(randomPassword);
+                                var params = [response.body.responseData.fullName, response.body.responseData.email, encPass, "Web",
                                 response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
                                 db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
                                     if (!error) {

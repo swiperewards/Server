@@ -8,26 +8,6 @@ var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 
-// not used
-exports.getDeals = function (req, res) {
-
-    var deal = {
-        'location': req.body.requestData.location
-    }
-    // parameter to be passed to get deals query
-    params = [deal.location, 0]
-    db.query("select * from deals where location = ? and isDeleted = ?", params, function (error, results) {
-        if (!error) {
-            logger.info("Deals fetched successfully by user - " + req.result.userId);
-            res.send(responseGenerator.getResponse(200, "Success", results))
-        } else {
-            logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-        }
-    })
-}
-
-
 
 exports.getDealsWithPaging = function (req, res) {
 
@@ -89,8 +69,8 @@ exports.getDealsWeb = function (req, res) {
                     'pageSize': req.body.requestData.pageSize ? req.body.requestData.pageSize : 0
                 }
                 // parameter to be passed to GetDeals procedure
-                params = [deals.merchantName, deals.status, deals.location, deals.fromDate, deals.toDate, deals.pageNumber, deals.pageSize]
-                db.query('call GetDealsWeb(?,?,?,?,?,?,?)', params, function (error, results) {
+                params = [deals.merchantName, deals.status, deals.location, deals.fromDate, deals.toDate, deals.pageNumber, deals.pageSize, result.userId]
+                db.query('call GetDealsWeb(?,?,?,?,?,?,?,?)', params, function (error, results) {
                     if (!error) {
                         logger.error("getDealsWeb - success -" + req.result.userId);
                         var deals = [];

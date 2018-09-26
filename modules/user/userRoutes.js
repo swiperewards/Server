@@ -79,4 +79,9 @@ router.post("/listBuckets", encDecController.verifyToken, api.listBuckets);
 // api to apply referral code
 router.post("/applyReferralCode", encDecController.verifyToken, api.applyReferralCode);
 
+// test
+router.post("/test", encDecController.verifyToken, api.test);
+
+router.post('/dashboard', encDecController.verifyToken, api.dashboard);
+
 module.exports=router;

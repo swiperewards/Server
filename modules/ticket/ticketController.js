@@ -76,33 +76,25 @@ exports.addTicketType = function (req, res) {
 
 
 exports.updateTicketType = function (req, res) {
-    isTicketExists(req.body.requestData.ticketTypeName, function (ifExist) {
-        if (ifExist) {
-            logger.info("updateTicketType - ticketTypeName already exists - " + req.result.userId);
-            res.send(responseGenerator.getResponse(1089, "Ticket type name already exists", null))
-        }
-        else {
-            // parameter to be passed to update Ticket Type
-            params = [req.body.requestData.ticketTypeName, new Date(Date.now()), req.body.requestData.status, req.body.requestData.id, 0];
-            db.query("update mst_ticket_type set ticketTypeName = ?, modifiedDate = ?, status = ? where id = ? and isDeleted = ?", params, function (error, results) {
-                if (!error) {
-                    if (results.affectedRows == 1) {
-                        logger.info("updateTicketType - ticketTypeName updated successfully for user - " + req.result.userId);
-                        res.send(responseGenerator.getResponse(200, "Success", null))
-                    }
-                    else {
-                        logger.info("updateTicketType - ticketTypeName not exists - " + req.result.userId);
-                        res.send(responseGenerator.getResponse(1090, "Ticket type not exist", null))
-                    }
 
-                } else {
-                    logger.error("updateTicketType - Error while processing your request", error);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, error))
-                }
-            })
-        }
-    });
+    // parameter to be passed to update Ticket Type
+    params = [req.body.requestData.ticketTypeName, new Date(Date.now()), req.body.requestData.status, req.body.requestData.id, 0];
+    db.query("update mst_ticket_type set ticketTypeName = ?, modifiedDate = ?, status = ? where id = ? and isDeleted = ?", params, function (error, results) {
+        if (!error) {
+            if (results.affectedRows == 1) {
+                logger.info("updateTicketType - ticketTypeName updated successfully for user - " + req.result.userId);
+                res.send(responseGenerator.getResponse(200, "Success", null))
+            }
+            else {
+                logger.info("updateTicketType - ticketTypeName not exists - " + req.result.userId);
+                res.send(responseGenerator.getResponse(1090, "Ticket type not exist", null))
+            }
 
+        } else {
+            logger.error("updateTicketType - Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+        }
+    })
 
 }
 
@@ -233,11 +225,12 @@ exports.resolveTicket = function (req, res) {
     var ticket = {
         "ticketTypeId": req.body.requestData.ticketTypeId,
         "resolveDescription": req.body.requestData.resolveDescription,
-        "replyMessage":req.body.requestData.replyMessage,
-        "id": req.body.requestData.id
+        "replyMessage": req.body.requestData.replyMessage,
+        "id": req.body.requestData.id,
+        "status": req.body.requestData.status
     }
     // parameter to be passed to update Ticket Type
-    params = [ticket.ticketTypeId, ticket.resolveDescription, ticket.replyMessage, 2, new Date(Date.now()), ticket.id, 0];
+    params = [ticket.ticketTypeId, ticket.resolveDescription, ticket.replyMessage, ticket.status, new Date(Date.now()), ticket.id, 0];
     db.query("update ticket set ticketTypeId = ?, resolveDescription = ?, replyMessage = ?, status = ?, modifiedDate = ? where id = ? and isDeleted = ?", params, function (error, results) {
         if (!error) {
             if (results.affectedRows == 1) {
