@@ -1,7 +1,6 @@
 var path = require('path');
 var db = require(path.resolve('.', 'modules/database/databaseConnector.js'));
 var enums = require(path.resolve('.', 'modules/constant/enums.js'));
-var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var nodeMailer = require('nodemailer');
 var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'));
