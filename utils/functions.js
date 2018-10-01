@@ -9,6 +9,9 @@ var msg = require(path.resolve('./', 'utils/errorMessages.js'));
 
 function decrypt(encryptedText) {
     var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKey);
+
+
+
     var plainText = encrypted.toString(CryptoJS.enc.Utf8);
     if (plainText == "")
         return null;
@@ -23,6 +26,22 @@ function encrypt(plainText) {
     return encryptedText;
 }
 
+
+function decryptTest(encryptedText) {
+    var encrypted = CryptoJS.AES.decrypt(encryptedText, "abcdefghijklmnopqrstuvwxyz123456", { iv: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], padding: "PKCS5" });
+    var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+    if (plainText == "")
+        return null;
+    else
+        return plainText;
+}
+
+// method to encrypt data(password)
+function encryptTest(plainText) {
+    var encrypted = CryptoJS.AES.encrypt(plainText, "abcdefghijklmnopqrstuvwxyz123456");
+    var encryptedText = encrypted.toString();
+    return encryptedText;
+}
 
 /**
  * Function for Encrypting the data
@@ -133,5 +152,7 @@ module.exports = {
     decryptData: decryptData,
     isAdminAuthorized: isAdminAuthorized,
     isAuthorized: isAuthorized,
-    isSuperAdminAuthorized: isSuperAdminAuthorized
+    isSuperAdminAuthorized: isSuperAdminAuthorized,
+    decryptTest: decryptTest,
+    encryptTest: encryptTest
 };

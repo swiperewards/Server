@@ -1542,7 +1542,6 @@ exports.applyReferralCode = function (req, res) {
 exports.dashboard = function (req, res) {
 
     var user = req.result;
-
     params = [user.userId]
     db.query("call GetDashboardData(?)", params, function (error, results) {
         if (!error) {
@@ -1555,17 +1554,17 @@ exports.dashboard = function (req, res) {
                 obj.tickets = [];
                 for(var i = 0; i<results[1].length; i++) {
                     ticket = {};
-                    ticket.ticketTypeId = results[1][i].ticketTypeId;
+                    ticket.id = results[1][i].ticketTypeId;
                     ticket.count = results[1][i].count;
-                    ticket.ticketTypeName = results[1][i].ticketTypeName;
+                    ticket.name = results[1][i].ticketTypeName;
                     obj.tickets.push(ticket);
                 }
                 obj.redeemRequests = [];
                 for(var i = 0; i<results[2].length; i++) {
                     redeem = {};
-                    redeem.redeemModeId = results[2][i].redeemModeId;
+                    redeem.id = results[2][i].redeemModeId;
                     redeem.count = results[2][i].count;
-                    redeem.ticketTypeName = results[2][i].mode;
+                    redeem.name = results[2][i].mode;
                     obj.redeemRequests.push(redeem);
                 }
 
@@ -1578,9 +1577,9 @@ exports.dashboard = function (req, res) {
                 obj.tickets = [];
                 for(var i = 0; i<results[1].length; i++) {
                     ticket = {};
-                    ticket.ticketTypeId = results[1][i].ticketTypeId;
+                    ticket.id = results[1][i].ticketTypeId;
                     ticket.count = results[1][i].count;
-                    ticket.ticketTypeName = results[1][i].ticketTypeName;
+                    ticket.name = results[1][i].ticketTypeName;
                     obj.tickets.push(ticket);
                 }
             }
@@ -1599,8 +1598,6 @@ exports.dashboard = function (req, res) {
                 logger.info("dashboard - success");
                 res.send(responseGenerator.getResponse(200, "Success", obj));
             }
-            
-
         } else {
             logger.error("dashboard - Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -1610,8 +1607,11 @@ exports.dashboard = function (req, res) {
 
 exports.test = function (req, res) {
     var password = req.body.requestData.password;
-    var encrypted = functions.encrypt(password);
-    var decrypted = functions.decrypt(encrypted);
+    var encrypted = functions.encryptTest(password);
+    var decrypted = functions.decryptTest("VC4/pTs4OLidhnu2ga18Rw==");
 
     res.send({ "pass": password, "enc": encrypted, "dec": decrypted });
 }
+
+
+

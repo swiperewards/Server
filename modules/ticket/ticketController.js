@@ -194,7 +194,7 @@ exports.updateTicket = function (req, res) {
 exports.getTickets = function (req, res) {
     filterStrings = {
         name: req.body.requestData.name ? "%" + req.body.requestData.name + "%" : "%%",
-        status: req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
+        status: req.body.requestData.status ? "%" + req.body.requestData.status + "%" : '%%',
         userType: req.body.requestData.userType ? "%" + req.body.requestData.userType + "%" : "%%",
         ticketType: req.body.requestData.ticketType ? "%" + req.body.requestData.ticketType + "%" : "%%"
     }
