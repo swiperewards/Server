@@ -11,7 +11,7 @@ var functions = require(path.resolve('.', 'utils/functions.js'));
 var router = express.Router();
 
 // api to update member
-router.post("/updateMember", encDecController.verifyToken, functions.isAdminAuthorized, api.updateMember);
+router.post("/updateMember", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.updateMember);
 
 
 module.exports = router;

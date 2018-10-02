@@ -1,17 +1,14 @@
-var  algorithm = 'aes-256-ctr';
-var privateKey = '37LvDSm4XvjYOh9Y';
+var cryptoJS = require("crypto-js");
+var config = require(path.resolve('./', 'config'));
 
-function decrypt(password) {
-    var decipher = crypto.createDecipher(algorithm, privateKey);
-    var dec = decipher.update(password, 'hex', 'utf8');
-    dec += decipher.final('utf8');
-    return dec;
+function decrypt(encText) {
+    var plainText = cryptoJS.AES.decrypt(encText, secretKey);
+    return plainText;
 }
 
 // method to encrypt data(password)
-function encrypt(password) {
-    var cipher = crypto.createCipher(algorithm, privateKey);
-    var crypted = cipher.update(password, 'utf8', 'hex');
-    crypted += cipher.final('hex');
-    return crypted;
+function encrypt(plainText) {
+    var encText = cryptoJS.AES.encrypt(plainText, config.secretKey);
+    return encText;
 }
+

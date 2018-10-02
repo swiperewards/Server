@@ -8,26 +8,6 @@ var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 
 
-// not used
-exports.getDeals = function (req, res) {
-
-    var deal = {
-        'location': req.body.requestData.location
-    }
-    // parameter to be passed to get deals query
-    params = [deal.location, 0]
-    db.query("select * from deals where location = ? and isDeleted = ?", params, function (error, results) {
-        if (!error) {
-            logger.info("Deals fetched successfully by user - " + req.result.userId);
-            res.send(responseGenerator.getResponse(200, "Success", results))
-        } else {
-            logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-        }
-    })
-}
-
-
 
 exports.getDealsWithPaging = function (req, res) {
 
@@ -81,7 +61,7 @@ exports.getDealsWeb = function (req, res) {
             } else {
                 var deals = {
                     'merchantName': req.body.requestData.merchantName ? ('%' + req.body.requestData.merchantName + '%') : '%%',
-                    'status': req.body.requestData.status ? ((req.body.requestData.status == 'Active') ? '%1%' : '%0%') : '%%',
+                    'status': req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
                     'location': req.body.requestData.location ? ('%' + req.body.requestData.location + '%') : '%%',
                     'fromDate': req.body.requestData.fromDate != "" ? req.body.requestData.fromDate : '',
                     'toDate': req.body.requestData.toDate != "" ? req.body.requestData.toDate : '',
@@ -89,8 +69,8 @@ exports.getDealsWeb = function (req, res) {
                     'pageSize': req.body.requestData.pageSize ? req.body.requestData.pageSize : 0
                 }
                 // parameter to be passed to GetDeals procedure
-                params = [deals.merchantName, deals.status, deals.location, deals.fromDate, deals.toDate, deals.pageNumber, deals.pageSize]
-                db.query('call GetDealsWeb(?,?,?,?,?,?,?)', params, function (error, results) {
+                params = [deals.merchantName, deals.status, deals.location, deals.fromDate, deals.toDate, deals.pageNumber, deals.pageSize, result.userId]
+                db.query('call GetDealsWeb(?,?,?,?,?,?,?,?)', params, function (error, results) {
                     if (!error) {
                         logger.error("getDealsWeb - success -" + req.result.userId);
                         var deals = [];
@@ -137,34 +117,50 @@ exports.getDealDetailsWeb = function (req, res) {
 
 
 exports.addDeal = function (req, res) {
-
-    var deal = {
-        "merchantId": req.body.requestData.merchantId ? req.body.requestData.merchantId : null,
-        "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
-        "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
-        "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
-        "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
-        "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
-        "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
-        "createdBy": req.result.userId,
-        "location": req.body.requestData.location ? req.body.requestData.location : null,
-        "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null
-    }
-    // parameter to be passed
-    params = [deal.merchantId, deal.shortDescription, deal.longDescription,
-    deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
-    deal.latitude, deal.longitude]
-    db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-        if (!error) {
-            logger.error("addDeal - ticket generated successfully by -" + deal.userId);
-            res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
+    params = [req.body.requestData.merchantId]
+    db.query('select userId from users where merchantId = ?', params, function (errorGetUserId, resultsGetUserId) {
+        if (!errorGetUserId) {
+            if(resultsGetUserId.length > 0){
+                var deal = {
+                    "merchantUserId": resultsGetUserId[0].userId,
+                    "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
+                    "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
+                    "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
+                    "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
+                    "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
+                    "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
+                    "createdBy": req.result.userId,
+                    "location": req.body.requestData.location ? req.body.requestData.location : null,
+                    "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
+                    "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+                    "status": (req.body.requestData.status == "1") ? "1" : "0"
+                }
+                // parameter to be passed
+                params = [deal.merchantUserId, deal.shortDescription, deal.longDescription,
+                deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
+                deal.latitude, deal.longitude, deal.status]
+                db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+                    if (!error) {
+                        logger.error("addDeal - ticket generated successfully by -" + deal.userId);
+                        res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
+                    }
+                    else {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    }
+                });
+            }
+            else {
+                logger.error("Something went wrong", null);
+                res.send(responseGenerator.getResponse(1083, "Something went wrong", null))
+            }
         }
         else {
-            logger.error("Error while processing your request", error);
+            logger.error("Error while processing your request", errorGetUserId);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });
+
 }
 
 
@@ -182,17 +178,20 @@ exports.updateDeal = function (req, res) {
         "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
         "location": req.body.requestData.location ? req.body.requestData.location : null,
         "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null
+        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+        "status": (req.body.requestData.status == "1") ? "1" : "0"
     }
 
-    // parameter to be passed
-    params = [deal.merchantId, deal.shortDescription, deal.longDescription,
-    deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.location,
-    deal.latitude, deal.longitude, new Date(Date.now()), deal.id, 0];
 
-    var query = "update deals set merchantId = ?, shortDescription = ?, longDescription = ?, " +
+
+    // parameter to be passed
+    params = [deal.shortDescription, deal.longDescription,
+    deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.location,
+    deal.latitude, deal.longitude, new Date(Date.now()), deal.status, deal.id, 0];
+
+    var query = "update deals set shortDescription = ?, longDescription = ?, " +
         "startDate = ?, endDate = ?, cashBonus = ?, icon = ?, location = ?, latitude = ?, longitude = ?, " +
-        "modifiedDate = ? where id = ? and isDeleted = ?";
+        "modifiedDate = ?, status = ? where id = ? and isDeleted = ?";
 
     db.query(query, params, function (errorUpdateDeal, resultsUpdateDeal) {
         if (!errorUpdateDeal) {
@@ -210,6 +209,7 @@ exports.updateDeal = function (req, res) {
             res.send(responseGenerator.getResponse(1005, msg.dbError, errorUpdateDeal))
         }
     });
+
 }
 
 

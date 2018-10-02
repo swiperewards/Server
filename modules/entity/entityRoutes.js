@@ -11,7 +11,7 @@ var functions=require(path.resolve('.','utils/functions.js'));
 var router=express.Router();
 
 // api to update entity
-router.post("/updateEntity", encDecController.verifyToken, functions.isAdminAuthorized, api.updateEntity);
+router.post("/updateEntity", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.updateEntity);
 
 
 module.exports=router;

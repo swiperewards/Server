@@ -2,9 +2,10 @@ var path = require('path');
 var config = require(path.resolve('./', 'config'));
 var logger = require(path.resolve('./logger'));
 var request = require('request');
+var functions = require(path.resolve('./', 'utils/functions.js'));
 
 function createMerchant(ReqBody, callback) {
-
+    ReqBody.requestData = functions.encryptData(ReqBody.requestData);
     request({
         url: config.transactionApiUrl + "/merchant/createMerchant",
         method: 'POST',
@@ -39,6 +40,7 @@ function getMerchants(callback) {
 
 
 function getMerchantsWithFilter(Reqbody, callback) {
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
 
     request({
         url: config.transactionApiUrl + "/merchant/getMerchantsWithFilter",
@@ -57,7 +59,7 @@ function getMerchantsWithFilter(Reqbody, callback) {
 
 
 function getMerchantDetails(Reqbody, callback) {
-
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
     request({
         url: config.transactionApiUrl + "/merchant/getMerchantDetails",
         method: 'POST',
@@ -75,7 +77,7 @@ function getMerchantDetails(Reqbody, callback) {
 
 
 function deleteMerchant(Reqbody, callback) {
-
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
     request({
         url: config.transactionApiUrl + "/merchant/deleteMerchant",
         method: 'POST',
@@ -95,6 +97,7 @@ function deleteMerchant(Reqbody, callback) {
 function updateMerchant(Reqbody, callback) {
 
     if (Reqbody.requestData.isRecordUpdated == "1") {
+        Reqbody.requestData = functions.encryptData(Reqbody.requestData);
         request({
             url: config.transactionApiUrl + "/merchant/updateMerchant",
             method: 'POST',
@@ -118,6 +121,7 @@ function updateMerchant(Reqbody, callback) {
 
 function updateEntity(Reqbody, callback) {
     if (Reqbody.requestData.isRecordUpdated == "1") {
+        Reqbody.requestData = functions.encryptData(Reqbody.requestData);
         request({
             url: config.transactionApiUrl + "/entity/updateEntity",
             method: 'POST',
@@ -136,14 +140,12 @@ function updateEntity(Reqbody, callback) {
         callback(null, { "status": 201, "message": "No change in entity data", "responseData": null, body })
     }
 
-
-
 }
 
 
 
 function createMember(Reqbody, callback) {
-
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
     request({
         url: config.transactionApiUrl + "/member/createMember",
         method: 'POST',
@@ -162,6 +164,7 @@ function createMember(Reqbody, callback) {
 
 function updateMember(Reqbody, callback) {
     if (Reqbody.requestData.isRecordUpdated == "1") {
+        Reqbody.requestData = functions.encryptData(Reqbody.requestData);
         request({
             url: config.transactionApiUrl + "/member/updateMember",
             method: 'POST',
@@ -186,7 +189,9 @@ function updateMember(Reqbody, callback) {
 
 function updateAccount(Reqbody, callback) {
 
+
     if (Reqbody.requestData.isRecordUpdated == "1") {
+        Reqbody.requestData = functions.encryptData(Reqbody.requestData);
         request({
             url: config.transactionApiUrl + "/account/updateAccount",
             method: 'POST',

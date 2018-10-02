@@ -11,25 +11,25 @@ var functions=require(path.resolve('.','utils/functions.js'));
 var router=express.Router();
 
 // api to create merchant
-router.post("/createMerchant", encDecController.verifyToken, functions.isAdminAuthorized, api.createMerchant);
+router.post("/createMerchant", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAuthorized, api.createMerchant);
 
 // api to get merchants list
-router.post("/getMerchants", encDecController.verifyToken, functions.isAdminAuthorized, api.getMerchants);
+router.post("/getMerchants", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.getMerchants);
 
 // api to get merchants list
-router.post("/getMerchantsWithFilter", encDecController.verifyToken, functions.isAdminAuthorized, api.getMerchantsWithFilter);
+router.post("/getMerchantsWithFilter", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.getMerchantsWithFilter);
 
 // api to get merchant details
-router.post("/getMerchantDetails", encDecController.verifyToken, functions.isAuthorized, api.getMerchantDetails);
+router.post("/getMerchantDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAuthorized, api.getMerchantDetails);
 
 // api to delete merchant
-router.post("/deleteMerchant", encDecController.verifyToken, functions.isAdminAuthorized, api.deleteMerchant);
+router.post("/deleteMerchant", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.deleteMerchant);
 
 // api to update merchant
-router.post("/updateMerchant", encDecController.verifyToken, functions.isAdminAuthorized, api.updateMerchant);
+router.post("/updateMerchant", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.updateMerchant);
 
 // api to update merchant details
-router.post("/updateMerchantDetails", encDecController.verifyToken, functions.isAdminAuthorized, api.updateMerchantDetails);
+router.post("/updateMerchantDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.updateMerchantDetails);
 
 
 
