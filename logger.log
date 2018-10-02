@@ -11291,3 +11291,4 @@
 {"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getRedeemOptions - Error while processing your request"}
 {"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getRedeemRequests - Error while processing your request"}
 {"message":"configController - keep alive (mysql)- Tue Oct 02 2018 11:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
