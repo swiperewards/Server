@@ -9,9 +9,6 @@ var msg = require(path.resolve('./', 'utils/errorMessages.js'));
 
 function decrypt(encryptedText) {
     var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKey);
-
-
-
     var plainText = encrypted.toString(CryptoJS.enc.Utf8);
     if (plainText == "")
         return null;
@@ -27,44 +24,77 @@ function encrypt(plainText) {
 }
 
 
-function decryptTest(encryptedText) {
-    var encrypted = CryptoJS.AES.decrypt(encryptedText, "abcdefghijklmnopqrstuvwxyz123456", { iv: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], padding: "PKCS5" });
+
+function decryptData(encryptedText) {
+    var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKeyDataEncryption);
     var plainText = encrypted.toString(CryptoJS.enc.Utf8);
     if (plainText == "")
         return null;
-    else
-        return plainText;
+    else {
+        var data = JSON.parse(plainText);
+        return data;
+    }
+}
+
+function decryptDataMiddleWare(req, res, next) {
+    if(config.isEncryptionEnabled){
+        if((req.body.requestData == undefined) || (typeof req.body.requestData == "string")) {
+            if((req.body.requestData == undefined)){
+                next();
+            }
+            else {
+                var encrypted = CryptoJS.AES.decrypt(req.body.requestData, config.secretKeyDataEncryption);
+                var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+                if (plainText == "")
+                    next();
+                else {
+                    req.body.requestData = JSON.parse(plainText);
+                    next();
+                }
+            }
+        }
+        else {
+            logger.error(msg.notAuthorized);
+            res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+        }
+    }
+    else {
+        next();
+    }
+    
 }
 
 // method to encrypt data(password)
-function encryptTest(plainText) {
-    var encrypted = CryptoJS.AES.encrypt(plainText, "abcdefghijklmnopqrstuvwxyz123456");
+function encryptData(plainText) {
+    var data = JSON.stringify(plainText);
+    var encrypted = CryptoJS.AES.encrypt(data, config.secretKeyDataEncryption);
     var encryptedText = encrypted.toString();
     return encryptedText;
 }
 
+
 /**
  * Function for Encrypting the data
  */
-function encryptData(data) {
-    var dataString = JSON.stringify(data);
-    var response = CryptoJS.AES.encrypt(dataString, config.cryptokey);
-    return response.toString();
-}
+// function encryptData(data) {
+//     var dataString = JSON.stringify(data);
+//     var response = CryptoJS.AES.encrypt(dataString, config.cryptokey);
+//     return response.toString();
+// }
 
 /**
  * Function for decrypting the data
  */
-function decryptData(data) {
-    var decrypted = CryptoJS.AES.decrypt(data, config.cryptokey);
-    if (decrypted) {
-        var userinfo = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-        return userinfo;
-    }
-    else {
-        return { "userinfo": { "error": "Please send proper token" } };
-    }
-}
+// function decryptData(data) {
+//     var decrypted = CryptoJS.AES.decrypt(data, config.cryptokey);
+//     if (decrypted) {
+//         var userinfo = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+//         return userinfo;
+//     }
+//     else {
+//         return { "userinfo": { "error": "Please send proper token" } };
+//     }
+// }
 
 function isAdminAuthorized(req, res, next) {
     var query = "select roleId from users where userId = ?";
@@ -150,9 +180,8 @@ module.exports = {
     encrypt: encrypt,
     encryptData: encryptData,
     decryptData: decryptData,
+    decryptDataMiddleWare: decryptDataMiddleWare,
     isAdminAuthorized: isAdminAuthorized,
     isAuthorized: isAuthorized,
-    isSuperAdminAuthorized: isSuperAdminAuthorized,
-    decryptTest: decryptTest,
-    encryptTest: encryptTest
+    isSuperAdminAuthorized: isSuperAdminAuthorized
 };

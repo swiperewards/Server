@@ -10,15 +10,15 @@ var encDecController = require(path.resolve('.', 'modules/config/encryptDecryptC
 var functions = require(path.resolve('.', 'utils/functions.js'));
 var router = express.Router();
 
-router.post("/addUpdateFcmToken", encDecController.verifyToken, api.addUpdateFcmToken);
+router.post("/addUpdateFcmToken", functions.decryptDataMiddleWare, encDecController.verifyToken, api.addUpdateFcmToken);
 
-router.post("/subscribeToTopic", encDecController.verifyToken, api.subscribeToTopic);
+router.post("/subscribeToTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.subscribeToTopic);
 
-router.post("/unsubscribeFromTopic", encDecController.verifyToken, api.unsubscribeFromTopic);
+router.post("/unsubscribeFromTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.unsubscribeFromTopic);
 
-router.post("/sendNotifToToken", encDecController.verifyToken, api.sendNotifToToken);
+router.post("/sendNotifToToken", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToToken);
 
-router.post("/sendNotifToTopic", encDecController.verifyToken, api.sendNotifToTopic);
+router.post("/sendNotifToTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToTopic);
 
 
 module.exports = router;

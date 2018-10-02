@@ -8,6 +8,6 @@ var router=express.Router();
 
 
 // api to update account
-router.post("/updateAccount", encDecController.verifyToken, functions.isAdminAuthorized, api.updateAccount);
+router.post("/updateAccount", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.updateAccount);
 
 module.exports=router;

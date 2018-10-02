@@ -706,8 +706,6 @@ exports.loginUserWeb = function (req, res) {
                                 logger.error("Error while processing your request", errorPrivileges);
                                 res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                             } else {
-
-
                                 var dataForToken = {
                                     emailId: results[0].emailId,
                                     fullName: results[0].fullName,
@@ -1605,11 +1603,19 @@ exports.dashboard = function (req, res) {
 }
 
 exports.test = function (req, res) {
-    var password = req.body.requestData.password;
-    var encrypted = functions.encryptTest(password);
-    var decrypted = functions.decryptTest("VC4/pTs4OLidhnu2ga18Rw==");
+    var data = req.body.requestData.data;
+    // var encrypted = functions.encryptData(password);
+    var decrypted = functions.decryptData(data);
 
-    res.send({ "pass": password, "enc": encrypted, "dec": decrypted });
+    res.send({ "dec": decrypted });
+}
+
+exports.testEncrypt = function (req, res) {
+    var data = req.body.requestData.data;
+    var encrypted = functions.encryptData(data);
+    // var decrypted = functions.decryptData(data);
+
+    res.send({ "enc": encrypted });
 }
 
 

@@ -10410,3 +10410,884 @@
 {"message":"Created logger","level":"info"}
 {"message":"Created logger","level":"info"}
 {"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 122","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 122","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getDealsWeb - success -32","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 13:00:01 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 14:00:48 GMT+0530 (India Standard Time)","level":"info"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Route.post() requires a callback function but got a [object Undefined]\nError: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","stack":"Error: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","exception":true,"date":"Mon Oct 01 2018 14:15:16 GMT+0530 (India Standard Time)","process":{"pid":6512,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":54550528,"heapTotal":37089280,"heapUsed":24624760,"external":1062530}},"os":{"loadavg":[0,0,0],"uptime":13220},"trace":[{"column":15,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js","function":"Route.(anonymous function) [as post]","line":202,"method":"(anonymous function) [as post]","native":false},{"column":19,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js","function":"Function.proto.(anonymous function) [as post]","line":510,"method":"(anonymous function) [as post]","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js","function":null,"line":68,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":702,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":713,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":612,"method":"load","native":false},{"column":12,"file":"internal/modules/cjs/loader.js","function":"tryModuleLoad","line":551,"method":null,"native":false},{"column":3,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":543,"method":"_load","native":false},{"column":17,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":650,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":20,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Route.post() requires a callback function but got a [object Undefined]\nError: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","stack":"Error: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","exception":true,"date":"Mon Oct 01 2018 14:17:08 GMT+0530 (India Standard Time)","process":{"pid":6800,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":54349824,"heapTotal":38662144,"heapUsed":24585136,"external":1054338}},"os":{"loadavg":[0,0,0],"uptime":13332},"trace":[{"column":15,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js","function":"Route.(anonymous function) [as post]","line":202,"method":"(anonymous function) [as post]","native":false},{"column":19,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js","function":"Function.proto.(anonymous function) [as post]","line":510,"method":"(anonymous function) [as post]","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js","function":null,"line":68,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":702,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":713,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":612,"method":"load","native":false},{"column":12,"file":"internal/modules/cjs/loader.js","function":"tryModuleLoad","line":551,"method":null,"native":false},{"column":3,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":543,"method":"_load","native":false},{"column":17,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":650,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":20,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Route.post() requires a callback function but got a [object Undefined]\nError: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","stack":"Error: Route.post() requires a callback function but got a [object Undefined]\n    at Route.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js:202:15)\n    at Function.proto.(anonymous function) [as post] (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js:510:19)\n    at Object.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js:68:8)\n    at Module._compile (internal/modules/cjs/loader.js:702:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:713:10)\n    at Module.load (internal/modules/cjs/loader.js:612:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:551:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:543:3)\n    at Module.require (internal/modules/cjs/loader.js:650:17)\n    at require (internal/modules/cjs/helpers.js:20:18)","exception":true,"date":"Mon Oct 01 2018 14:17:40 GMT+0530 (India Standard Time)","process":{"pid":7056,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":55631872,"heapTotal":40759296,"heapUsed":20861592,"external":59099}},"os":{"loadavg":[0,0,0],"uptime":13365},"trace":[{"column":15,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\route.js","function":"Route.(anonymous function) [as post]","line":202,"method":"(anonymous function) [as post]","native":false},{"column":19,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\express\\lib\\router\\index.js","function":"Function.proto.(anonymous function) [as post]","line":510,"method":"(anonymous function) [as post]","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userRoutes.js","function":null,"line":68,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":702,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":713,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":612,"method":"load","native":false},{"column":12,"file":"internal/modules/cjs/loader.js","function":"tryModuleLoad","line":551,"method":null,"native":false},{"column":3,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":543,"method":"_load","native":false},{"column":17,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":650,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":20,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 15:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 122","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 16:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Cards fetched successfully for user - 311","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Cards fetched successfully for user - 311","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 17:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 18:00:01 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"Admin details fetched successfully","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"Admin details fetched successfully","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"Deal fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 19:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypeDetails - ticket details fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"RedeemReq Details details fetched successfully","level":"info"}
+{"message":"RedeemReq Details details fetched successfully","level":"info"}
+{"message":"RedeemReq Details details fetched successfully","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTicketDetails - ticket details fetched successfully for user - 24","level":"info"}
+{"message":"getTicketDetails - ticket details fetched successfully for user - 24","level":"info"}
+{"message":"getTicketDetails - ticket details fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 20:00:25 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 21:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 22:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 01 2018 23:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 00:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 01:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 02:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 03:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 04:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 05:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 06:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 07:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 08:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 09:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 10:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"dashboard - Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getTicketTypes - Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getTickets - Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getRedeemOptions - Error while processing your request"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"getRedeemRequests - Error while processing your request"}
+{"message":"configController - keep alive (mysql)- Tue Oct 02 2018 11:00:00 GMT+0530 (India Standard Time)","level":"info"}
