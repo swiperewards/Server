@@ -7,6 +7,41 @@ var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'));
 
 
+function decrypt(encryptedText) {
+    var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKey);
+
+
+
+    var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+    if (plainText == "")
+        return null;
+    else
+        return plainText;
+}
+
+// method to encrypt data(password)
+function encrypt(plainText) {
+    var encrypted = CryptoJS.AES.encrypt(plainText, config.secretKey);
+    var encryptedText = encrypted.toString();
+    return encryptedText;
+}
+
+
+function decryptTest(encryptedText) {
+    var encrypted = CryptoJS.AES.decrypt(encryptedText, "abcdefghijklmnopqrstuvwxyz123456", { iv: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], padding: "PKCS5" });
+    var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+    if (plainText == "")
+        return null;
+    else
+        return plainText;
+}
+
+// method to encrypt data(password)
+function encryptTest(plainText) {
+    var encrypted = CryptoJS.AES.encrypt(plainText, "abcdefghijklmnopqrstuvwxyz123456");
+    var encryptedText = encrypted.toString();
+    return encryptedText;
+}
 
 /**
  * Function for Encrypting the data
@@ -36,8 +71,40 @@ function isAdminAuthorized(req, res, next) {
     var params = [req.result.userId];
     db.query(query, params, function (error, results) {
         if (!error) {
-            if ((results[0].roleId == 1) || (results[0].roleId == 2)) {
-                next();
+            if (results.length > 0) {
+                if ((results[0].roleId == 1) || (results[0].roleId == 2)) {
+                    next();
+                }
+                else {
+                    logger.error(msg.notAuthorized);
+                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                }
+            }
+            else {
+                logger.error(msg.notAuthorized);
+                res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+            }
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
+
+function isSuperAdminAuthorized(req, res, next) {
+    var query = "select roleId from users where userId = ?";
+    var params = [req.result.userId];
+    db.query(query, params, function (error, results) {
+        if (!error) {
+            if (results.length > 0) {
+                if (results[0].roleId == 1) {
+                    next();
+                }
+                else {
+                    logger.error(msg.notAuthorized);
+                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                }
             }
             else {
                 logger.error(msg.notAuthorized);
@@ -56,9 +123,15 @@ function isAuthorized(req, res, next) {
     var params = [req.result.userId];
     db.query(query, params, function (error, results) {
         if (!error) {
-            if ((results[0].roleId == 1) || (results[0].roleId == 2) || (results[0].roleId == 3)) {
-                req.result.roleId = results[0].roleId;
-                next();
+            if (results.length > 0) {
+                if ((results[0].roleId == 1) || (results[0].roleId == 2) || (results[0].roleId == 3)) {
+                    req.result.roleId = results[0].roleId;
+                    next();
+                }
+                else {
+                    logger.error(msg.notAuthorized);
+                    res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+                }
             }
             else {
                 logger.error(msg.notAuthorized);
@@ -73,8 +146,13 @@ function isAuthorized(req, res, next) {
 
 
 module.exports = {
+    decrypt: decrypt,
+    encrypt: encrypt,
     encryptData: encryptData,
     decryptData: decryptData,
     isAdminAuthorized: isAdminAuthorized,
-    isAuthorized: isAuthorized
+    isAuthorized: isAuthorized,
+    isSuperAdminAuthorized: isSuperAdminAuthorized,
+    decryptTest: decryptTest,
+    encryptTest: encryptTest
 };

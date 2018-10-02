@@ -24,7 +24,6 @@ function sendEmail(to, subject, message, callback) {
         to: to,
         subject: subject,
         html: message
-
     };
 
     transporter.sendMail(mailOptions, function (err, info) {

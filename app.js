@@ -7,22 +7,23 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 
 var index = require('./routes/index');
-var userRoutes=require(path.resolve('.','modules/user/userRoutes'));
-var cardRoutes=require(path.resolve('.','modules/card/cardRoutes'));
-var dealRoutes=require(path.resolve('.','modules/deal/dealRoutes'));
-var ticketRoutes=require(path.resolve('.','modules/ticket/ticketRoutes'));
-var redeemRoutes=require(path.resolve('.','modules/redeem/redeemRoutes'));
-var configRoutes=require(path.resolve('.','modules/config/configRoutes'));
-var eventRoutes=require(path.resolve('.','modules/event/eventRoutes'));
-var merchantRoutes=require(path.resolve('.','modules/merchant/merchantRoutes'));
-var entityRoutes=require(path.resolve('.','modules/entity/entityRoutes'));
-var memberRoutes=require(path.resolve('.','modules/member/memberRoutes'));
-var accountRoutes=require(path.resolve('.','modules/account/accountRoutes'));
+var userRoutes = require(path.resolve('.', 'modules/user/userRoutes'));
+var cardRoutes = require(path.resolve('.', 'modules/card/cardRoutes'));
+var dealRoutes = require(path.resolve('.', 'modules/deal/dealRoutes'));
+var ticketRoutes = require(path.resolve('.', 'modules/ticket/ticketRoutes'));
+var redeemRoutes = require(path.resolve('.', 'modules/redeem/redeemRoutes'));
+var configRoutes = require(path.resolve('.', 'modules/config/configRoutes'));
+var eventRoutes = require(path.resolve('.', 'modules/event/eventRoutes'));
+var merchantRoutes = require(path.resolve('.', 'modules/merchant/merchantRoutes'));
+var entityRoutes = require(path.resolve('.', 'modules/entity/entityRoutes'));
+var memberRoutes = require(path.resolve('.', 'modules/member/memberRoutes'));
+var accountRoutes = require(path.resolve('.', 'modules/account/accountRoutes'));
+var notificationsRoutes = require(path.resolve('.', 'modules/notifications/notificationsRoutes'));
 
 var app = express();
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb'}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb' }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,17 +56,18 @@ app.use("/merchant", merchantRoutes);
 app.use("/entity", entityRoutes);
 app.use("/member", memberRoutes);
 app.use("/account", accountRoutes);
+app.use("/notifications", notificationsRoutes);
 
-
+notificationsRoutes
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -74,7 +76,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 
 
 module.exports = app;

@@ -25,7 +25,7 @@ exports.initSwipe = function (req, res) {
                 res.send(responseGenerator.getResponse(1050, msg.tokenInvalid, null))
             } else {
                 var query = "select u.userId, u.fullName, u.city, u.latitude, u.longitude, u.userXP, ml.id as userLevel, ml.minRange, ml.maxRange,"+
-                "u.isNotificationEnabled, u.profilePicUrl, w.balance from users u join mst_level ml on u.userXP "+
+                "u.isNotificationEnabled, u.profilePicUrl, u.userReferralCode, w.balance from users u join mst_level ml on u.userXP "+
                 "between ml.minRange and ml.maxRange left outer join wallet w on u.userId = w.userId where u.isDeleted = ? and "+
                 "u.userId = ? and ml.isDeleted = ?"
                 // parameter to be passed to select deals query
@@ -64,7 +64,8 @@ exports.initSwipe = function (req, res) {
                                 "levelValue": results[0].levelValue,
                                 "isNotificationEnabled": results[0].isNotificationEnabled ? true : false,
                                 "profilePicUrl": results[0].profilePicUrl,
-                                "walletBalance": results[0].balance ? results[0].balance : 0
+                                "walletBalance": results[0].balance ? results[0].balance : 0,
+                                "userReferralCode": results[0].userReferralCode
                             }
                             logger.info("initSwipe - userData fetched successfully by user - " + result.userId);
                             res.send(responseGenerator.getResponse(200, "Success", { "generalSettings": configData, "userProfile": userData }))
