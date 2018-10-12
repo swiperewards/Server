@@ -6,6 +6,9 @@ var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
+var notifController = require(path.resolve('.', 'modules/notifications/notificationsController.js'));
+var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
+var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 
 
 exports.getRedeemOptions = function (req, res) {
@@ -209,8 +212,22 @@ exports.raiseRedeemRequest = function (req, res) {
     params = [redeemRequest.redeemModeId, redeemRequest.redeemModeOptionId, redeemRequest.userId, redeemRequest.amount, redeemRequest.details, redeemRequest.extraField]
     db.query('call RaiseRedeemRequest(?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
-            logger.error("raiseRedeemRequest - redeem request generated successfully by -" + redeemRequest.userId);
-            res.send(responseGenerator.getResponse(200, "Redeem request generated successfully", results[0][0]))
+            var message;
+            template.redeemReqAck(results[0][0].p_userName, function (err, msg) {
+                message = msg;
+            })
+            emailHandler.sendEmail(results[0][0].p_emailId, '"Redeem" Request Acknowledgement', message, function (errorEmailHandler) {
+                if (errorEmailHandler) {
+                    logger.warn("Failed to send Redeem Request Acknowledgement to linked mail");
+                    res.send(responseGenerator.getResponse(1001, "Failed to send Redeem Request Acknowledgement to linked mail", null))
+                } else {
+                    logger.info("Redeem Request Acknowledgement sent");
+
+                    logger.error("raiseRedeemRequest - redeem request generated successfully by -" + redeemRequest.userId);
+                    res.send(responseGenerator.getResponse(200, "Redeem request generated successfully", results[0][0]))
+                }
+            });
+
         }
         else {
             logger.error("raiseRedeemRequest - Error while processing your request", error);
@@ -249,13 +266,13 @@ exports.getRedeemRequests = function (req, res) {
             data.redeemRequests = redeemRequests;
             db.query("select status, count(id) as count from redeem_requests group by status", function (errorGetCounts, resultsGetCounts) {
                 if (!errorGetCounts) {
-                    if(resultsGetCounts.length > 0){
+                    if (resultsGetCounts.length > 0) {
                         data.summary = {};
-                        for(var i= 0; i<resultsGetCounts.length; i++){
-                            if(resultsGetCounts[i].status == 1){
+                        for (var i = 0; i < resultsGetCounts.length; i++) {
+                            if (resultsGetCounts[i].status == 1) {
                                 data.summary.pending = resultsGetCounts[i].count;
                             }
-                            else if(resultsGetCounts[i].status == 2){
+                            else if (resultsGetCounts[i].status == 2) {
                                 data.summary.approved = resultsGetCounts[i].count;
                             }
                             else {
@@ -264,7 +281,7 @@ exports.getRedeemRequests = function (req, res) {
                         }
                     }
                     else {
-                        data.summary = {"pending": 0, "approved": 0, "rejected": 0};
+                        data.summary = { "pending": 0, "approved": 0, "rejected": 0 };
                     }
                     res.send(responseGenerator.getResponse(200, "Success", data));
                 } else {
@@ -272,7 +289,7 @@ exports.getRedeemRequests = function (req, res) {
                     res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                 }
             })
-            
+
         } else {
             logger.error("getRedeemRequests - Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -291,9 +308,9 @@ exports.getRedeemReqDetails = function (req, res) {
     // parameter to be passed
     params = [redeemRequest.id, 0];
 
-    var query = "select r.id, r.redeemModeId, mrm.mode, r.redeemModeOptionId, r.userId, u.fullName, r.amount, r.status, "+
-    "r.modifiedDate, r.details, r.extraField, r.transactionNumber from redeem_requests r join users u on r.userId = u.userId join mst_redeem_modes mrm on r.redeemModeId = mrm.id where r.id "+
-    "= ? and r.isDeleted = ?";
+    var query = "select r.id, r.redeemModeId, mrm.mode, r.redeemModeOptionId, r.userId, u.fullName, r.amount, r.status, " +
+        "r.modifiedDate, r.details, r.extraField, r.transactionNumber from redeem_requests r join users u on r.userId = u.userId join mst_redeem_modes mrm on r.redeemModeId = mrm.id where r.id " +
+        "= ? and r.isDeleted = ?";
 
     db.query(query, params, function (errorRedeemReqDetails, resultsRedeemReqDetails) {
         if (!errorRedeemReqDetails) {
@@ -366,6 +383,19 @@ exports.approveRedeemRequest = function (req, res) {
                 res.send(responseGenerator.getResponse(1097, "Insufficient balance", null));
             }
             else {
+                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, "Approved", function () {
+                    var message;
+                    template.redeemReqApproved(results[0][0].p_userName, function (err, msg) {
+                        message = msg;
+                    })
+                    emailHandler.sendEmail(results[0][0].p_emailId, 'Redeem Request Status Changed (Approved)', message, function (errorEmailHandler) {
+                        if (errorEmailHandler) {
+                            logger.warn("Failed to send Redeem Request Status Changed (Approved) to linked mail");
+                        } else {
+                            logger.info("Redeem Request Status Changed (Approved) Acknowledgement sent");
+                        }
+                    });
+                });
                 logger.error("approveRedeemRequest - redeem request approved successfully by -" + req.result.userId);
                 res.send(responseGenerator.getResponse(200, "Redeem request approved successfully", null))
             }
@@ -394,6 +424,19 @@ exports.rejectRedeemRequest = function (req, res) {
                 res.send(responseGenerator.getResponse(1085, "Invalid id", null));
             }
             else {
+                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, "Rejected", function () {
+                    // var message;
+                    // template.redeemReqRejected(results[0][0].p_userName, function (err, msg) {
+                    //     message = msg;
+                    // })
+                    // emailHandler.sendEmail(results[0][0].p_emailId, 'Redeem Request Status Changed (Rejected)', message, function (errorEmailHandler) {
+                    //     if (errorEmailHandler) {
+                    //         logger.warn("Failed to send Redeem Request Status Changed (Rejected) to linked mail");
+                    //     } else {
+                    //         logger.info("Redeem Request Status Changed (Rejected) Acknowledgement sent");
+                    //     }
+                    // });
+                });
                 logger.error("rejectRedeemRequest - redeem request rejected successfully by -" + req.result.userId);
                 res.send(responseGenerator.getResponse(200, "Redeem request rejected successfully", null))
             }

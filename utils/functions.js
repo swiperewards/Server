@@ -16,7 +16,7 @@ function decrypt(encryptedText) {
         return plainText;
 }
 
-// method to encrypt data(password)
+// method to encrypt password
 function encrypt(plainText) {
     var encrypted = CryptoJS.AES.encrypt(plainText, config.secretKey);
     var encryptedText = encrypted.toString();
@@ -26,20 +26,32 @@ function encrypt(plainText) {
 
 
 function decryptData(encryptedText) {
-    var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKeyDataEncryption);
-    var plainText = encrypted.toString(CryptoJS.enc.Utf8);
-    if (plainText == "")
-        return null;
-    else {
-        var data = JSON.parse(plainText);
-        return data;
+    if (config.isEncryptionEnabled && encryptedText) {
+        if((typeof encryptedText) == "string") {
+            var encrypted = CryptoJS.AES.decrypt(encryptedText, config.secretKeyDataEncryption);
+            var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+            if (plainText == "")
+                return null;
+            else {
+                var data = JSON.parse(plainText);
+                return data;
+            }
+        }
+        else {
+            return encryptedText;
+        }
+        
     }
+    else {
+        return encryptedText;
+    }
+    
 }
 
 function decryptDataMiddleWare(req, res, next) {
-    if(config.isEncryptionEnabled){
-        if((req.body.requestData == undefined) || (typeof req.body.requestData == "string")) {
-            if((req.body.requestData == undefined)){
+    if (config.isEncryptionEnabled) {
+        if ((req.body.requestData == undefined) || (typeof req.body.requestData == "string")) {
+            if ((req.body.requestData == undefined)) {
                 next();
             }
             else {
@@ -61,15 +73,19 @@ function decryptDataMiddleWare(req, res, next) {
     else {
         next();
     }
-    
 }
 
-// method to encrypt data(password)
+// method to encrypt data
 function encryptData(plainText) {
-    var data = JSON.stringify(plainText);
-    var encrypted = CryptoJS.AES.encrypt(data, config.secretKeyDataEncryption);
-    var encryptedText = encrypted.toString();
-    return encryptedText;
+    if (config.isEncryptionEnabled) {
+        var data = JSON.stringify(plainText);
+        var encrypted = CryptoJS.AES.encrypt(data, config.secretKeyDataEncryption);
+        var encryptedText = encrypted.toString();
+        return encryptedText;
+    }
+    else {
+        return plainText;
+    }
 }
 
 

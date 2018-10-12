@@ -23,5 +23,9 @@ router.post("/updateDeal", functions.decryptDataMiddleWare, encDecController.ver
 // api to delete deal
 router.post("/deleteDeal", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAuthorized, api.deleteDeal);
 
+router.post("/getActiveDeals",api.getActiveDeals);
+
+router.post("/updatePoolAmounts",api.updatePoolAmounts);
+
 
 module.exports=router;

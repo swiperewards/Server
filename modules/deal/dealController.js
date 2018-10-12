@@ -90,11 +90,8 @@ exports.getDealsWeb = function (req, res) {
         });
     } else {
         logger.error(msg.tokenInvalid);
-
         res.send(responseGenerator.getResponse(1050, msg.tokenInvalid, null))
-
     }
-
 }
 
 exports.getDealDetailsWeb = function (req, res) {
@@ -104,7 +101,7 @@ exports.getDealDetailsWeb = function (req, res) {
     }
     // parameter to be passed to get deals query
     params = [0, deal.id];
-    db.query("select md.merchantId, d.id, md.entityName, d.shortDescription, d.longDescription, d.startDate, d.endDate, d.cashBonus, d.status, d.location from deals d inner join merchantdata md on d.merchantId = md.userId where d.isDeleted = ? and d.id = ?", params, function (error, results) {
+    db.query("select md.merchantId, md.entityName, d.id, d.shortDescription, d.longDescription, d.startDate, d.endDate, d.cashBonus, d.status, d.location, d.storeLocation, d.latitude, d.longitude from deals d inner join merchantdata md on d.merchantId = md.merchantId where d.isDeleted = ? and d.id = ?", params, function (error, results) {
         if (!error) {
             logger.info("Deal fetched successfully by user - " + req.result.userId);
             res.send(responseGenerator.getResponse(200, "Success", results[0]))
@@ -117,46 +114,33 @@ exports.getDealDetailsWeb = function (req, res) {
 
 
 exports.addDeal = function (req, res) {
-    params = [req.body.requestData.merchantId]
-    db.query('select userId from users where merchantId = ?', params, function (errorGetUserId, resultsGetUserId) {
-        if (!errorGetUserId) {
-            if(resultsGetUserId.length > 0){
-                var deal = {
-                    "merchantUserId": resultsGetUserId[0].userId,
-                    "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
-                    "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
-                    "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
-                    "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
-                    "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
-                    "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
-                    "createdBy": req.result.userId,
-                    "location": req.body.requestData.location ? req.body.requestData.location : null,
-                    "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-                    "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
-                    "status": (req.body.requestData.status == "1") ? "1" : "0"
-                }
-                // parameter to be passed
-                params = [deal.merchantUserId, deal.shortDescription, deal.longDescription,
-                deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
-                deal.latitude, deal.longitude, deal.status]
-                db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                    if (!error) {
-                        logger.error("addDeal - ticket generated successfully by -" + deal.userId);
-                        res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
-                    }
-                    else {
-                        logger.error("Error while processing your request", error);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    }
-                });
-            }
-            else {
-                logger.error("Something went wrong", null);
-                res.send(responseGenerator.getResponse(1083, "Something went wrong", null))
-            }
+    
+    var deal = {
+        "merchantId": req.body.requestData.merchantId,
+        "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
+        "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
+        "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
+        "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
+        "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
+        "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
+        "createdBy": req.result.userId,
+        "location": req.body.requestData.location ? req.body.requestData.location : null,
+        "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
+        "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+        "status": (req.body.requestData.status == "1") ? "1" : "0",
+        "storeLocation": req.body.requestData.storeLocation ? req.body.requestData.storeLocation : null
+    }
+    // parameter to be passed
+    params = [deal.merchantId, deal.shortDescription, deal.longDescription,
+    deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
+    deal.latitude, deal.longitude, deal.status, deal.storeLocation]
+    db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+        if (!error) {
+            logger.error("addDeal - ticket generated successfully by -" + deal.userId);
+            res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
         }
         else {
-            logger.error("Error while processing your request", errorGetUserId);
+            logger.error("Error while processing your request", error);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });
@@ -179,7 +163,8 @@ exports.updateDeal = function (req, res) {
         "location": req.body.requestData.location ? req.body.requestData.location : null,
         "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
         "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
-        "status": (req.body.requestData.status == "1") ? "1" : "0"
+        "status": (req.body.requestData.status == "1") ? "1" : "0",
+        "storeLocation": req.body.requestData.storeLocation ? req.body.requestData.storeLocation : null
     }
 
 
@@ -187,11 +172,11 @@ exports.updateDeal = function (req, res) {
     // parameter to be passed
     params = [deal.shortDescription, deal.longDescription,
     deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.location,
-    deal.latitude, deal.longitude, new Date(Date.now()), deal.status, deal.id, 0];
+    deal.latitude, deal.longitude, new Date(Date.now()), deal.status, deal.storeLocation, deal.id, 0];
 
     var query = "update deals set shortDescription = ?, longDescription = ?, " +
         "startDate = ?, endDate = ?, cashBonus = ?, icon = ?, location = ?, latitude = ?, longitude = ?, " +
-        "modifiedDate = ?, status = ? where id = ? and isDeleted = ?";
+        "modifiedDate = ?, status = ?, storeLocation = ? where id = ? and isDeleted = ?";
 
     db.query(query, params, function (errorUpdateDeal, resultsUpdateDeal) {
         if (!errorUpdateDeal) {
@@ -241,4 +226,92 @@ exports.deleteDeal = function (req, res) {
             res.send(responseGenerator.getResponse(1005, msg.dbError, errorDeleteDeal))
         }
     });
+}
+
+
+
+
+
+/**
+ * This api function is used to get the active deals with their merchant id, deal_id, start and end date.
+ * This function will get called from Nouvo transaction server 2.
+ */
+exports.getActiveDeals = function (req, res) {
+    var query = 'select deals.id, merchantData.merchantId,deals.startDate, deals.endDate from deals ' +
+        'inner join merchantData on deals.merchantId=merchantData.merchantId ' +
+        'where status =1 and now()>=startDate and now() <=endDate';
+
+    db.query(query, function (error, results){
+        if (!error) {
+            res.send(responseGenerator.getResponse(200, "Success", results))
+        } else {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+        }
+    })
+}
+
+
+/**
+ * This api function is used to update the below parameters in deal table.
+ * 1) Total transactions amount of nouvo users
+ * 2) Total transactoins of non nouvo users. 
+ * 3) Calcuate the pool amount of the deal.
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.updatePoolAmounts = function (req, res) {
+    // saveTransactionToDatabase(res,splashResponse.body.data)
+    if (req.body != null) {
+
+        db.beginTransaction(function (err) {
+            if (err) {
+                throw err;
+            }
+            console.log('Total pool updates received ' + req.body.length);
+            var arr = [];
+            //arr.push();
+            each(req.body,
+                function (poolDetail, next) {
+                    arr.push(poolDetail);
+                    if (poolDetail.registeredSwipeAmt != null && poolDetail.nonRegisteredSwipeAmt != null && poolDetail.deal_id != null) {
+                        var totalSwipeAmount = poolDetail.registeredSwipeAmt + poolDetail.nonRegisteredSwipeAmt;
+                        var params = [poolDetail.registeredSwipeAmt, poolDetail.nonRegisteredSwipeAmt,
+                            totalSwipeAmount, poolDetail.deal_id]; { }
+
+                        //Updating pool amount using query and forumla
+                        //Pool Amount compounding = Tbase + ((Tbasis/100)*(Transactions/100)) 
+                        var updateQuery = 'update deals d set d.registeredTransactions=?, d.nonRegisteredTransactions=?, ' +
+                            'd.totalPoolAmount=d.merchantContribution + (d.tBasis/100) * ((?)/100) where d.id=?';
+
+                        db.query(updateQuery, params, function (err, result) {
+                            if (err) {
+                                console.log('Callback Transaction Error.' + err);
+                                db.rollback(function () {
+                                    console.log('Rollbacking Transactions.' + err);
+                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                });
+                            }
+                            next(err, arr)
+                        });
+                    }
+                },
+                function (err, transformedItems) {
+                    if (!err) {
+                        db.commit(function (err) {
+                            if (err) {
+                                db.rollback(function () {
+                                    console.log('Transaction Error while commiting.' + err);
+                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                });
+                            } else {
+                                console.log('Pool amount update completed at server 1.');
+                                res.send(responseGenerator.getResponse(200, "Success", null))
+                            }
+                        });
+
+                    }
+                })
+        });
+    }
 }
