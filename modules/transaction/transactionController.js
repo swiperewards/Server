@@ -188,8 +188,6 @@ function updateMember(Reqbody, callback) {
 
 
 function updateAccount(Reqbody, callback) {
-
-
     if (Reqbody.requestData.isRecordUpdated == "1") {
         Reqbody.requestData = functions.encryptData(Reqbody.requestData);
         request({
@@ -220,6 +218,43 @@ function updateAccount(Reqbody, callback) {
 // }
 
 
+function createCustomer(Reqbody, callback) {
+
+    request({
+        url: config.transactionApiUrl + "/customer/createCustomer",
+        method: 'POST',
+        headers:
+            {
+                'Content-Type': 'application/json'
+            },
+        json: true,
+        body: Reqbody
+    }, function (err, res) {
+        callback(err, res);
+    })
+
+}
+
+
+function createToken(Reqbody, callback) {
+
+    request({
+        url: config.transactionApiUrl + "/customer/createToken",
+        method: 'POST',
+        headers:
+            {
+                'Content-Type': 'application/json'
+            },
+        json: true,
+        body: Reqbody
+    }, function (err, res) {
+        callback(err, res);
+    })
+
+}
+
+
+
 
 
 module.exports = {
@@ -232,6 +267,8 @@ module.exports = {
     updateEntity: updateEntity,
     createMember: createMember,
     updateMember: updateMember,
-    updateAccount: updateAccount
+    updateAccount: updateAccount,
+    createCustomer:createCustomer,
+    createToken:createToken
 }
 

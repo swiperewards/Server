@@ -6,6 +6,8 @@ var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
+var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
+var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 
 
 exports.getTicketTypes = function (req, res) {
@@ -142,14 +144,28 @@ exports.generateTicket = function (req, res) {
         "userId": req.result.userId,
         "ticketTypeId": req.body.requestData.ticketTypeId,
         "feedback": req.body.requestData.feedback,
-        "userCategory": req.body.requestData.userCategory
+        "userCategory": req.body.requestData.userCategory,
+        "merchantId": req.body.requestData.merchantId
     }
     // parameter to be passed to select ticket types
-    params = [ticket.userId, ticket.ticketTypeId, ticket.feedback, ticket.userCategory]
-    db.query('call GenerateTicket(?,?,?,?)', params, function (error, results) {
+    params = [ticket.userId, ticket.ticketTypeId, ticket.feedback, ticket.userCategory, ticket.merchantId]
+    db.query('call GenerateTicket(?,?,?,?,?)', params, function (error, results) {
         if (!error) {
-            logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
-            res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
+            var message;
+            template.contactUsReqAck(results[0][0].p_userName, function (err, msg) {
+                message = msg;
+            })
+            emailHandler.sendEmail(results[0][0].p_emailId, '"Contact us" Request Acknowledgement #' + results[0][0].p_ticketNumber, message, function (errorEmailHandler) {
+                if (errorEmailHandler) {
+                    logger.warn("Failed to send Contact us - request ack to linked mail");
+                    res.send(responseGenerator.getResponse(1001, "Failed to send Contact us - request ack to linked mail", null))
+                } else {
+                    logger.info("Contact us - request ack sent");
+
+                    logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
+                    res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
+                }
+            });
         }
         else {
             logger.error("Error while processing your request", error);
@@ -234,6 +250,21 @@ exports.resolveTicket = function (req, res) {
     db.query("update ticket set ticketTypeId = ?, resolveDescription = ?, replyMessage = ?, status = ?, modifiedDate = ? where id = ? and isDeleted = ?", params, function (error, results) {
         if (!error) {
             if (results.affectedRows == 1) {
+                // var message;
+                // template.ticketResolved(results[0][0].p_userName, function (err, msg) {
+                //     message = msg;
+                // })
+                // emailHandler.sendEmail(results[0][0].p_emailId, '"Contact us" Request Acknowledgement #' + results[0][0].p_ticketNumber, message, function (errorEmailHandler) {
+                //     if (errorEmailHandler) {
+                //         logger.warn("Failed to send Contact us - request ack to linked mail");
+                //         res.send(responseGenerator.getResponse(1001, "Failed to send Contact us - request ack to linked mail", null))
+                //     } else {
+                //         logger.info("Contact us - request ack sent");
+
+                //         logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
+                //         res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
+                //     }
+                // });
                 logger.info("resolveTicket - ticket resolved successfully for user - " + req.result.userId);
                 res.send(responseGenerator.getResponse(200, "Ticket resolved successfully", null))
             }

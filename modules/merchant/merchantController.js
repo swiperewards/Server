@@ -15,121 +15,123 @@ var functions = require(path.resolve('./', 'utils/functions.js'));
 
 exports.createMerchant = function (req, res) {
     var Reqbody = req.body;
-    var registeredWithNouvo = req.body.requestData.registeredWithNouvo;
+    // var registeredWithNouvo = req.body.requestData.registeredWithNouvo;
     var registeredEmail = req.body.requestData.registeredEmail;
-    if (registeredWithNouvo) {
+    // if (registeredWithNouvo) {
 
-        if (registeredEmail == Reqbody.requestData.entityEmail) {
-            Reqbody.userId = req.result.userId;
+    // if (registeredEmail == Reqbody.requestData.entityEmail) {
+    Reqbody.userId = req.result.userId;
 
-            transaction.createMerchant(Reqbody, function (error, response) {
-                if (error) {
-                    logger.info("Error while creating merchants - " + req.result.userId);
-                    res.send(responseGenerator.getResponse(1081, msg.splashError, error));
-                }
-                else if (response) {
-                    if (response.body.status == 200) {
-                        logger.info("Merchant added successfully by user - " + req.result.userId);
-                        var params = [response.body.responseData.fullName, response.body.responseData.email, "Web",
-                        response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
-                        db.query('call UpdateMerchant(?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
-                            if (!errorUpdateMerchant) {
-                                res.send(response.body);
-                            } else {
-                                logger.error("Error while processing your request", errorUpdateMerchant);
-                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                            }
-                        })
-                    }
-                    else {
-                        logger.info("Create merchant - something went wrong" + req.result.userId);
+    transaction.createMerchant(Reqbody, function (error, response) {
+        if (error) {
+            logger.info("Error while creating merchants - " + req.result.userId);
+            res.send(responseGenerator.getResponse(1081, msg.splashError, error));
+        }
+        else if (response) {
+            if (response.body.status == 200) {
+                logger.info("Merchant added successfully by user - " + req.result.userId);
+                decryptedResponse = functions.decryptData(response.body.responseData);
+                decryptedRequest = functions.decryptData(req.body.requestData);
+                var params = [decryptedResponse.fullName, decryptedRequest.registeredEmail, "Web",
+                decryptedResponse.merchantId, decryptedResponse.entityName, decryptedResponse.entityId, decryptedResponse.accountId, decryptedResponse.memberId];
+                db.query('call UpdateMerchant(?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
+                    if (!errorUpdateMerchant) {
                         res.send(response.body);
+                    } else {
+                        logger.error("Error while processing your request", errorUpdateMerchant);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                     }
-
-                }
-            });
-        }
-        else {
-            logger.warn("Business email must be same as registered email address");
-            res.send(responseGenerator.getResponse(1093, "Business email must be same as registered email address", null));
-        }
-    }
-    else {
-        Reqbody.userId = req.result.userId;
-        var query = {
-            sql: "select userId, fullName from users where emailId = ?",
-            values: [Reqbody.requestData.entityEmail]
-        };
-
-        db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
-            if (errorEmailCheck) {
-                logger.error("Error while processing your request", errorEmailCheck);
-                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-            } else {
-                if (resultsEmailCheck.length == 0) {
-                    transaction.createMerchant(Reqbody, function (error, response) {
-                        if (error) {
-                            logger.info("Error while creating merchants - " + req.result.userId);
-                            res.send(responseGenerator.getResponse(1081, msg.splashError, error));
-                        }
-                        else if (response) {
-                            if (response.body.status == 200) {
-                                logger.info("Merchant added successfully by user - " + req.result.userId);
-                                var randomPassword = randomstring.generate(8);
-                                var encPass = functions.encrypt(randomPassword);
-                                var params = [response.body.responseData.fullName, response.body.responseData.email, encPass, "Web",
-                                response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
-                                db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                                    if (!error) {
-                                        var token = randomstring.generate(6);
-
-                                        query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
-                                        params = [token, Reqbody.requestData.entityEmail];
-                                        db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
-                                            if (!errorInsertActivateToken) {
-                                                var message;
-                                                template.activateAccount(response.body.responseData.fullName, token, 3, randomPassword, function (err, msg) {
-                                                    message = msg;
-                                                })
-                                                emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
-                                                    if (errorEmailHandler) {
-                                                        logger.warn("Failed to send Verification link to linked mail");
-                                                        // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
-                                                        res.send(response.body);
-                                                    } else {
-                                                        logger.info("Verification link sent to mail");
-                                                        res.send(response.body);
-                                                    }
-                                                });
-                                            } else {
-                                                logger.error("Error while processing your request", errorInsertActivateToken);
-                                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
-                                            }
-                                        })
-
-                                    } else {
-                                        logger.error("Error while processing your request", error);
-                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                                    }
-                                })
-                            }
-                            else {
-                                logger.info("Create merchant - something went wrong" + req.result.userId);
-                                res.send(response.body);
-                            }
-
-                        }
-                    });
-                }
-                else {
-                    logger.warn("Email Already Exists");
-                    res.send(responseGenerator.getResponse(1004, "Could not able to create new merchant as this mail id is already exists, please use different mail id", null));
-                }
-
+                })
             }
-        });
+            else {
+                logger.info("Create merchant - something went wrong" + req.result.userId);
+                res.send(response.body);
+            }
 
-    }
+        }
+    });
+    // }
+    // else {
+    //     logger.warn("Business email must be same as registered email address");
+    //     res.send(responseGenerator.getResponse(1093, "Business email must be same as registered email address", null));
+    // }
+    // }
+    // else {
+    //     Reqbody.userId = req.result.userId;
+    //     var query = {
+    //         sql: "select userId, fullName from users where emailId = ?",
+    //         values: [Reqbody.requestData.entityEmail]
+    //     };
+
+    //     db.query(query, function (errorEmailCheck, resultsEmailCheck, fieldsEmailCheck) {
+    //         if (errorEmailCheck) {
+    //             logger.error("Error while processing your request", errorEmailCheck);
+    //             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+    //         } else {
+    //             if (resultsEmailCheck.length == 0) {
+    //                 transaction.createMerchant(Reqbody, function (error, response) {
+    //                     if (error) {
+    //                         logger.info("Error while creating merchants - " + req.result.userId);
+    //                         res.send(responseGenerator.getResponse(1081, msg.splashError, error));
+    //                     }
+    //                     else if (response) {
+    //                         if (response.body.status == 200) {
+    //                             logger.info("Merchant added successfully by user - " + req.result.userId);
+    //                             var randomPassword = randomstring.generate(8);
+    //                             var encPass = functions.encrypt(randomPassword);
+    //                             var params = [response.body.responseData.fullName, response.body.responseData.email, encPass, "Web",
+    //                             response.body.responseData.merchantId, response.body.responseData.entityName, response.body.responseData.entityId, response.body.responseData.accountId, response.body.responseData.memberId];
+    //                             db.query('call CreateMerchant(?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+    //                                 if (!error) {
+    //                                     var token = randomstring.generate(6);
+
+    //                                     query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+    //                                     params = [token, Reqbody.requestData.entityEmail];
+    //                                     db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+    //                                         if (!errorInsertActivateToken) {
+    //                                             var message;
+    //                                             template.activateAccount(response.body.responseData.fullName, token, 3, randomPassword, function (err, msg) {
+    //                                                 message = msg;
+    //                                             })
+    //                                             emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+    //                                                 if (errorEmailHandler) {
+    //                                                     logger.warn("Failed to send Verification link to linked mail");
+    //                                                     // res.send(responseGenerator.getResponse(1001, "Merchant created successfully, Failed to send Verification link to linked mail", response.body.responseData))
+    //                                                     res.send(response.body);
+    //                                                 } else {
+    //                                                     logger.info("Verification link sent to mail");
+    //                                                     res.send(response.body);
+    //                                                 }
+    //                                             });
+    //                                         } else {
+    //                                             logger.error("Error while processing your request", errorInsertActivateToken);
+    //                                             res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+    //                                         }
+    //                                     })
+
+    //                                 } else {
+    //                                     logger.error("Error while processing your request", error);
+    //                                     res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+    //                                 }
+    //                             })
+    //                         }
+    //                         else {
+    //                             logger.info("Create merchant - something went wrong" + req.result.userId);
+    //                             res.send(response.body);
+    //                         }
+
+    //                     }
+    //                 });
+    //             }
+    //             else {
+    //                 logger.warn("Email Already Exists");
+    //                 res.send(responseGenerator.getResponse(1004, "Could not able to create new merchant as this mail id is already exists, please use different mail id", null));
+    //             }
+
+    //         }
+    //     });
+
+    // }
 
 
 }
@@ -151,18 +153,36 @@ exports.getMerchants = function (req, res) {
 
 
 exports.getMerchantsWithFilter = function (req, res) {
-    var Reqbody = req.body;
-    Reqbody.userId = req.result.userId;
-    transaction.getMerchantsWithFilter(Reqbody, function (error, response) {
-        if (error) {
-            logger.info("Error while fetching merchants - " + req.result.userId);
-            res.send(responseGenerator.getResponse(1088, "Error while fetching merchants", error));
+    var userId = req.body.requestData.userId;
+
+    var params = [userId, 0];
+
+    var query = "Select merchantId from merchantdata where userId = ? and isDeleted = ?";
+
+    db.query(query, params, function (errorGetMerchants, resultsMerchants) {
+        if (!errorGetMerchants) {
+            if (resultsMerchants.length > 0) {
+                req.body.requestData.merchantsList = resultsMerchants;
+                transaction.getMerchantsWithFilter(req.body, function (error, response) {
+                    if (error) {
+                        logger.info("Error while fetching merchants - " + req.result.userId);
+                        res.send(responseGenerator.getResponse(1088, "Error while fetching merchants", error));
+                    }
+                    else if (response) {
+                        logger.info("Merchants fetched successfully by user - " + req.result.userId);
+                        res.send(response.body);
+                    }
+                });
+            }
+            else {
+                logger.info("No business added for merchant - " + userId);
+                res.send(responseGenerator.getResponse(200, "Success", []));
+            }
+        } else {
+            logger.error("Error while processing your request", errorGetMerchants);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorGetMerchants));
         }
-        else if (response) {
-            logger.info("Merchants fetched successfully by user - " + req.result.userId);
-            res.send(response.body);
-        }
-    });
+    })
 }
 
 exports.getMerchantDetails = function (req, res) {
@@ -191,7 +211,23 @@ exports.deleteMerchant = function (req, res) {
         }
         else if (response) {
             logger.info("Merchant deleted successfully by user - " + req.result.userId);
-            res.send(response.body);
+            decryptedRequest = functions.decryptData(req.body.requestData);
+            db.query("update merchantdata set inactive = ? where merchantId = ?", [decryptedRequest.inactive, decryptedRequest.merchantId], function (error, results) {
+                if (!error) {
+                    res.send(response.body);
+                }
+                else {
+                    var Reqbody = req.body;
+                    Reqbody.userId = req.result.userId;
+                    Reqbody.requestData = functions.decryptData(Reqbody.requestData);
+                    Reqbody.requestData.inactive = !Reqbody.requestData.inactive;
+                    transaction.deleteMerchant(Reqbody, function (error, response) {
+                        logger.info("Error while deleting merchant - " + req.result.userId + " - " + error);
+                    })
+                    res.send(responseGenerator.getResponse(1083, "Something went wrong", error));
+                }
+            });
+
         }
     });
 }
@@ -237,6 +273,7 @@ exports.updateMerchantDetails = function (req, res) {
             obj.code = responseUpdateMerchant.body.status;
             obj.description = responseUpdateMerchant.body.message;
             //**change */
+            responseUpdateMerchant.body.responseData = functions.decryptData(responseUpdateMerchant.body.responseData);
             (responseUpdateMerchant.body.status == 200) ? (obj.data = responseUpdateMerchant.body.responseData) : (obj.data = responseUpdateMerchant.body.responseData);
             data.push(obj);
             if (responseUpdateMerchant.body.status == 200) {
@@ -258,8 +295,7 @@ exports.updateMerchantDetails = function (req, res) {
                     // res.send(responseGenerator.getResponse(200, "Error while fetching merchants", errorUpdateEntity));
                 }
                 else if (responseUpdateEntity) {
-
-
+                    responseUpdateEntity.body.responseData = functions.decryptData(responseUpdateEntity.body.responseData);
                     logger.info("Entity updated successfully by user - " + req.result.userId);
                     obj = {};
                     obj.code = responseUpdateEntity.body.status;
@@ -273,7 +309,6 @@ exports.updateMerchantDetails = function (req, res) {
                     }
                     each(Reqbody.requestData.memberData,
                         function (member, next) {
-
                             //perform async operation with item
                             if (member.isNewRecord == "1") {
                                 transaction.createMember({ "requestData": member }, function (errorCreateMember, responseCreateMember) {
@@ -287,6 +322,7 @@ exports.updateMerchantDetails = function (req, res) {
                                         // res.send(responseGenerator.getResponse(200, "Error while fetching merchants", errorUpdateEntity));
                                     }
                                     else if (responseCreateMember) {
+                                        responseCreateMember.body.responseData = functions.decryptData(responseCreateMember.body.responseData);
                                         if (responseCreateMember.body.status == 200) {
                                             if (member.primary == 1) {
                                                 merchantInfo.memberId = member.id;
@@ -319,6 +355,7 @@ exports.updateMerchantDetails = function (req, res) {
                                         // res.send(responseGenerator.getResponse(200, "Error while fetching merchants", errorUpdateEntity));
                                     }
                                     else if (responseUpdateMember) {
+                                        responseUpdateMember.body.responseData = functions.decryptData(responseUpdateMember.body.responseData);
                                         if (responseUpdateMember.body.status == 200) {
                                             if (member.primary == 1) {
                                                 merchantInfo.memberId = member.memberId;
@@ -353,6 +390,7 @@ exports.updateMerchantDetails = function (req, res) {
                                     // res.send(responseGenerator.getResponse(200, "Error while fetching merchants", errorUpdateEntity));
                                 }
                                 else if (responseUpdateAccount) {
+                                    responseUpdateAccount.body.responseData = functions.decryptData(responseUpdateAccount.body.responseData);
                                     if (responseUpdateAccount.body.status == 200) {
                                         if (responseUpdateAccount.body.primary == 1) {
                                             merchantInfo.accountId = responseUpdateAccount.body.id;
@@ -365,9 +403,14 @@ exports.updateMerchantDetails = function (req, res) {
                                     obj.description = responseUpdateAccount.body.message;
                                     (responseUpdateAccount.body.status == 200) ? (obj.data = responseUpdateAccount.body.responseData) : (obj.data = responseUpdateAccount.body.responseData);
                                     data.push(obj);
-                                    updateMerchantData(Reqbody.requestData.merchantData.merchantId, merchantInfo, function () {
+                                    // updateMerchantData(Reqbody.requestData.merchantData.merchantId, merchantInfo, function () {
+
+                                    // })
+
+                                    decryptedRequest = functions.decryptData(req.body.requestData);
+                                    db.query("update merchantdata set entityName = ? where merchantId = ?", [merchantInfo.entityName, decryptedRequest.merchantData.merchantId], function (error, results) {
                                         res.send(responseGenerator.getResponse(200, "Success", data));
-                                    })
+                                    });
 
                                 }
                             });
@@ -379,49 +422,57 @@ exports.updateMerchantDetails = function (req, res) {
     });
 }
 
-function updateMerchantData(merchant, merchantInfo, callback) {
-    db.query("select * from users where merchantId = ?", [merchant], function (errorGetUserData, responseGetUserData) {
-        if (!errorGetUserData && (responseGetUserData.length > 0)) {
-            dataToUpdateInUsers = [];
-            merchantInfo.fullName ? (dataToUpdateInUsers.push(merchantInfo.fullName)) : (dataToUpdateInUsers.push(responseGetUserData[0].fullName))
-            merchantInfo.emailId ? (dataToUpdateInUsers.push(merchantInfo.emailId)) : (dataToUpdateInUsers.push(responseGetUserData[0].emailId))
-            dataToUpdateInUsers.push(new Date(Date.now()));
-            dataToUpdateInUsers.push(merchant);
-            db.query("update users set fullName = ?, emailId = ?, modifiedDate = ? where merchantId = ?", dataToUpdateInUsers, function (errorUpdateUserData, responseUpdateUserData) {
-                if (!errorUpdateUserData) {
-                    db.query("select * from merchantdata where merchantId = ?", [merchant], function (errorGetMerchantData, responseGetMerchantData) {
-                        if (!errorGetMerchantData && (responseGetMerchantData.length > 0)) {
-                            dataToUpdateInMerchants = [];
-                            merchantInfo.entityName ? (dataToUpdateInMerchants.push(merchantInfo.entityName)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].entityName))
-                            merchantInfo.entityId ? (dataToUpdateInMerchants.push(merchantInfo.entityId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].entityId))
-                            merchantInfo.accountId ? (dataToUpdateInMerchants.push(merchantInfo.accountId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].accountId))
-                            merchantInfo.memberId ? (dataToUpdateInMerchants.push(merchantInfo.memberId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].memberId))
+// function updateMerchantData(merchant, merchantInfo, callback) {
+//     db.query("select userId from merchantdata where merchantId = ?", [merchant], function (errorGetUserId, resultGetUserId) {
+//         if (!errorGetUserId && (resultGetUserId.length > 0)) {
+//             db.query("select * from users where userId = ?", [resultGetUserId[0].userId], function (errorGetUserData, responseGetUserData) {
+//                 if (!errorGetUserData && (responseGetUserData.length > 0)) {
+//                     dataToUpdateInUsers = [];
+//                     merchantInfo.fullName ? (dataToUpdateInUsers.push(merchantInfo.fullName)) : (dataToUpdateInUsers.push(responseGetUserData[0].fullName))
+//                     merchantInfo.emailId ? (dataToUpdateInUsers.push(merchantInfo.emailId)) : (dataToUpdateInUsers.push(responseGetUserData[0].emailId))
+//                     dataToUpdateInUsers.push(new Date(Date.now()));
+//                     dataToUpdateInUsers.push(resultGetUserId[0].userId);
+//                     db.query("update users set fullName = ?, emailId = ?, modifiedDate = ? where userId = ?", dataToUpdateInUsers, function (errorUpdateUserData, responseUpdateUserData) {
+//                         if (!errorUpdateUserData) {
+//                             db.query("select * from merchantdata where merchantId = ?", [merchant], function (errorGetMerchantData, responseGetMerchantData) {
+//                                 if (!errorGetMerchantData && (responseGetMerchantData.length > 0)) {
+//                                     dataToUpdateInMerchants = [];
+//                                     merchantInfo.entityName ? (dataToUpdateInMerchants.push(merchantInfo.entityName)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].entityName))
+//                                     merchantInfo.entityId ? (dataToUpdateInMerchants.push(merchantInfo.entityId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].entityId))
+//                                     merchantInfo.accountId ? (dataToUpdateInMerchants.push(merchantInfo.accountId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].accountId))
+//                                     merchantInfo.memberId ? (dataToUpdateInMerchants.push(merchantInfo.memberId)) : (dataToUpdateInMerchants.push(responseGetMerchantData[0].memberId))
 
-                            dataToUpdateInMerchants.push(merchant);
-                            db.query("update merchantdata set entityName = ?, entityId = ?, accountId = ?, memberId = ? where merchantId = ?", dataToUpdateInMerchants, function (errorUpdateMerchantData, responseUpdateMerchantData) {
-                                if (!errorUpdateMerchantData) {
-                                    callback();
-                                }
-                                else {
-                                    callback();
-                                }
-                            })
+//                                     dataToUpdateInMerchants.push(merchant);
+//                                     db.query("update merchantdata set entityName = ?, entityId = ?, accountId = ?, memberId = ? where merchantId = ?", dataToUpdateInMerchants, function (errorUpdateMerchantData, responseUpdateMerchantData) {
+//                                         if (!errorUpdateMerchantData) {
+//                                             callback();
+//                                         }
+//                                         else {
+//                                             callback();
+//                                         }
+//                                     })
 
-                        }
-                        else {
-                            callback();
-                        }
-                    })
-                }
-                else {
-                    callback();
-                }
-            })
+//                                 }
+//                                 else {
+//                                     callback();
+//                                 }
+//                             })
+//                         }
+//                         else {
+//                             callback();
+//                         }
+//                     })
 
-        }
-        else {
-            callback();
-        }
-    })
+//                 }
+//                 else {
+//                     callback();
+//                 }
+//             })
+//         }
+//         else {
+//             callback();
+//         }
+//     })
 
-}
+
+// }

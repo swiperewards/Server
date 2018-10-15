@@ -1,8 +1,11 @@
 var path = require('path');
-var db = require(path.resolve('.', 'modules/database/databaseConnector.js'));
-var enums = require(path.resolve('.', 'modules/constant/enums.js'));
 var jwt = require('jsonwebtoken');
 var nodeMailer = require('nodemailer');
+var fs = require("fs");
+var randomstring = require("randomstring");
+var DateDiff = require('date-diff');
+var db = require(path.resolve('.', 'modules/database/databaseConnector.js'));
+var enums = require(path.resolve('.', 'modules/constant/enums.js'));
 var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'));
 var config = require(path.resolve('./', 'config'));
 var logger = require(path.resolve('./logger'));
@@ -11,9 +14,8 @@ var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 var msg = require(path.resolve('./', 'utils/errorMessages.js'));
 var functions = require(path.resolve('./', 'utils/functions.js'));
 var encryptDecrypt = require(path.resolve('./', 'utils/functions.js'));
-var fs = require("fs");
-var randomstring = require("randomstring");
-var DateDiff = require('date-diff');
+var notifController = require(path.resolve('.', 'modules/notifications/notificationsController.js'));
+var transaction = require(path.resolve('.', 'modules/transaction/transactionController.js'));
 
 // npm required for the s3 storage
 var aws = require('aws-sdk');
@@ -60,6 +62,51 @@ Codes used :
 */
 
 exports.registerUser = function (req, res) {
+    var getUserQuery = {
+        sql: "select * from users where emailId = ? and isDeleted = 0",
+        values: [req.body.requestData.emailId]
+    };
+
+    db.query(getUserQuery, function (errorCheckMailExist, resultsCheckMailExist, fields) {
+        if (errorCheckMailExist) {
+            logger.error("1 Error while processing your request", errorCheckMailExist);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorCheckMailExist))
+        } else {
+            if (resultsCheckMailExist && resultsCheckMailExist.length > 0) {
+                // next();
+                // logger.warn("Email Already Exists");
+                registerUserInternal(req, res);
+
+                // res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+            } else {
+                //splash registration followed by swipe registration
+                var Reqbody = {};
+                Reqbody.first = req.body.requestData.fullName;
+                Reqbody.last = req.body.requestData.fullName;
+                Reqbody.email = req.body.requestData.emailId;
+
+                transaction.createCustomer(Reqbody, function (error, responsecustomer) {
+                    if (error) {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1084, msg.splashError, error));
+                    } else {
+                        if (responsecustomer != null && responsecustomer.body != null && responsecustomer.body.status != null && responsecustomer.body.status == 200 &&
+                            responsecustomer.body.responseData != null && responsecustomer.body.responseData.length > 0) {
+                            req.body.requestData.customerId = responsecustomer.body.responseData[0].id;
+                            // next();
+                            registerUserInternal(req, res);
+
+                        } else {
+                            res.send(responseGenerator.getResponse(1005, msg.splashError, null));
+                        }
+                    }
+                });
+            }
+        }
+    })
+}
+
+function registerUserInternal(req, res) {
     var user = {
         'fullName': req.body.requestData.fullName,
         'mobileNumber': !req.body.requestData.mobileNumber ? null : req.body.requestData.mobileNumber,
@@ -74,7 +121,8 @@ exports.registerUser = function (req, res) {
         'isSocialLogin': (req.body.requestData.isSocialLogin == false) ? 0 : 1,
         'profilePicUrl': !req.body.requestData.isSocialLogin ? null : req.body.requestData.profilePicUrl,
         'socialToken': !req.body.requestData.isSocialLogin ? null : req.body.requestData.socialToken,
-        'referredBy': !req.body.requestData.referredBy ? null : req.body.requestData.referredBy
+        'referredBy': !req.body.requestData.referredBy ? null : req.body.requestData.referredBy,
+        'customerId': !req.body.requestData.customerId ? null : req.body.requestData.customerId
     }
 
     var randomNumForReferral = randomstring.generate({
@@ -83,9 +131,9 @@ exports.registerUser = function (req, res) {
     });
     randomNumForReferral = randomNumForReferral + "";
 
-    var params = [user.fullName, user.mobileNumber, user.emailId, functions.encrypt(user.password), user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy, randomNumForReferral]
+    var params = [user.fullName, user.mobileNumber, user.emailId, functions.encrypt(user.password), user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy, randomNumForReferral, user.customerId]
 
-    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsOldRecord == 1) {
@@ -139,46 +187,86 @@ exports.registerUser = function (req, res) {
                         }))
                     }
                     else {
-                        var reqId = randomstring.generate(6);
-                        var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
-                        var params = [reqId, results[0][0].emailId];
-                        db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
-                            if (!errorInsertActivateToken) {
-
-                                var message;
-                                template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
-                                    message = msg;
-                                })
-                                emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
-                                    if (errorEmailHandler) {
-                                        logger.warn("Failed to send Verification link to linked mail");
-                                        res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
-                                    } else {
-                                        logger.info("Verification link sent to mail");
-
-                                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                            name: results[0][0].name,
-                                            emailId: results[0][0].emailId,
-                                            userId: results[0][0].userId,
-                                            isNewRecord: results[0][0].isNewRecord
-                                        }))
-                                    }
-                                });
-
-                            } else {
-                                logger.error("Error while processing your request", errorInsertActivateToken);
-                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                        var msg = "";
+                        if (results[0][0].sendNotif) {
+                            if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
+                                msg = "Congratulations! You got 10 reward points for referral.";
                             }
-                        })
+                            else {
+                                msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
+                            }
+                            notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, function () {
+                                var reqId = randomstring.generate(6);
+                                var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                                var params = [reqId, results[0][0].emailId];
+                                db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                                    if (!errorInsertActivateToken) {
+                                        var message;
+                                        template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
+                                            message = msg;
+                                        })
+                                        emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                            if (errorEmailHandler) {
+                                                logger.warn("Failed to send Verification link to linked mail");
+                                                res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                            } else {
+                                                logger.info("Verification link sent to mail");
+
+                                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                    name: results[0][0].fullName,
+                                                    emailId: results[0][0].emailId,
+                                                    userId: results[0][0].userId,
+                                                    isNewRecord: results[0][0].isNewRecord
+                                                }))
+                                            }
+                                        });
+
+                                    } else {
+                                        logger.error("Error while processing your request", errorInsertActivateToken);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                                    }
+                                })
+                            });
+                        }
+                        else {
+
+                            var reqId = randomstring.generate(6);
+                            var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
+                            var params = [reqId, results[0][0].emailId];
+                            db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
+                                if (!errorInsertActivateToken) {
+                                    var message;
+                                    template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
+                                        message = msg;
+                                    })
+                                    emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
+                                        if (errorEmailHandler) {
+                                            logger.warn("Failed to send Verification link to linked mail");
+                                            res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
+                                        } else {
+                                            logger.info("Verification link sent to mail");
+
+                                            res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                name: results[0][0].fullName,
+                                                emailId: results[0][0].emailId,
+                                                userId: results[0][0].userId,
+                                                isNewRecord: results[0][0].isNewRecord
+                                            }))
+                                        }
+                                    });
+
+                                } else {
+                                    logger.error("Error while processing your request", errorInsertActivateToken);
+                                    res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertActivateToken))
+                                }
+                            })
+                        }
                     }
-
-
                 }
-
             }
         } else {
             logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error))
         }
     })
 }
@@ -270,6 +358,7 @@ exports.loginUser = function (req, res) {
                             roleId: results[0].roleId
                         }, config.privateKey, {
                             expiresIn: '365d'
+                            // expiresIn: '1m'
                         });
                     // finalCallback(null, results)
                     if (results[0].isUserVerified) {
@@ -306,7 +395,7 @@ exports.getUserProfile = function (req, res) {
     }
 
     var strQuery = {
-        sql: "select * from users where userId = ?",
+        sql: "select * from merchantdata where userId = ?",
         values: [user.userId]
     };
 
@@ -316,7 +405,7 @@ exports.getUserProfile = function (req, res) {
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
             if (results && results.length > 0) {
-                res.send(responseGenerator.getResponse(200, "Success", results[0]))
+                res.send(responseGenerator.getResponse(200, "Success", results))
             }
             else {
                 res.send(responseGenerator.getResponse(1092, "Account does not exist", null))
@@ -405,7 +494,7 @@ exports.changePassword = function (req, res) {
     var user = {
         'userId': req.result.userId,
         'password': req.body.requestData.password,
-        'oldPassword': req.body.requestData.oldPassword,
+        'oldPassword': req.body.requestData.oldPassword
     }
     var strQuery = {
         sql: "select * from users where userId = ? and isDeleted = ?",
@@ -429,10 +518,11 @@ exports.changePassword = function (req, res) {
                                 res.send(responseGenerator.getResponse(1083, "Something went wrong", null))
                             }
                             else {
-                                logger.info("Password updated successfully for user - " + user.userId);
-                                res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                                notifController.sendNotifPasswordChanged(user.userId, function () {
+                                    logger.info("Password updated successfully for user - " + user.userId);
+                                    res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+                                })
                             }
-
                         } else {
                             logger.error("Error while processing your request", error);
                             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
@@ -644,8 +734,24 @@ exports.setPassword = function (req, res) {
                                             res.send(responseGenerator.getResponse(1012, "No email found", null))
                                         }
                                         else {
+                                            db.query('select userId from users where emailId = ?', [user.emailId], function (errorGetUserId, resultsGetUserId) {
+                                                if (!errorGetUserId) {
+                                                    if (resultsGetUserId.length > 0) {
+                                                        notifController.sendNotifPasswordChanged(resultsGetUserId[0].userId, function () {
+
+                                                        });
+                                                    }
+                                                    else {
+                                                        logger.info("sendNotifToToken - invalid userId");
+                                                    }
+                                                }
+                                                else {
+                                                    logger.error("Error while processing your request", errorGetUserId);
+                                                }
+                                            });
                                             logger.info("Password updated successfully for user - " + user.emailId);
                                             res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
+
                                         }
                                     } else {
                                         logger.error("Error while processing your request", error);
@@ -680,7 +786,7 @@ exports.setPassword = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, u.merchantId, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ?",
+        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ?",
         values: [req.body.requestData.emailId, 0, 1]
     };
 
@@ -729,7 +835,6 @@ exports.loginUserWeb = function (req, res) {
                                     userId: results[0].userId,
                                     role: results[0].role,
                                     profilePicUrl: results[0].profilePicUrl,
-                                    merchantId: results[0].merchantId,
                                     menuList: resultsPrivileges,
                                     isUserVerified: results[0].isUserVerified,
                                     token: token
@@ -739,7 +844,7 @@ exports.loginUserWeb = function (req, res) {
                                     res.send(responseGenerator.getResponse(200, "Login successful", userData))
                                 }
                                 else {
-                                    res.send(responseGenerator.getResponse(1002, "Verification pending", null))
+                                    res.send(responseGenerator.getResponse(1002, "Verification pending", { "email": req.body.requestData.emailId }))
                                 }
                             }
                         });
@@ -760,7 +865,6 @@ exports.loginUserWeb = function (req, res) {
 
 
 exports.resendVerificationEmail = function (req, res) {
-
 
     var user = {
         'emailId': req.body.requestData.emailId
@@ -1116,6 +1220,12 @@ exports.updateUser = function (req, res) {
         password = randomstring.generate(8);
     }
 
+    if ((User.isEmailUpdated == "0") && (User.isPasswordUpdated == "1")) {
+        notifController.sendNotifPasswordChanged(User.userId, function () {
+        })
+    }
+
+
     encPass = functions.encrypt(password);
 
     if (User.isEmailUpdated == "1") {
@@ -1348,19 +1458,27 @@ exports.deleteAdmin = function (req, res) {
 exports.deleteUser = function (req, res) {
 
     var User = {
-        "id": req.body.requestData.id ? req.body.requestData.id : null
+        "id": req.body.requestData.id ? req.body.requestData.id : null,
+        "status": req.body.requestData.status
     }
 
     // parameter to be passed
-    params = [1, User.id, 0, 3, 4];
+    params = [User.status, User.id, 0, 3, 4];
 
-    var query = "update users set isDeleted = ? where userId = ? and isDeleted = ? and (roleId = ? or roleId = ?)";
+    var query = "update users set status = ? where userId = ? and isDeleted = ? and (roleId = ? or roleId = ?)";
 
     db.query(query, params, function (errorDeleteUser, resultsDeleteUser) {
         if (!errorDeleteUser) {
             if (resultsDeleteUser.affectedRows == 1) {
-                logger.info("User deleted successfully");
-                res.send(responseGenerator.getResponse(200, "User deleted successfully", User));
+                if (User.status == "1") {
+                    logger.info("User activated successfully");
+                    res.send(responseGenerator.getResponse(200, "User activated successfully", User));
+                }
+                else {
+                    logger.info("User deactivated successfully");
+                    res.send(responseGenerator.getResponse(200, "User deactivated successfully", User));
+                }
+
             }
             else {
                 logger.info("deleteUser - Invalid id - " + User.id);
@@ -1543,13 +1661,13 @@ exports.dashboard = function (req, res) {
     db.query("call GetDashboardData(?)", params, function (error, results) {
         if (!error) {
             var obj = {};
-            if(results[0][0].p_roleId == 1){
+            if (results[0][0].p_roleId == 1) {
                 obj.openTicketsCount = results[0][0].openTicketsCount;
                 obj.openRedeemRequestsCount = results[0][0].openRedeemRequestsCount;
                 obj.totalMerchantsCount = results[0][0].totalMerchantsCount;
                 obj.activeDealsCount = results[0][0].activeDealsCount;
                 obj.tickets = [];
-                for(var i = 0; i<results[1].length; i++) {
+                for (var i = 0; i < results[1].length; i++) {
                     ticket = {};
                     ticket.id = results[1][i].ticketTypeId;
                     ticket.count = results[1][i].count;
@@ -1557,7 +1675,7 @@ exports.dashboard = function (req, res) {
                     obj.tickets.push(ticket);
                 }
                 obj.redeemRequests = [];
-                for(var i = 0; i<results[2].length; i++) {
+                for (var i = 0; i < results[2].length; i++) {
                     redeem = {};
                     redeem.id = results[2][i].redeemModeId;
                     redeem.count = results[2][i].count;
@@ -1566,13 +1684,13 @@ exports.dashboard = function (req, res) {
                 }
 
             }
-            else if(results[0][0].p_roleId == 2){
+            else if (results[0][0].p_roleId == 2) {
                 obj.openTicketsCount = results[0][0].openTicketsCount;
                 obj.totalRegisteredUsersCount = results[0][0].totalRegisteredUsersCount;
                 obj.totalMerchantsCount = results[0][0].totalMerchantsCount;
                 obj.activeDealsCount = results[0][0].activeDealsCount;
                 obj.tickets = [];
-                for(var i = 0; i<results[1].length; i++) {
+                for (var i = 0; i < results[1].length; i++) {
                     ticket = {};
                     ticket.id = results[1][i].ticketTypeId;
                     ticket.count = results[1][i].count;
@@ -1580,14 +1698,14 @@ exports.dashboard = function (req, res) {
                     obj.tickets.push(ticket);
                 }
             }
-            else if(results[0][0].p_roleId == 3){
+            else if (results[0][0].p_roleId == 3) {
                 obj.totalRegisteredUsersCount = results[0][0].totalRegisteredUsersCount;
                 obj.totalDealsCount = results[0][0].totalDealsCount;
                 obj.activeDealsCount = results[0][0].activeDealsCount;
                 obj.transactionsInActivePool = 0;
                 obj.totalPoolAmount = 0;
             }
-            if(results[0][0].p_roleId == 4){
+            if (results[0][0].p_roleId == 4) {
                 logger.info("dashboard - not authorized");
                 res.send(responseGenerator.getResponse(1010, "You are not authorized", obj));
             }
@@ -1602,20 +1720,27 @@ exports.dashboard = function (req, res) {
     })
 }
 
-exports.test = function (req, res) {
-    var data = req.body.requestData.data;
-    // var encrypted = functions.encryptData(password);
-    var decrypted = functions.decryptData(data);
 
-    res.send({ "dec": decrypted });
+
+const CryptoJS = require("crypto-js");
+
+
+exports.test = function (req, res) {
+    var data = req.body.requestData;
+    // var encrypted = functions.encryptData(password);
+
+    var encrypted = CryptoJS.AES.decrypt(data, config.secretKeyDataEncryption);
+    var plainText = encrypted.toString(CryptoJS.enc.Utf8);
+
+    res.send(plainText);
 }
 
 exports.testEncrypt = function (req, res) {
-    var data = req.body.requestData.data;
+    var data = req.body.requestData;
     var encrypted = functions.encryptData(data);
     // var decrypted = functions.decryptData(data);
 
-    res.send({ "enc": encrypted });
+    res.send(encrypted);
 }
 
 

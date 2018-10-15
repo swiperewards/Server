@@ -16,9 +16,9 @@ router.post("/subscribeToTopic", functions.decryptDataMiddleWare, encDecControll
 
 router.post("/unsubscribeFromTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.unsubscribeFromTopic);
 
-router.post("/sendNotifToToken", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToToken);
+// router.post("/sendNotifToToken", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToToken);
 
-router.post("/sendNotifToTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToTopic);
+// router.post("/sendNotifToTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToTopic);
 
 
 module.exports = router;

@@ -57,3 +57,40 @@ exports.forgotPassword = function (fullname, token, callback) {
   template = template.replace("$fullname", fullname).replace("$link", link).replace("$token", token);
   callback(null, template)
 }
+
+exports.contactUsReqAck = function (username, callback) {
+  var template = fs.readFileSync('./static/contactUsReqAck.html', 'utf8').toString();
+  template = template.replace("$username", username)
+  callback(null, template)
+}
+
+exports.redeemReqAck = function (username, callback) {
+  var template = fs.readFileSync('./static/redeemReqAck.html', 'utf8').toString();
+  template = template.replace("$username", username)
+  callback(null, template)
+}
+
+exports.redeemReqApproved = function (username, callback) {
+  var template = fs.readFileSync('./static/redeemReqApproved.html', 'utf8').toString();
+  template = template.replace("$username", username)
+  callback(null, template)
+}
+
+exports.redeemReqRejected = function (username, callback) {
+  link = config.frontEndHost;
+  var template = fs.readFileSync('./static/redeemReqRejected.html', 'utf8').toString();
+  template = template.replace("$username", username).replace("$link", link)
+  callback(null, template)
+}
+
+exports.accountDeleted = function (username, callback) {
+  var template = fs.readFileSync('./static/accountDeletion.html', 'utf8').toString();
+  callback(null, template)
+}
+
+exports.ticketResolved = function (username, callback) {
+  link = config.frontEndHost;
+  var template = fs.readFileSync('./static/ticketResolved.html', 'utf8').toString();
+  template = template.replace("$username", username).replace("$link", link)
+  callback(null, template)
+}
