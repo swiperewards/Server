@@ -67,7 +67,7 @@ function decryptDataMiddleWare(req, res, next) {
         }
         else {
             logger.error(msg.notAuthorized);
-            res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null))
+            res.send(responseGenerator.getResponse(1010, msg.notAuthorized, null));
         }
     }
     else {

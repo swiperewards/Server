@@ -1531,9 +1531,9 @@ exports.getUserDetails = function (req, res) {
     }
 
     // parameter to be passed
-    params = [User.id, 3, 4];
+    params = [User.id, 3, 4, 1];
 
-    var query = "select * from users where userId = ? and (roleId = ? or roleId = ?)";
+    var query = "select * from users where userId = ? and (roleId = ? or roleId = ? or roleId = ?)";
 
     db.query(query, params, function (errorGetUserDetails, resultsGetUserDetails) {
         if (!errorGetUserDetails) {
@@ -1587,7 +1587,7 @@ exports.getAdmins = function (req, res) {
 
 
 exports.getUsers = function (req, res) {
-
+    var Users = [];
     var data = {
         'name': req.body.requestData.name ? ('%' + req.body.requestData.name + '%') : '%%',
         'status': req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
@@ -1601,16 +1601,40 @@ exports.getUsers = function (req, res) {
     db.query('call GetUsers(?,?,?,?,?)', params, function (errorGetUsers, resultsGetUsers) {
         if (!errorGetUsers) {
             logger.info("getUsers - success -" + req.result.userId);
-            var Users = [];
-            for (var i = 0; i < resultsGetUsers[0].length; i++) {
-                var obj = resultsGetUsers[0][i];
-                obj.serial_number = i + 1;
-                Users.push(obj);
-            }
-            res.send(responseGenerator.getResponse(200, "Success", Users))
+            
+            // for (var i = 0; i < resultsGetUsers[0].length; i++) {
+            //     var obj = resultsGetUsers[0][i];
+            //     obj.serial_number = i + 1;
+            //     Users.push(obj);
+            // }
+            // params = [data.name, data.status, data.pageNumber, data.pageSize, data.type]
+            db.query('select userId, count(*) as businessCount from merchantdata group by userId', params, function (errorGetBusinessCount, resultsGetBusinessCount) {
+                if (!errorGetBusinessCount) {
+                    logger.info("getUsers - success -" + req.result.userId);
+                    var Users = [];
+                    for (var i = 0; i < resultsGetUsers[0].length; i++) {
+                        var obj = resultsGetUsers[0][i];
+                        obj.serial_number = i + 1;
+                        obj.businessCount = 0;
+                        // Users.push(obj);
+                        for(var j= 0; j<resultsGetBusinessCount.length; j++){
+                            if(obj.userId == resultsGetBusinessCount[j].userId){
+                                obj.businessCount = resultsGetBusinessCount[j].businessCount;
+                            }
+                        }
+                        Users.push(obj);
+                    }
+                    res.send(responseGenerator.getResponse(200, "Success", Users))
+                }
+                else {
+                    logger.error("getUsers - Error while processing your request", errorGetBusinessCount);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                }
+            });
+            // res.send(responseGenerator.getResponse(200, "Success", Users))
         }
         else {
-            logger.error("getDealsWeb - Error while processing your request", errorGetUsers);
+            logger.error("getUsers - Error while processing your request", errorGetUsers);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });

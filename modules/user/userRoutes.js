@@ -65,7 +65,7 @@ router.post("/deleteUser", functions.decryptDataMiddleWare, encDecController.ver
 router.post("/getAdminDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isSuperAdminAuthorized, api.getAdminDetails);
 
 // api to get user details
-router.post("/getUserDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.getUserDetails);
+router.post("/getUserDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAuthorized, api.getUserDetails);
 
 // api to get admins
 router.post("/getAdmins", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isSuperAdminAuthorized, api.getAdmins);

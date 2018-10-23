@@ -6,6 +6,8 @@ var responseGenerator = require(path.resolve('.', 'utils/responseGenerator.js'))
 var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
+var transaction = require(path.resolve('.', 'modules/transaction/transactionController.js'));
+var functions = require(path.resolve('./', 'utils/functions.js'));
 
 
 exports.addCard = function (req, res) {
@@ -21,8 +23,8 @@ exports.addCard = function (req, res) {
     // parameters to be passed to AddCard procedure
     var params = [card.cardNumber, card.expiryMonthMM, card.expiryYearYYYY,
     card.cvv, card.nameOnCard, card.userId]
-    db.query("call AddCard(?,?,?,?,?,?)", params, function (error, results) {
-        if (!error) {
+    db.query("call AddCard(?,?,?,?,?,?)", params, function (errorAddCard, results) {
+        if (!errorAddCard) {
             if (results[0][0].IsRecordExists) {
                 logger.info("Card already exists - " + results[0][0].id);
                 res.send(responseGenerator.getResponse(1051, "Card already exists", {
@@ -30,11 +32,33 @@ exports.addCard = function (req, res) {
                 }))
             }
             else {
-                logger.info("Card added successfully - " + results[0][0].ip_NewCardID);
-                res.send(responseGenerator.getResponse(200, "Card added successfully", {
-                    cardId: results[0][0].id,
-                    createdDate: results[0][0].createdDate
-                }))
+                var Reqbody = req.body;
+                // Reqbody.userId = req.result.userId;
+                Reqbody.requestData.userId = req.result.userId;
+                Reqbody.requestData.id = results[0][0].id
+                transaction.addCard(Reqbody, function (error, response) {
+                    if (error) {
+                        logger.info("Error while adding card - " + req.result.userId);
+                        res.send(responseGenerator.getResponse(200, "Error while adding card", error));
+                    }
+                    else if (response) {
+                        response.body.responseData = functions.decryptData(response.body.responseData);
+                        if (response.body.status == 200) {
+                            logger.info("Card added successfully - " + results[0][0].ip_NewCardID);
+                            res.send(responseGenerator.getResponse(200, "Card added successfully", {
+                                cardId: results[0][0].id,
+                                createdDate: results[0][0].createdDate
+                            }))
+                        }
+                        else {
+                            db.query("delete from cards where id = ?", [results[0][0].id], function (errDelete, resultsDelete) {
+                                logger.error("Error while processing your request", null);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            });
+                        }
+                    }
+                });
+
             }
 
         } else {
