@@ -597,7 +597,7 @@ exports.updateProfilePic = function (req, res) {
 
                 } else {
                     logger.error("updateProfilePic - Error while processing your request", error);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null));
                 }
             })
         }
