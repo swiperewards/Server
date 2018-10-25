@@ -15587,3 +15587,24 @@
 {"message":"configController - keep alive (mysql)- Thu Oct 25 2018 12:00:00 GMT+0530 (India Standard Time)","level":"info"}
 {"message":"Created logger","level":"info"}
 {"message":"configController - keep alive (mysql)- Thu Oct 25 2018 13:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Oct 25 2018 17:00:01 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Error while fetching merchants - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}

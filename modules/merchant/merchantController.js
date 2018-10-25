@@ -48,7 +48,7 @@ exports.createMerchant = function (req, res) {
                 decryptedResponse = functions.decryptData(response.body.responseData);
                 decryptedRequest = functions.decryptData(req.body.requestData);
 
-                if(decryptedRequest.image) {
+                if (decryptedRequest.image) {
                     var ProfilePicUrl = "https://s3.amazonaws.com/" + config.merchantLogoBucketName + "/" + decryptedResponse.merchantId + ".jpg";
 
                     buf = new Buffer(decryptedRequest.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
@@ -60,7 +60,7 @@ exports.createMerchant = function (req, res) {
                         Bucket: config.merchantLogoBucketName,
                         ACL: 'public-read'
                     };
-    
+
                     s3.putObject(data, function (err, data) {
                         if (err) {
                             console.log(err);
@@ -94,7 +94,7 @@ exports.createMerchant = function (req, res) {
                         }
                     })
                 }
-                
+
             }
             else {
                 logger.info("Create merchant - something went wrong" + req.result.userId);
@@ -241,14 +241,25 @@ exports.getMerchantsWithFilter = function (req, res) {
 exports.getMerchantDetails = function (req, res) {
     var Reqbody = req.body;
     Reqbody.userId = req.result.userId;
-    transaction.getMerchantDetails(Reqbody, function (error, response) {
-        if (error) {
-            logger.info("Error while fetching merchants - " + req.result.userId);
-            res.send(responseGenerator.getResponse(200, "Error while fetching merchants", error));
+    db.query("select * from merchantdata where merchantId = ?", [req.body.requestData.merchantId], function (errorGetMerchantData, resultsGetMerchantData) {
+        if (!errorGetMerchantData) {
+            if (resultsGetMerchantData.length > 0) {
+                Reqbody.requestData.logoUrl = resultsGetMerchantData[0].logoUrl;
+            }
+            transaction.getMerchantDetails(Reqbody, function (error, response) {
+                if (error) {
+                    logger.info("Error while fetching merchants - " + req.result.userId);
+                    res.send(responseGenerator.getResponse(200, "Error while fetching merchants", error));
+                }
+                else if (response) {
+                    logger.info("Merchant details fetched successfully by user - " + req.result.userId);
+                    res.send(response.body);
+                }
+            });
         }
-        else if (response) {
-            logger.info("Merchant details fetched successfully by user - " + req.result.userId);
-            res.send(response.body);
+        else {
+            logger.error("Error while processing your request", errorGetMerchantData);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, errorGetMerchantData));
         }
     });
 }
@@ -492,7 +503,7 @@ function updateMerchantDetailsFunction(req, res, logoUrl, isLogoUpdated) {
                                     decryptedRequest = functions.decryptData(req.body.requestData);
                                     query = "update merchantdata set entityName = ? where merchantId = ?";
                                     params = [merchantInfo.entityName];
-                                    if(isLogoUpdated == "1"){
+                                    if (isLogoUpdated == "1") {
                                         query = "update merchantdata set entityName = ?, logoUrl = ? where merchantId = ?";
                                         params.push(logoUrl);
                                     }
