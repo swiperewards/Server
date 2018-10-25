@@ -15608,3 +15608,15 @@
 {"message":"getUsers - success -24","level":"info"}
 {"message":"Merchants fetched successfully by user - 24","level":"info"}
 {"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR","fatal":false,"level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"register User - success vinayb@winjit.com","level":"info"}
