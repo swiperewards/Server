@@ -114,45 +114,79 @@ exports.getDealDetailsWeb = function (req, res) {
 
 
 exports.addDeal = function (req, res) {
-    db.query('select tbasis from tbasis where id = ?', [1], function (errorGetBasis, resultsGetBasis) {
-        if (!errorGetBasis) {
-
-            var deal = {
-                "merchantId": req.body.requestData.merchantId,
-                "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
-                "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
-                "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
-                "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
-                "cashBonus": req.body.requestData.cashBonus ? req.body.requestData.cashBonus : null,
-                "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
-                "createdBy": req.result.userId,
-                "location": req.body.requestData.location ? req.body.requestData.location : null,
-                "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
-                "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
-                "status": (req.body.requestData.status == "1") ? "1" : "0",
-                "storeLocation": req.body.requestData.storeLocation ? req.body.requestData.storeLocation : null,
-                "tbasis": resultsGetBasis[0].tbasis
+    var poolToRollOver = 0;
+    var previousDealId = 0;
+    params = [];
+    db.query('select * from deals where merchantId = ? and status = ? and isPoolDistributed = ?', [req.body.requestData.merchantId, 1, 1], function (errorGetOldDeal, resultsGetOldDeal) {
+        if (!errorGetOldDeal) {
+            if (resultsGetOldDeal.length > 0) {
+                poolToRollOver = parseFloat(resultsGetOldDeal[0].remainingPoolAmount)/100;
+                previousDealId = resultsGetOldDeal[0].id;
             }
-            // parameter to be passed
-            params = [deal.merchantId, deal.shortDescription, deal.longDescription,
-            deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
-            deal.latitude, deal.longitude, deal.status, deal.storeLocation, deal.tbasis]
-            db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
-                if (!error) {
-                    logger.error("addDeal - ticket generated successfully by -" + deal.userId);
-                    res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
+
+            params = [req.body.requestData.startDate, req.body.requestData.endDate, req.body.requestData.merchantId, 0, 1]
+            db.query('select * from deals where ((? between startDate and endDate) or (? between startDate and endDate)) and merchantId = ? and isDeleted = ? and status = ?', params, function (errorCheckDealExists, resultsCheckDealExists) {
+                if (!errorCheckDealExists) {
+                    if (resultsCheckDealExists.length > 0) {
+                        logger.info("addDeal - Deal already exists for this period ");
+                        res.send(responseGenerator.getResponse(1099, "Deal already exists for this period", null))
+                    }
+                    else {
+
+                        db.query('select tbasis from tbasis where id = ?', [1], function (errorGetBasis, resultsGetBasis) {
+                            if (!errorGetBasis) {
+
+                                var deal = {
+                                    "merchantId": req.body.requestData.merchantId,
+                                    "shortDescription": req.body.requestData.shortDescription ? req.body.requestData.shortDescription : null,
+                                    "longDescription": req.body.requestData.longDescription ? req.body.requestData.longDescription : null,
+                                    "startDate": req.body.requestData.startDate ? req.body.requestData.startDate : null,
+                                    "endDate": req.body.requestData.endDate ? req.body.requestData.endDate : null,
+                                    "cashBonus": req.body.requestData.cashBonus ? (parseFloat(req.body.requestData.cashBonus) + poolToRollOver) : null,
+                                    "icon": req.body.requestData.icon ? req.body.requestData.icon : null,
+                                    "createdBy": req.result.userId,
+                                    "location": req.body.requestData.location ? req.body.requestData.location : null,
+                                    "latitude": req.body.requestData.latitude ? req.body.requestData.latitude : null,
+                                    "longitude": req.body.requestData.longitude ? req.body.requestData.longitude : null,
+                                    "status": (req.body.requestData.status == "1") ? "1" : "0",
+                                    "storeLocation": req.body.requestData.storeLocation ? req.body.requestData.storeLocation : null,
+                                    "tbasis": resultsGetBasis[0].tbasis
+                                }
+                                // parameter to be passed
+                                params = [deal.merchantId, deal.shortDescription, deal.longDescription,
+                                deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.createdBy, deal.location,
+                                deal.latitude, deal.longitude, deal.status, deal.storeLocation, deal.tbasis, previousDealId]
+                                db.query('call addDeal(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+                                    if (!error) {
+                                        logger.info("addDeal - Deal added successfully -" + deal.userId);
+                                        res.send(responseGenerator.getResponse(200, "Deal added successfully", results[0][0]))
+                                    }
+                                    else {
+                                        logger.error("Error while processing your request", error);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                });
+                            }
+                            else {
+                                logger.error("Error while processing your request", error);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                            }
+                        });
+                    }
                 }
                 else {
-                    logger.error("Error while processing your request", error);
+                    logger.error("Error while processing your request", errorCheckDealExists);
                     res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                 }
             });
         }
         else {
-            logger.error("Error while processing your request", error);
+            logger.error("Error while processing your request", errorCheckDealExists);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });
+
+
 }
 
 

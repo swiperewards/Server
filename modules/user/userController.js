@@ -144,6 +144,9 @@ function registerUserInternal(req, res) {
                 logger.warn("Invalid referral code");
                 res.send(responseGenerator.getResponse(1096, "Invalid referral code", null));
             }
+            else if(results[0][0].InvalidRecord == 1) {
+                res.send(responseGenerator.getResponse(1003, "Please check username or password", null))
+            }
             else {
                 var data = {
                     emailId: results[0][0].emailId,
@@ -333,8 +336,8 @@ exports.registerUserWeb = function (req, res) {
 
 exports.loginUser = function (req, res) {
     var strQuery = {
-        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ?",
-        values: [req.body.requestData.emailId, 0, 4, 1]
+        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ? and status = ?",
+        values: [req.body.requestData.emailId, 0, 4, 1, 1]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -395,8 +398,8 @@ exports.getUserProfile = function (req, res) {
     }
 
     var strQuery = {
-        sql: "select * from merchantdata where userId = ?",
-        values: [user.userId]
+        sql: "select * from merchantdata where userId = ? and inactive = ?",
+        values: [user.userId, 0]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -1531,9 +1534,9 @@ exports.getUserDetails = function (req, res) {
     }
 
     // parameter to be passed
-    params = [User.id, 3, 4, 1];
+    params = [User.id];
 
-    var query = "select * from users where userId = ? and (roleId = ? or roleId = ? or roleId = ?)";
+    var query = "select * from users where userId = ?";
 
     db.query(query, params, function (errorGetUserDetails, resultsGetUserDetails) {
         if (!errorGetUserDetails) {

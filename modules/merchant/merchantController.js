@@ -13,6 +13,21 @@ var emailHandler = require(path.resolve('./', 'utils/emailHandler.js'));
 var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 var functions = require(path.resolve('./', 'utils/functions.js'));
 
+// npm required for the s3 storage
+var aws = require('aws-sdk');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+
+aws.config.update({
+    secretAccessKey: config.s3SecreateAccessKey,
+    accessKeyId: config.s3accessKeyId,
+    region: config.region
+
+});
+// S3 variable declarations
+var s3 = new aws.S3();
+
+
 exports.createMerchant = function (req, res) {
     var Reqbody = req.body;
     // var registeredWithNouvo = req.body.requestData.registeredWithNouvo;
@@ -32,16 +47,54 @@ exports.createMerchant = function (req, res) {
                 logger.info("Merchant added successfully by user - " + req.result.userId);
                 decryptedResponse = functions.decryptData(response.body.responseData);
                 decryptedRequest = functions.decryptData(req.body.requestData);
-                var params = [decryptedResponse.fullName, decryptedRequest.registeredEmail, "Web",
-                decryptedResponse.merchantId, decryptedResponse.entityName, decryptedResponse.entityId, decryptedResponse.accountId, decryptedResponse.memberId];
-                db.query('call UpdateMerchant(?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
-                    if (!errorUpdateMerchant) {
-                        res.send(response.body);
-                    } else {
-                        logger.error("Error while processing your request", errorUpdateMerchant);
-                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                    }
-                })
+
+                if(decryptedRequest.image) {
+                    var ProfilePicUrl = "https://s3.amazonaws.com/" + config.merchantLogoBucketName + "/" + decryptedResponse.merchantId + ".jpg";
+
+                    buf = new Buffer(decryptedRequest.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                    var data = {
+                        Key: decryptedResponse.merchantId + ".jpg",
+                        Body: buf,
+                        ContentEncoding: 'base64',
+                        ContentType: 'image/jpeg',
+                        Bucket: config.merchantLogoBucketName,
+                        ACL: 'public-read'
+                    };
+    
+                    s3.putObject(data, function (err, data) {
+                        if (err) {
+                            console.log(err);
+                            console.log('Error uploading data: ', data);
+                        } else {
+                            var params = [decryptedResponse.fullName, decryptedRequest.registeredEmail, "Web",
+                            decryptedResponse.merchantId, decryptedResponse.entityName, decryptedResponse.entityId,
+                            decryptedResponse.accountId, decryptedResponse.memberId, ProfilePicUrl];
+                            db.query('call UpdateMerchant(?,?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
+                                if (!errorUpdateMerchant) {
+                                    res.send(response.body);
+                                } else {
+                                    logger.error("Error while processing your request", errorUpdateMerchant);
+                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                }
+                            })
+                        }
+                    });
+                }
+                else {
+
+                    var params = [decryptedResponse.fullName, decryptedRequest.registeredEmail, "Web",
+                    decryptedResponse.merchantId, decryptedResponse.entityName, decryptedResponse.entityId,
+                    decryptedResponse.accountId, decryptedResponse.memberId, ""];
+                    db.query('call UpdateMerchant(?,?,?,?,?,?,?,?,?)', params, function (errorUpdateMerchant, results) {
+                        if (!errorUpdateMerchant) {
+                            res.send(response.body);
+                        } else {
+                            logger.error("Error while processing your request", errorUpdateMerchant);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                        }
+                    })
+                }
+                
             }
             else {
                 logger.info("Create merchant - something went wrong" + req.result.userId);
@@ -251,6 +304,35 @@ exports.updateMerchant = function (req, res) {
 
 
 exports.updateMerchantDetails = function (req, res) {
+    if (req.body.requestData.isLogoUpdated == "1") {
+        var logoUrl = "https://s3.amazonaws.com/" + config.merchantLogoBucketName + "/" + req.body.requestData.merchantId + ".jpg";
+
+        buf = new Buffer(req.body.requestData.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+        var data = {
+            Key: req.body.requestData.merchantId + ".jpg",
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/jpeg',
+            Bucket: config.merchantLogoBucketName,
+            ACL: 'public-read'
+        };
+
+        s3.putObject(data, function (err, data) {
+            if (err) {
+                console.log(err);
+                console.log('Error uploading data: ', data);
+            } else {
+                updateMerchantDetailsFunction(req, res, logoUrl, req.body.requestData.isLogoUpdated);
+            }
+        });
+    }
+    else {
+        updateMerchantDetailsFunction(req, res, "", "0");
+    }
+}
+
+function updateMerchantDetailsFunction(req, res, logoUrl, isLogoUpdated) {
+
     var Reqbody = req.body;
     Reqbody.userId = req.result.userId;
     var data = [];
@@ -408,7 +490,14 @@ exports.updateMerchantDetails = function (req, res) {
                                     // })
 
                                     decryptedRequest = functions.decryptData(req.body.requestData);
-                                    db.query("update merchantdata set entityName = ? where merchantId = ?", [merchantInfo.entityName, decryptedRequest.merchantData.merchantId], function (error, results) {
+                                    query = "update merchantdata set entityName = ? where merchantId = ?";
+                                    params = [merchantInfo.entityName];
+                                    if(isLogoUpdated == "1"){
+                                        query = "update merchantdata set entityName = ?, logoUrl = ? where merchantId = ?";
+                                        params.push(logoUrl);
+                                    }
+                                    params.push(decryptedRequest.merchantData.merchantId);
+                                    db.query(query, params, function (error, results) {
                                         res.send(responseGenerator.getResponse(200, "Success", data));
                                     });
 
@@ -421,6 +510,7 @@ exports.updateMerchantDetails = function (req, res) {
         }
     });
 }
+
 
 // function updateMerchantData(merchant, merchantInfo, callback) {
 //     db.query("select userId from merchantdata where merchantId = ?", [merchant], function (errorGetUserId, resultGetUserId) {
