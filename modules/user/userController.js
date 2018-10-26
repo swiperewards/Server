@@ -831,8 +831,8 @@ exports.setPassword = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ?",
-        values: [req.body.requestData.emailId, 0, 1]
+        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ? and u.platformId = ?",
+        values: [req.body.requestData.emailId, 0, 1, "Web"]
     };
 
     db.query(strQuery, function (error, results, fields) {
