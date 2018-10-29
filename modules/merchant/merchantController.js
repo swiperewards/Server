@@ -36,8 +36,9 @@ exports.createMerchant = function (req, res) {
 
     // if (registeredEmail == Reqbody.requestData.entityEmail) {
     Reqbody.userId = req.result.userId;
-
-    transaction.createMerchant(Reqbody, function (error, response) {
+    var ReqbodyWithoutImage = Reqbody;
+    ReqbodyWithoutImage.requestData.image = "";
+    transaction.createMerchant(ReqbodyWithoutImage, function (error, response) {
         if (error) {
             logger.info("Error while creating merchants - " + req.result.userId);
             res.send(responseGenerator.getResponse(1081, msg.splashError, error));

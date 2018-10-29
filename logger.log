@@ -15647,3 +15647,311 @@
 {"message":"Created logger","level":"info"}
 {"message":"Created logger","level":"info"}
 {"message":"Verification link sent to mail","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 13:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 14:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"register User - success pavanm@winjit.com","level":"info"}
+{"code":"ER_TOO_MANY_ROWS","errno":1172,"sqlMessage":"Result consisted of more than one row","sqlState":"42000","index":0,"sql":"call SignupUserV2('Pavan Maind',NULL,'pavanm@winjit.com','U2FsdGVkX19F8ZxWbvvAnhWvbYdf+d0S9A5HFuROyzg=','android','some string here','','',NULL,NULL,1,NULL,NULL,NULL,'10367182',NULL,'Pavan','Maind')","level":"error","message":"Error while processing your request"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'dbError' of undefined\nTypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","stack":"TypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","exception":true,"date":"Fri Oct 26 2018 14:42:24 GMT+0530 (India Standard Time)","process":{"pid":7124,"uid":null,"gid":null,"cwd":"D:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","D:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":21889024,"heapTotal":29708288,"heapUsed":25280216,"external":89772}},"os":{"loadavg":[0,0,0],"uptime":15449},"trace":[{"column":62,"file":"D:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":286,"method":"_callback","native":false},{"column":24,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.ErrorPacket","line":90,"method":"ErrorPacket","native":false},{"column":23,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"D:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"addChunk","line":283,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_TOO_MANY_ROWS","errno":1172,"sqlMessage":"Result consisted of more than one row","sqlState":"42000","index":0,"sql":"call SignupUserV2('Pavan Maind',NULL,'pavanm@winjit.com','U2FsdGVkX19Va0+Zqjn2DA4sfJVBbapoBMcGRBJ6ozM=','android','some string here','','',NULL,NULL,1,NULL,NULL,NULL,'98872797',NULL,'Pavan','Maind')","level":"error","message":"Error while processing your request"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'dbError' of undefined\nTypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","stack":"TypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","exception":true,"date":"Fri Oct 26 2018 14:44:02 GMT+0530 (India Standard Time)","process":{"pid":6812,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":89411584,"heapTotal":66408448,"heapUsed":29071216,"external":244277}},"os":{"loadavg":[0,0,0],"uptime":15547},"trace":[{"column":62,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":286,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.ErrorPacket","line":90,"method":"ErrorPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"addChunk","line":283,"method":null,"native":false}]}
+{"code":"ER_TOO_MANY_ROWS","errno":1172,"sqlMessage":"Result consisted of more than one row","sqlState":"42000","index":0,"sql":"call SignupUserV2('Pavan Maind',NULL,'pavanm@winjit.com','U2FsdGVkX19E1sgJn94g8G7eOXkjxCSgP/x+7frPLus=','android','some string here','','',NULL,NULL,1,NULL,NULL,NULL,'24230220',NULL,'Pavan','Maind')","level":"error","message":"Error while processing your request"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'dbError' of undefined\nTypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","stack":"TypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","exception":true,"date":"Fri Oct 26 2018 14:50:27 GMT+0530 (India Standard Time)","process":{"pid":6812,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":82497536,"heapTotal":48058368,"heapUsed":37610880,"external":46547}},"os":{"loadavg":[0,0,0],"uptime":15932},"trace":[{"column":62,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":286,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.ErrorPacket","line":90,"method":"ErrorPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"addChunk","line":283,"method":null,"native":false}]}
+{"code":"ER_TOO_MANY_ROWS","errno":1172,"sqlMessage":"Result consisted of more than one row","sqlState":"42000","index":0,"sql":"call SignupUserV2('Pavan Maind',NULL,'pavanm@winjit.com','U2FsdGVkX1/MayFXtaeTiUoysHkxvZcKODxAwvjDITA=','android','some string here','','',NULL,NULL,1,NULL,NULL,NULL,'29485662',NULL,'Pavan','Maind')","level":"error","message":"Error while processing your request"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'dbError' of undefined\nTypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","stack":"TypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","exception":true,"date":"Fri Oct 26 2018 14:50:30 GMT+0530 (India Standard Time)","process":{"pid":6812,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":83181568,"heapTotal":48058368,"heapUsed":38395744,"external":64732}},"os":{"loadavg":[0,0,0],"uptime":15935},"trace":[{"column":62,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":286,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.ErrorPacket","line":90,"method":"ErrorPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"addChunk","line":283,"method":null,"native":false}]}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 15:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"code":"ER_TOO_MANY_ROWS","errno":1172,"sqlMessage":"Result consisted of more than one row","sqlState":"42000","index":0,"sql":"call SignupUserV2('Pavan Maind',NULL,'pavanm@winjit.com','U2FsdGVkX1/A6GwHt/+fwFUTHW7lSh6Zp4A9+aLGfn4=','android','some string here','','',NULL,NULL,1,NULL,NULL,NULL,'50413626',NULL,'Pavan','Maind')","level":"error","message":"Error while processing your request"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'dbError' of undefined\nTypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","stack":"TypeError: Cannot read property 'dbError' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:286:62)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query.ErrorPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:90:8)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at addChunk (_stream_readable.js:283:12)","exception":true,"date":"Fri Oct 26 2018 15:11:15 GMT+0530 (India Standard Time)","process":{"pid":2552,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":70918144,"heapTotal":34951168,"heapUsed":29472288,"external":53843}},"os":{"loadavg":[0,0,0],"uptime":17179},"trace":[{"column":62,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":286,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.ErrorPacket","line":90,"method":"ErrorPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false},{"column":12,"file":"_stream_readable.js","function":"addChunk","line":283,"method":null,"native":false}]}
+{"message":"registerUser - Success 424","level":"info"}
+{"error":{},"level":"error","message":"uncaughtException: Cannot read property 'IsOldRecord' of undefined\nTypeError: Cannot read property 'IsOldRecord' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:153:31)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.OkPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:72:10)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)","stack":"TypeError: Cannot read property 'IsOldRecord' of undefined\n    at Query._callback (d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js:153:31)\n    at Query.Sequence.end (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js:88:24)\n    at Query._handleFinalResultPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:139:8)\n    at Query.OkPacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js:72:10)\n    at Protocol._parsePacket (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:279:23)\n    at Parser.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js:76:12)\n    at Protocol.write (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js:39:16)\n    at Socket.<anonymous> (d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js:103:28)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)","exception":true,"date":"Fri Oct 26 2018 15:11:49 GMT+0530 (India Standard Time)","process":{"pid":2552,"uid":null,"gid":null,"cwd":"d:\\PAVAN\\SwipeRewards\\Server","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v10.4.1","argv":["C:\\Program Files\\nodejs\\node.exe","d:\\PAVAN\\SwipeRewards\\Server\\bin\\www"],"memoryUsage":{"rss":71094272,"heapTotal":35475456,"heapUsed":29800992,"external":54156}},"os":{"loadavg":[0,0,0],"uptime":17214},"trace":[{"column":31,"file":"d:\\PAVAN\\SwipeRewards\\Server\\modules\\user\\userController.js","function":"Query._callback","line":153,"method":"_callback","native":false},{"column":24,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Sequence.js","function":"Query.Sequence.end","line":88,"method":"end","native":false},{"column":8,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query._handleFinalResultPacket","line":139,"method":"_handleFinalResultPacket","native":false},{"column":10,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\sequences\\Query.js","function":"Query.OkPacket","line":72,"method":"OkPacket","native":false},{"column":23,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol._parsePacket","line":279,"method":"_parsePacket","native":false},{"column":12,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Parser.js","function":"Parser.write","line":76,"method":"write","native":false},{"column":16,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\protocol\\Protocol.js","function":"Protocol.write","line":39,"method":"write","native":false},{"column":28,"file":"d:\\PAVAN\\SwipeRewards\\Server\\node_modules\\mysql\\lib\\Connection.js","function":null,"line":103,"method":null,"native":false},{"column":13,"file":"events.js","function":"Socket.emit","line":182,"method":"emit","native":false},{"column":20,"file":"domain.js","function":"Socket.EventEmitter.emit","line":442,"method":"emit","native":false}]}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"registerUser - Success 424","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Email Already Exists","level":"warn"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 16:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"No business added for merchant - undefined","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"No business added for merchant - undefined","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"No business added for merchant - undefined","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"No business added for merchant - 425","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"registerUser - Success 424","level":"info"}
+{"message":"registerUser - Success 424","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"registerUser - Success 424","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"initSwipe - without auth","level":"error"}
+{"message":"initSwipe - userData fetched successfully by user - 400","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"register User - success brohplr@gmail.com","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"registerUser - Success 427","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"You are not authorized","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchant added successfully by user - 24","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Merchant added successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUserDetails - Invalid id - null","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"dashboard - success","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"getTickets - Tickets fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 24","level":"info"}
+{"message":"getRedeemRequests - Redeem requests fetched successfully for user - 24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Create merchant - something went wrong24","level":"info"}
+{"message":"No business added for merchant - 426","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 18:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchant added successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getAdmins - success -24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"Merchant updated successfully by user - 24","level":"info"}
+{"message":"Entity updated successfully by user - 24","level":"info"}
+{"message":"Member updated successfully by user - 24","level":"info"}
+{"message":"Account updated successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"No business added for merchant - 426","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant details fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant deleted successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant deleted successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"User details fetched successfully","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"No business added for merchant - 426","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"Merchant added successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"Merchants fetched successfully by user - 24","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getDealsWeb - success -24","level":"error"}
+{"message":"getCities - cities list fetched successfully by user - 24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"getUsers - success -24","level":"info"}
+{"message":"configController - keep alive (mysql)- Fri Oct 26 2018 19:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"initSwipe - userData fetched successfully by user - 400","level":"info"}
+{"message":"getCities - cities list fetched successfully by user - 400","level":"info"}
+{"message":"addUpdateFcmToken - 400","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Mon Oct 29 2018 11:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}

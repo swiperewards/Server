@@ -364,8 +364,8 @@ exports.registerUserWeb = function (req, res) {
 
 exports.loginUser = function (req, res) {
     var strQuery = {
-        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ? and status = ?",
-        values: [req.body.requestData.emailId, 0, 4, 1, 1]
+        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ? and status = ? and platformId != ?",
+        values: [req.body.requestData.emailId, 0, 4, 1, 1, "Web"]
     };
 
     db.query(strQuery, function (error, results, fields) {
