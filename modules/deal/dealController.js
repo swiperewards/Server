@@ -120,7 +120,7 @@ exports.addDeal = function (req, res) {
     db.query('select * from deals where merchantId = ? and status = ? and isPoolDistributed = ?', [req.body.requestData.merchantId, 1, 1], function (errorGetOldDeal, resultsGetOldDeal) {
         if (!errorGetOldDeal) {
             if (resultsGetOldDeal.length > 0) {
-                poolToRollOver = parseFloat(resultsGetOldDeal[0].remainingPoolAmount)/100;
+                poolToRollOver = parseFloat(resultsGetOldDeal[0].remainingPoolAmount) / 100;
                 previousDealId = resultsGetOldDeal[0].id;
             }
 
@@ -132,7 +132,6 @@ exports.addDeal = function (req, res) {
                         res.send(responseGenerator.getResponse(1099, "Deal already exists for this period", null))
                     }
                     else {
-
                         db.query('select tbasis from tbasis where id = ?', [1], function (errorGetBasis, resultsGetBasis) {
                             if (!errorGetBasis) {
 
@@ -209,33 +208,47 @@ exports.updateDeal = function (req, res) {
         "storeLocation": req.body.requestData.storeLocation ? req.body.requestData.storeLocation : null
     }
 
-
-
-    // parameter to be passed
-    params = [deal.shortDescription, deal.longDescription,
-    deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.location,
-    deal.latitude, deal.longitude, new Date(Date.now()), deal.status, deal.storeLocation, deal.id, 0];
-
-    var query = "update deals set shortDescription = ?, longDescription = ?, " +
-        "startDate = ?, endDate = ?, cashBonus = ?, icon = ?, location = ?, latitude = ?, longitude = ?, " +
-        "modifiedDate = ?, status = ?, storeLocation = ? where id = ? and isDeleted = ?";
-
-    db.query(query, params, function (errorUpdateDeal, resultsUpdateDeal) {
-        if (!errorUpdateDeal) {
-            if (resultsUpdateDeal.affectedRows == 1) {
-                logger.info("Deal updated successfully");
-                res.send(responseGenerator.getResponse(200, "Deal updated successfully", deal));
+    params = [req.body.requestData.startDate, req.body.requestData.endDate, req.body.requestData.merchantId, 0, 1, deal.id]
+    db.query('select * from deals where ((? between startDate and endDate) or (? between startDate and endDate)) and merchantId = ? and isDeleted = ? and status = ? and id != ?', params, function (errorCheckDealExists, resultsCheckDealExists) {
+        if (!errorCheckDealExists) {
+            if (resultsCheckDealExists.length > 0) {
+                logger.info("addDeal - Deal already exists for this period ");
+                res.send(responseGenerator.getResponse(1099, "Deal already exists for this period", null))
             }
             else {
-                logger.info("updateDeal - Invalid deal id - " + req.result.userId);
-                res.send(responseGenerator.getResponse(1085, "Invalid deal id", null));
+                // parameter to be passed
+                params = [deal.shortDescription, deal.longDescription,
+                deal.startDate, deal.endDate, deal.cashBonus, deal.icon, deal.location,
+                deal.latitude, deal.longitude, new Date(Date.now()), deal.status, deal.storeLocation, deal.id, 0];
+
+                var query = "update deals set shortDescription = ?, longDescription = ?, " +
+                    "startDate = ?, endDate = ?, cashBonus = ?, icon = ?, location = ?, latitude = ?, longitude = ?, " +
+                    "modifiedDate = ?, status = ?, storeLocation = ? where id = ? and isDeleted = ?";
+
+                db.query(query, params, function (errorUpdateDeal, resultsUpdateDeal) {
+                    if (!errorUpdateDeal) {
+                        if (resultsUpdateDeal.affectedRows == 1) {
+                            logger.info("Deal updated successfully");
+                            res.send(responseGenerator.getResponse(200, "Deal updated successfully", deal));
+                        }
+                        else {
+                            logger.info("updateDeal - Invalid deal id - " + req.result.userId);
+                            res.send(responseGenerator.getResponse(1085, "Invalid deal id", null));
+                        }
+                    }
+                    else {
+                        logger.error("updateDeal - Error while processing your request", errorUpdateDeal);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorUpdateDeal));
+                    }
+                });
             }
         }
         else {
-            logger.error("updateDeal - Error while processing your request", errorUpdateDeal);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, errorUpdateDeal))
+            logger.error("Error while processing your request", errorCheckDealExists);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });
+
 
 }
 
@@ -303,6 +316,8 @@ exports.getActiveDeals = function (req, res) {
  * @param {*} res 
  */
 exports.updatePoolAmounts = function (req, res) {
+    var totalSwipeAmount;
+    var params;
     // saveTransactionToDatabase(res,splashResponse.body.data)
     if (req.body != null) {
 
@@ -318,25 +333,47 @@ exports.updatePoolAmounts = function (req, res) {
                     function (poolDetail, next) {
                         arr.push(poolDetail);
                         if (poolDetail.registeredUserSwipeAmt != null && poolDetail.nonRegisteredUserSwipeAmt != null && poolDetail.deal_id != null) {
-                            var totalSwipeAmount = poolDetail.registeredUserSwipeAmt + poolDetail.nonRegisteredUserSwipeAmt;
-                            var params = [poolDetail.registeredUserSwipeAmt, poolDetail.nonRegisteredUserSwipeAmt,
+                            totalSwipeAmount = poolDetail.registeredUserSwipeAmt + poolDetail.nonRegisteredUserSwipeAmt;
+                            params = [poolDetail.registeredUserSwipeAmt, poolDetail.nonRegisteredUserSwipeAmt,
                                 totalSwipeAmount, poolDetail.deal_id];
 
                             //Updating pool amount using query and forumla
                             //Pool Amount compounding = Tbase + ((Tbasis/100)*(Transactions/100)) 
                             //Below, d.cahBonus is merchant contribution
-                            var updateQuery = 'update deals d set d.registeredUserSwipeAmt=?, d.nonRegisteredUserSwipeAmt=?, ' +
-                                'd.totalPoolAmount=(d.cashBonus * 100) + (d.tBasis/100) * ((?)/100) where d.id=?';
 
-                            db.query(updateQuery, params, function (err, result) {
-                                if (err) {
+                            var query = 'select * from deals where id=?';
+
+                            db.query(query, [poolDetail.deal_id], function (errGetDeal, resultGetDeal) {
+                                if (errGetDeal) {
                                     console.log('Callback Transaction Error.' + err);
                                     db.rollback(function () {
                                         console.log('Rollbacking Transactions.' + err);
                                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                                     });
                                 }
-                                next(err, arr)
+                                else {
+                                    if (resultGetDeal.length > 0) {
+                                        var oldPool = resultGetDeal[0].totalPoolAmount;
+                                        var totalPool = (parseFloat(resultGetDeal[0].cashBonus) * 100) + ((parseFloat(resultGetDeal[0].tBasis) / 100) * (totalSwipeAmount / 100));
+                                        var increaseInPool = totalPool - oldPool;
+                                        var updateQuery = 'update deals d set d.registeredUserSwipeAmt=?, d.nonRegisteredUserSwipeAmt=?, d.increasedPool = "'+increaseInPool+
+                                            '", d.totalPoolAmount=(d.cashBonus * 100) + (d.tBasis/100) * ((?)/100) where d.id=?';
+
+                                        db.query(updateQuery, params, function (err, result) {
+                                            if (err) {
+                                                console.log('Callback Transaction Error.' + err);
+                                                db.rollback(function () {
+                                                    console.log('Rollbacking Transactions.' + err);
+                                                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                                });
+                                            }
+                                            next(err, arr)
+                                        });
+                                    }
+                                    else {
+                                        next(err, arr);
+                                    }
+                                }
                             });
                         }
                     },
@@ -364,6 +401,7 @@ exports.updatePoolAmounts = function (req, res) {
         });
     }
 }
+
 
 
 /**

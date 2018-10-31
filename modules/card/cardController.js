@@ -81,10 +81,10 @@ exports.getCards = function (req, res) {
     db.query("select * from cards where userId = ? and isDeleted = ?", params, function (error, results) {
         if (!error) {
             logger.info("Cards fetched successfully for user - " + card.userId);
-            res.send(responseGenerator.getResponse(200, "Success", results))
+            res.send(responseGenerator.getResponse(200, "Success", results));
         } else {
             logger.error("Error while processing your request", error);
-            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+            res.send(responseGenerator.getResponse(1005, msg.dbError, null));
         }
     })
 

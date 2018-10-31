@@ -83,14 +83,14 @@ exports.redeemReqRejected = function (username, callback) {
   callback(null, template)
 }
 
-exports.accountDeleted = function (username, callback) {
+exports.accountDeleted = function (callback) {
   var template = fs.readFileSync('./static/accountDeletion.html', 'utf8').toString();
   callback(null, template)
 }
 
-exports.ticketResolved = function (username, callback) {
+exports.ticketResolved = function (username, ticketNumber, callback) {
   link = config.frontEndHost;
   var template = fs.readFileSync('./static/ticketResolved.html', 'utf8').toString();
-  template = template.replace("$username", username).replace("$link", link)
+  template = template.replace("$username", username).replace("$link", link).replace("$ticketNumber", ticketNumber).replace("$link", link);
   callback(null, template)
 }

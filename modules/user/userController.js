@@ -1191,59 +1191,90 @@ exports.updateAdmin = function (req, res) {
                 logger.error("updateAdmin - ", err.message);
                 res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
             } else {
-                var query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
+                var query = "select * from users where userId != ? and isDeleted = ? and emailId = ?";
 
-                var params = [ProfilePicUrl, admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+                var params = [admin.userId, 0, admin.emailId];
 
-                db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
-                    if (errorUpdateAdmin) {
-                        if (errorUpdateAdmin.errno == 1062) {
+                db.query(query, params, function (errorCheckEmailExists, resultsCheckEmailExists, fieldsCheckEmailExists) {
+                    if (errorCheckEmailExists) {
+                        logger.error("Error while processing your request", errorUpdateAdmin);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+                    }
+                    else {
+                        if (resultsCheckEmailExists.length > 0) {
                             logger.warn("Email Already Exists");
                             res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
                         }
                         else {
-                            logger.error("Error while processing your request", errorUpdateAdmin);
-                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                        }
-                    } else {
-                        if (resultsUpdateAdmin.affectedRows == 1) {
-                            logger.info("admin updated successfully");
-                            res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
-                        }
-                        else {
-                            logger.warn("Invalid email");
-                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+
+                            query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+                            params = [ProfilePicUrl, admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+
+                            db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+                                if (errorUpdateAdmin) {
+                                    if (errorUpdateAdmin.errno == 1062) {
+                                        logger.warn("Email Already Exists");
+                                        res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+                                    }
+                                    else {
+                                        logger.error("Error while processing your request", errorUpdateAdmin);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                } else {
+                                    if (resultsUpdateAdmin.affectedRows == 1) {
+                                        logger.info("admin updated successfully");
+                                        res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                                    }
+                                    else {
+                                        logger.warn("Invalid email");
+                                        res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                                    }
+                                }
+                            });
                         }
                     }
                 });
-
             }
         });
     }
     else {
-        var query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
+        var query = "select * from users where userId != ? and isDeleted = ? and emailId = ?";
 
-        var params = [admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+        var params = [admin.userId, 0, admin.emailId];
 
-        db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
-            if (errorUpdateAdmin) {
-                if (errorUpdateAdmin.errno == 1062) {
+        db.query(query, params, function (errorCheckEmailExists, resultsCheckEmailExists, fieldsCheckEmailExists) {
+            if (errorCheckEmailExists) {
+                logger.error("Error while processing your request", errorUpdateAdmin);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+            }
+            else {
+                if (resultsCheckEmailExists.length > 0) {
                     logger.warn("Email Already Exists");
                     res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
                 }
                 else {
-                    logger.error("Error while processing your request", errorUpdateAdmin);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                }
+                    query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
 
-            } else {
-                if (resultsUpdateAdmin.affectedRows == 1) {
-                    logger.info("admin updated successfully");
-                    res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
-                }
-                else {
-                    logger.warn("Invalid email");
-                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                    params = [admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+
+                    db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+                        if (errorUpdateAdmin) {
+
+                            logger.error("Error while processing your request", errorUpdateAdmin);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+
+                        } else {
+                            if (resultsUpdateAdmin.affectedRows == 1) {
+                                logger.info("admin updated successfully");
+                                res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                            }
+                            else {
+                                logger.warn("Invalid email");
+                                res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -1303,8 +1334,8 @@ exports.updateUser = function (req, res) {
     encPass = functions.encrypt(password);
 
     if (User.isEmailUpdated == "1") {
-        query = "SELECT emailId FROM users WHERE emailId = ?";
-        params = [User.emailId];
+        query = "SELECT emailId FROM users WHERE emailId = ? and isDeleted = ?";
+        params = [User.emailId, 0];
         db.query(query, params, function (errorEmailCheck, resultsEmailCheck) {
             if (!errorEmailCheck) {
                 if (resultsEmailCheck.length > 0) {
