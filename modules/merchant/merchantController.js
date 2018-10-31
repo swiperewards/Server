@@ -37,6 +37,7 @@ exports.createMerchant = function (req, res) {
     // if (registeredEmail == Reqbody.requestData.entityEmail) {
     Reqbody.userId = req.result.userId;
     var ReqbodyWithoutImage = Reqbody;
+    var image = ReqbodyWithoutImage.requestData.image;
     ReqbodyWithoutImage.requestData.image = "";
     transaction.createMerchant(ReqbodyWithoutImage, function (error, response) {
         if (error) {
@@ -49,10 +50,10 @@ exports.createMerchant = function (req, res) {
                 decryptedResponse = functions.decryptData(response.body.responseData);
                 decryptedRequest = functions.decryptData(req.body.requestData);
 
-                if (decryptedRequest.image) {
+                if (image) {
                     var ProfilePicUrl = "https://s3.amazonaws.com/" + config.merchantLogoBucketName + "/" + decryptedResponse.merchantId + ".jpg";
 
-                    buf = new Buffer(decryptedRequest.image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                    buf = new Buffer(image.replace(/^data:image\/\w+;base64,/, ""), 'base64')
                     var data = {
                         Key: decryptedResponse.merchantId + ".jpg",
                         Body: buf,
