@@ -254,6 +254,24 @@ function createToken(Reqbody, callback) {
 }
 
 
+function addCard(Reqbody, callback) {
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
+    request({
+        url: config.transactionApiUrl + "/customer/addCard",
+        method: 'POST',
+        headers:
+            {
+                'Content-Type': 'application/json'
+            },
+        json: true,
+        body: Reqbody
+    }, function (err, res) {
+        callback(err, res);
+    })
+
+}
+
+
 
 
 
@@ -268,7 +286,8 @@ module.exports = {
     createMember: createMember,
     updateMember: updateMember,
     updateAccount: updateAccount,
-    createCustomer:createCustomer,
-    createToken:createToken
+    createCustomer: createCustomer,
+    createToken: createToken,
+    addCard: addCard
 }
 

@@ -14,8 +14,8 @@ var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 exports.getRedeemOptions = function (req, res) {
 
     // parameters to be passed to select redeem options
-    params = [0, 0, '']
-    db.query("select mrd.id as modeId, mrd.mode, mrd.status, mrdo.id as modeSubId, mrdo.name from mst_redeem_modes mrd left outer join mst_redeem_mode_options mrdo on mrd.id = mrdo.redeemModeId where mrd.isDeleted = ? and (mrdo.isDeleted = ? or COALESCE(mrdo.isDeleted, '') = ?)", params, function (error, results) {
+    params = [0, 1, 0, '']
+    db.query("select mrd.id as modeId, mrd.mode, mrd.status, mrdo.id as modeSubId, mrdo.name from mst_redeem_modes mrd left outer join mst_redeem_mode_options mrdo on mrd.id = mrdo.redeemModeId where mrd.isDeleted = ? and mrd.status = ? and (mrdo.isDeleted = ? or COALESCE(mrdo.isDeleted, '') = ?)", params, function (error, results) {
         if (!error) {
             // code to format the response into required structure, we will get the formated output in arrFinal
             var arr = [];
@@ -415,27 +415,27 @@ exports.rejectRedeemRequest = function (req, res) {
         "note": req.body.requestData.note ? req.body.requestData.note : null
     }
     // parameters to be passed to RaiseRedeemRequest procedure
-    params = [3, new Date(Date.now()), redeemRequest.note, redeemRequest.id, 1]
-    var query = "update redeem_requests set status = ?, modifiedDate = ?, note = ? where id = ? and status = ?"
+    params = [redeemRequest.id, redeemRequest.note]
+    var query = "call RejectRedeemRequest(?,?)"
     db.query(query, params, function (error, results) {
         if (!error) {
-            if (results.affectedRows == 0) {
+            if (results[0][0].invalidId) {
                 logger.info("rejectRedeemRequest - Invalid id - " + redeemRequest.id);
                 res.send(responseGenerator.getResponse(1085, "Invalid id", null));
             }
             else {
                 notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, "Rejected", function () {
-                    // var message;
-                    // template.redeemReqRejected(results[0][0].p_userName, function (err, msg) {
-                    //     message = msg;
-                    // })
-                    // emailHandler.sendEmail(results[0][0].p_emailId, 'Redeem Request Status Changed (Rejected)', message, function (errorEmailHandler) {
-                    //     if (errorEmailHandler) {
-                    //         logger.warn("Failed to send Redeem Request Status Changed (Rejected) to linked mail");
-                    //     } else {
-                    //         logger.info("Redeem Request Status Changed (Rejected) Acknowledgement sent");
-                    //     }
-                    // });
+                    var message;
+                    template.redeemReqRejected(results[0][0].fullName, function (err, msg) {
+                        message = msg;
+                    })
+                    emailHandler.sendEmail(results[0][0].emailId, 'Redeem Request Status Changed (Rejected)', message, function (errorEmailHandler) {
+                        if (errorEmailHandler) {
+                            logger.warn("Failed to send Redeem Request Status Changed (Rejected) to linked mail");
+                        } else {
+                            logger.info("Redeem Request Status Changed (Rejected) Acknowledgement sent");
+                        }
+                    });
                 });
                 logger.error("rejectRedeemRequest - redeem request rejected successfully by -" + req.result.userId);
                 res.send(responseGenerator.getResponse(200, "Redeem request rejected successfully", null))

@@ -13,8 +13,8 @@ var template = require(path.resolve('./', 'utils/emailTemplates.js'));
 exports.getTicketTypes = function (req, res) {
 
     // parameter to be passed to select ticket types
-    params = [0]
-    db.query("select id, status, ticketTypeName from mst_ticket_type where isDeleted = ?", params, function (error, results) {
+    params = [0, 1]
+    db.query("select id, status, ticketTypeName from mst_ticket_type where isDeleted = ? and status = ? order by modifiedDate desc", params, function (error, results) {
         if (!error) {
             logger.info("getTicketTypes - ticketTypeName fetched successfully for user - " + req.result.userId);
             var ticketTypes = [];
@@ -246,31 +246,29 @@ exports.resolveTicket = function (req, res) {
         "status": req.body.requestData.status
     }
     // parameter to be passed to update Ticket Type
-    params = [ticket.ticketTypeId, ticket.resolveDescription, ticket.replyMessage, ticket.status, new Date(Date.now()), ticket.id, 0];
-    db.query("update ticket set ticketTypeId = ?, resolveDescription = ?, replyMessage = ?, status = ?, modifiedDate = ? where id = ? and isDeleted = ?", params, function (error, results) {
+    params = [ticket.ticketTypeId, ticket.resolveDescription, ticket.replyMessage, ticket.status, ticket.id];
+    db.query("call ResolveTicket(?,?,?,?,?)", params, function (error, results) {
         if (!error) {
-            if (results.affectedRows == 1) {
-                // var message;
-                // template.ticketResolved(results[0][0].p_userName, function (err, msg) {
-                //     message = msg;
-                // })
-                // emailHandler.sendEmail(results[0][0].p_emailId, '"Contact us" Request Acknowledgement #' + results[0][0].p_ticketNumber, message, function (errorEmailHandler) {
-                //     if (errorEmailHandler) {
-                //         logger.warn("Failed to send Contact us - request ack to linked mail");
-                //         res.send(responseGenerator.getResponse(1001, "Failed to send Contact us - request ack to linked mail", null))
-                //     } else {
-                //         logger.info("Contact us - request ack sent");
-
-                //         logger.error("generateTicket - ticket generated successfully by -" + ticket.userId);
-                //         res.send(responseGenerator.getResponse(200, "Ticket generated successfully", results[0][0]))
-                //     }
-                // });
-                logger.info("resolveTicket - ticket resolved successfully for user - " + req.result.userId);
-                res.send(responseGenerator.getResponse(200, "Ticket resolved successfully", null))
-            }
-            else {
+            if (results[0][0].invalidId) {
                 logger.info("resolveTicket - ticketTypeName not exists - " + req.result.userId);
                 res.send(responseGenerator.getResponse(1090, "Ticket does not exist", null))
+
+            }
+            else {
+                var message;
+                template.ticketResolved(results[0][0].fullName, results[0][0].ip_ticketNumber, function (err, msg) {
+                    message = msg;
+                })
+                emailHandler.sendEmail(results[0][0].emailId, 'Query Resolution #' + results[0][0].ip_ticketNumber, message, function (errorEmailHandler) {
+                    if (errorEmailHandler) {
+                        logger.warn("Failed to send Contact us - request ack to linked mail");
+                        res.send(responseGenerator.getResponse(1001, "Failed to send Contact us - request ack to linked mail", null))
+                    } else {
+                        logger.info("resolveTicket - ticket resolved successfully for user - " + req.result.userId);
+                        res.send(responseGenerator.getResponse(200, "Ticket resolved successfully", null));
+                    }
+                });
+
             }
 
         } else {

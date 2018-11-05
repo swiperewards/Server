@@ -107,6 +107,7 @@ exports.registerUser = function (req, res) {
 }
 
 function registerUserInternal(req, res) {
+
     var user = {
         'fullName': req.body.requestData.fullName,
         'mobileNumber': !req.body.requestData.mobileNumber ? null : req.body.requestData.mobileNumber,
@@ -124,16 +125,29 @@ function registerUserInternal(req, res) {
         'referredBy': !req.body.requestData.referredBy ? null : req.body.requestData.referredBy,
         'customerId': !req.body.requestData.customerId ? null : req.body.requestData.customerId
     }
+    var nameArr = user.fullName.split(" ");
 
+    if (nameArr.length == 1) {
+        user.firstName = nameArr[0];
+    }
+    else if (nameArr.length > 1) {
+        user.firstName = nameArr[0];
+        user.lastName = "";
+        for (var i = 0; i < nameArr.length; i++) {
+            if (i != 0)
+                user.lastName = user.lastName + " " + nameArr[i];
+        }
+        user.lastName = user.lastName.trim();
+    }
     var randomNumForReferral = randomstring.generate({
         length: 8,
         charset: 'numeric'
     });
     randomNumForReferral = randomNumForReferral + "";
 
-    var params = [user.fullName, user.mobileNumber, user.emailId, functions.encrypt(user.password), user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy, randomNumForReferral, user.customerId]
+    var params = [user.fullName, user.mobileNumber, user.emailId, functions.encrypt(user.password), user.platform, user.deviceId, user.lat, user.long, user.pincode, user.city, user.isSocialLogin, user.profilePicUrl, user.socialToken, user.referredBy, randomNumForReferral, user.customerId, user.firstName, user.lastName]
 
-    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
+    db.query('call SignupUserV2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsOldRecord == 1) {
@@ -143,6 +157,9 @@ function registerUserInternal(req, res) {
             else if (results[0][0].InvalidReferralCode == 1) {
                 logger.warn("Invalid referral code");
                 res.send(responseGenerator.getResponse(1096, "Invalid referral code", null));
+            }
+            else if (results[0][0].InvalidRecord == 1) {
+                res.send(responseGenerator.getResponse(1003, "Please check username or password", null))
             }
             else {
                 var data = {
@@ -165,26 +182,47 @@ function registerUserInternal(req, res) {
 
                 if (results[0][0].modifiedDate) {
                     logger.info("registerUser - Success " + results[0][0].userId);
+                    functions.addJwtToken(results[0][0].userId, token, function (errAddToken, successAddToken) {
+                        if (!errAddToken) {
+                            res.send(responseGenerator.getResponse(200, "Success", {
+                                token: token,
+                                name: results[0][0].fullName,
+                                emailId: results[0][0].emailId,
+                                userId: results[0][0].userId,
+                                isNewRecord: results[0][0].isNewRecord
+                            }))
+                        }
+                        else {
+                            logger.error("Error while processing your request", errAddToken);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                        }
 
-                    res.send(responseGenerator.getResponse(200, "Success", {
-                        token: token,
-                        name: results[0][0].fullName,
-                        emailId: results[0][0].emailId,
-                        userId: results[0][0].userId,
-                        isNewRecord: results[0][0].isNewRecord
-                    }))
+                    })
+
+                    
                 }
                 else {
                     if (user.isSocialLogin == "1") {
                         logger.info("register User - success " + user.emailId);
 
-                        res.send(responseGenerator.getResponse(200, "Success", {
-                            token: token,
-                            name: results[0][0].name,
-                            emailId: results[0][0].emailId,
-                            userId: results[0][0].userId,
-                            isNewRecord: results[0][0].isNewRecord
-                        }))
+                        functions.addJwtToken(results[0][0].userId, token, function (errAddToken, successAddToken) {
+                            if (!errAddToken) {
+                                res.send(responseGenerator.getResponse(200, "Success", {
+                                    token: token,
+                                    name: results[0][0].name,
+                                    emailId: results[0][0].emailId,
+                                    userId: results[0][0].userId,
+                                    isNewRecord: results[0][0].isNewRecord
+                                }))
+                            }
+                            else {
+                                logger.error("Error while processing your request", errAddToken);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                            }
+    
+                        })
+
+                        
                     }
                     else {
                         var msg = "";
@@ -279,8 +317,22 @@ exports.registerUserWeb = function (req, res) {
         'password': req.body.requestData.password ? req.body.requestData.password : null,
         'platform': req.body.platform
     }
-    var params = [user.fullName, user.emailId, functions.encrypt(user.password), user.platform]
-    db.query('call SignupUserWeb(?,?,?,?)', params, function (error, results) {
+    var nameArr = user.fullName.split(" ");
+
+    if (nameArr.length == 1) {
+        user.firstName = nameArr[0];
+    }
+    else if (nameArr.length > 1) {
+        user.firstName = nameArr[0];
+        user.lastName = "";
+        for (var i = 0; i < nameArr.length; i++) {
+            if (i != 0)
+                user.lastName = user.lastName + " " + nameArr[i];
+        }
+        user.lastName = user.lastName.trim();
+    }
+    var params = [user.fullName, user.emailId, functions.encrypt(user.password), user.platform, user.firstName, user.lastName]
+    db.query('call SignupUserWeb(?,?,?,?,?,?)', params, function (error, results) {
         if (!error) {
             //check for email already exists in DB
             if (results[0][0].IsOldRecord == 1) {
@@ -333,8 +385,8 @@ exports.registerUserWeb = function (req, res) {
 
 exports.loginUser = function (req, res) {
     var strQuery = {
-        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ?",
-        values: [req.body.requestData.emailId, 0, 4, 1]
+        sql: "select * from users where emailId = ? and isDeleted = ? and roleId = ? and isUserVerified = ? and status = ? and platformId != ?",
+        values: [req.body.requestData.emailId, 0, 4, 1, 1, "Web"]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -362,12 +414,22 @@ exports.loginUser = function (req, res) {
                         });
                     // finalCallback(null, results)
                     if (results[0].isUserVerified) {
-                        res.send(responseGenerator.getResponse(200, "Login successful", {
-                            token: token,
-                            fullName: results[0].fullName,
-                            emailId: results[0].emailId,
-                            userId: results[0].userId
-                        }))
+                        functions.addJwtToken(results[0].userId, token, function (errAddToken, successAddToken) {
+                            if (!errAddToken) {
+                                res.send(responseGenerator.getResponse(200, "Login successful", {
+                                    token: token,
+                                    fullName: results[0].fullName,
+                                    emailId: results[0].emailId,
+                                    userId: results[0].userId
+                                }))
+                            }
+                            else {
+                                logger.error("Error while processing your request", errAddToken);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                            }
+
+                        })
+
                     }
                     else {
                         res.send(responseGenerator.getResponse(1002, "Verification pending", null))
@@ -395,8 +457,8 @@ exports.getUserProfile = function (req, res) {
     }
 
     var strQuery = {
-        sql: "select * from merchantdata where userId = ?",
-        values: [user.userId]
+        sql: "select * from merchantdata where userId = ? and inactive = ?",
+        values: [user.userId, 0]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -489,6 +551,24 @@ exports.activateAccount = function (req, res) {
 
 
 
+exports.logout = function (req, res) {
+    var user = {
+        'userId': req.result.userId,
+        'auth': req.headers.auth
+    }
+    db.query("update jwt_tokens set isDeleted = ? where jwt_token = ?", [1, user.auth], function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+        } else {
+            logger.info("User logout successfully");
+            res.send(responseGenerator.getResponse(200, "User logout successfully", null));
+        }
+    });
+}
+
+
+
 exports.changePassword = function (req, res) {
 
     var user = {
@@ -540,6 +620,7 @@ exports.changePassword = function (req, res) {
         }
     });
 }
+
 
 
 
@@ -597,7 +678,7 @@ exports.updateProfilePic = function (req, res) {
 
                 } else {
                     logger.error("updateProfilePic - Error while processing your request", error);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null));
                 }
             })
         }
@@ -614,9 +695,23 @@ exports.updateUserProfile = function (req, res) {
         'fullName': req.body.requestData.fullName,
         'password': req.body.requestData.password
     }
+    var nameArr = user.fullName.split(" ");
+
+    if (nameArr.length == 1) {
+        user.firstName = nameArr[0];
+    }
+    else if (nameArr.length > 1) {
+        user.firstName = nameArr[0];
+        user.lastName = "";
+        for (var i = 0; i < nameArr.length; i++) {
+            if (i != 0)
+                user.lastName = user.lastName + " " + nameArr[i];
+        }
+        user.lastName = user.lastName.trim();
+    }
     var encPass = "";
-    query = "update users set fullName = ? ";
-    params = [user.fullName];
+    query = "update users set fullName = ?, firstName = ?, lastName = ? ";
+    params = [user.fullName, user.firstName, user.lastName];
 
     encPass = functions.encrypt(user.password);
 
@@ -786,8 +881,8 @@ exports.setPassword = function (req, res) {
 exports.loginUserWeb = function (req, res) {
 
     var strQuery = {
-        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ?",
-        values: [req.body.requestData.emailId, 0, 1]
+        sql: "select u.emailId, u.password, u.fullName, u.userId, u.roleId, u.isUserVerified, u.profilePicUrl, mr.name as role from users u join mst_role mr on u.roleId = mr.id where u.emailId = ? and u.isDeleted = ? and u.status = ? and u.platformId = ?",
+        values: [req.body.requestData.emailId, 0, 1, "Web"]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -841,7 +936,17 @@ exports.loginUserWeb = function (req, res) {
                                 }
 
                                 if (results[0].isUserVerified) {
-                                    res.send(responseGenerator.getResponse(200, "Login successful", userData))
+                                    functions.addJwtToken(userData.userId, userData.token, function (errAddToken, successAddToken) {
+                                        if (!errAddToken) {
+                                            res.send(responseGenerator.getResponse(200, "Login successful", userData))
+                                        }
+                                        else {
+                                            logger.error("Error while processing your request", errAddToken);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                                        }
+
+                                    })
+
                                 }
                                 else {
                                     res.send(responseGenerator.getResponse(1002, "Verification pending", { "email": req.body.requestData.emailId }))
@@ -1113,6 +1218,21 @@ exports.updateAdmin = function (req, res) {
             'status': (req.body.requestData.status == "1") ? "1" : "0",
             'profilePic': req.body.requestData.profilePic
         }
+
+    var nameArr = admin.fullName.split(" ");
+
+    if (nameArr.length == 1) {
+        admin.firstName = nameArr[0];
+    }
+    else if (nameArr.length > 1) {
+        admin.firstName = nameArr[0];
+        admin.lastName = "";
+        for (var i = 0; i < nameArr.length; i++) {
+            if (i != 0)
+                admin.lastName = admin.lastName + " " + nameArr[i];
+        }
+        admin.lastName = admin.lastName.trim();
+    }
     if ((admin.profilePic) && (admin.profilePic.length > 100)) {
         var ProfilePicUrl = "https://s3.amazonaws.com/swipe-webpage-pictures/" + admin.userId + ".jpg";
 
@@ -1131,59 +1251,90 @@ exports.updateAdmin = function (req, res) {
                 logger.error("updateAdmin - ", err.message);
                 res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
             } else {
-                var query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+                var query = "select * from users where userId != ? and isDeleted = ? and emailId = ?";
 
-                var params = [ProfilePicUrl, admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.userId, 0, 2];
+                var params = [admin.userId, 0, admin.emailId];
 
-                db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
-                    if (errorUpdateAdmin) {
-                        if (errorUpdateAdmin.errno == 1062) {
+                db.query(query, params, function (errorCheckEmailExists, resultsCheckEmailExists, fieldsCheckEmailExists) {
+                    if (errorCheckEmailExists) {
+                        logger.error("Error while processing your request", errorUpdateAdmin);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+                    }
+                    else {
+                        if (resultsCheckEmailExists.length > 0) {
                             logger.warn("Email Already Exists");
                             res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
                         }
                         else {
-                            logger.error("Error while processing your request", errorUpdateAdmin);
-                            res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                        }
-                    } else {
-                        if (resultsUpdateAdmin.affectedRows == 1) {
-                            logger.info("admin updated successfully");
-                            res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
-                        }
-                        else {
-                            logger.warn("Invalid email");
-                            res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+
+                            query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
+
+                            params = [ProfilePicUrl, admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+
+                            db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+                                if (errorUpdateAdmin) {
+                                    if (errorUpdateAdmin.errno == 1062) {
+                                        logger.warn("Email Already Exists");
+                                        res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
+                                    }
+                                    else {
+                                        logger.error("Error while processing your request", errorUpdateAdmin);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                } else {
+                                    if (resultsUpdateAdmin.affectedRows == 1) {
+                                        logger.info("admin updated successfully");
+                                        res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                                    }
+                                    else {
+                                        logger.warn("Invalid email");
+                                        res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                                    }
+                                }
+                            });
                         }
                     }
                 });
-
             }
         });
     }
     else {
-        var query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ? where userId = ? and isDeleted = ? and roleId = ?";
+        var query = "select * from users where userId != ? and isDeleted = ? and emailId = ?";
 
-        var params = [admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.userId, 0, 2];
+        var params = [admin.userId, 0, admin.emailId];
 
-        db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
-            if (errorUpdateAdmin) {
-                if (errorUpdateAdmin.errno == 1062) {
+        db.query(query, params, function (errorCheckEmailExists, resultsCheckEmailExists, fieldsCheckEmailExists) {
+            if (errorCheckEmailExists) {
+                logger.error("Error while processing your request", errorUpdateAdmin);
+                res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+            }
+            else {
+                if (resultsCheckEmailExists.length > 0) {
                     logger.warn("Email Already Exists");
                     res.send(responseGenerator.getResponse(1004, "Email Already Exists", null));
                 }
                 else {
-                    logger.error("Error while processing your request", errorUpdateAdmin);
-                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
-                }
+                    query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ? and roleId = ?";
 
-            } else {
-                if (resultsUpdateAdmin.affectedRows == 1) {
-                    logger.info("admin updated successfully");
-                    res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
-                }
-                else {
-                    logger.warn("Invalid email");
-                    res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                    params = [admin.fullName, admin.emailId, admin.status, admin.contactNumber, admin.firstName, admin.lastName, admin.userId, 0, 2];
+
+                    db.query(query, params, function (errorUpdateAdmin, resultsUpdateAdmin, fieldsUpdateAdmin) {
+                        if (errorUpdateAdmin) {
+
+                            logger.error("Error while processing your request", errorUpdateAdmin);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, null));
+
+                        } else {
+                            if (resultsUpdateAdmin.affectedRows == 1) {
+                                logger.info("admin updated successfully");
+                                res.send(responseGenerator.getResponse(200, "Admin updated successfully", null));
+                            }
+                            else {
+                                logger.warn("Invalid email");
+                                res.send(responseGenerator.getResponse(1085, "Invalid email", null));
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -1208,6 +1359,20 @@ exports.updateUser = function (req, res) {
             "roleId": req.body.requestData.roleId,
             "isPasswordUpdated": req.body.requestData.isPasswordUpdated
         }
+    var nameArr = User.fullName.split(" ");
+
+    if (nameArr.length == 1) {
+        User.firstName = nameArr[0];
+    }
+    else if (nameArr.length > 1) {
+        User.firstName = nameArr[0];
+        User.lastName = "";
+        for (var i = 0; i < nameArr.length; i++) {
+            if (i != 0)
+                User.lastName = User.lastName + " " + nameArr[i];
+        }
+        User.lastName = User.lastName.trim();
+    }
     var query = "";
     var params;
     var returned = false;
@@ -1229,8 +1394,8 @@ exports.updateUser = function (req, res) {
     encPass = functions.encrypt(password);
 
     if (User.isEmailUpdated == "1") {
-        query = "SELECT emailId FROM users WHERE emailId = ?";
-        params = [User.emailId];
+        query = "SELECT emailId FROM users WHERE emailId = ? and isDeleted = ?";
+        params = [User.emailId, 0];
         db.query(query, params, function (errorEmailCheck, resultsEmailCheck) {
             if (!errorEmailCheck) {
                 if (resultsEmailCheck.length > 0) {
@@ -1256,9 +1421,9 @@ exports.updateUser = function (req, res) {
                                 logger.error("updateUser - ", err.message);
                                 res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
                             } else {
-                                query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+                                query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ?";
 
-                                params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, 0, new Date(Date.now()), User.userId, 0];
+                                params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, 0, new Date(Date.now()), User.firstName, User.lastName, User.userId, 0];
 
                                 db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
                                     if (errorUpdateUser) {
@@ -1306,9 +1471,9 @@ exports.updateUser = function (req, res) {
                         });
                     }
                     else {
-                        query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+                        query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, isUserVerified = ?, modifiedDate = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ?";
 
-                        params = [User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, 0, new Date(Date.now()), User.userId, 0];
+                        params = [User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, 0, new Date(Date.now()), User.firstName, User.lastName, User.userId, 0];
 
                         db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
                             if (errorUpdateUser) {
@@ -1376,9 +1541,9 @@ exports.updateUser = function (req, res) {
                     logger.error("updateUser - ", err.message);
                     res.send(responseGenerator.getResponse(1094, "Something went wrong", err));
                 } else {
-                    query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+                    query = "update users set profilePicUrl = ?, fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ?";
 
-                    params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, new Date(Date.now()), User.userId, 0];
+                    params = [ProfilePicUrl, User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, new Date(Date.now()), User.firstName, User.lastName, User.userId, 0];
 
                     db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
                         if (errorUpdateUser) {
@@ -1400,9 +1565,9 @@ exports.updateUser = function (req, res) {
             });
         }
         else {
-            query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ? where userId = ? and isDeleted = ?";
+            query = "update users set fullName = ?, emailId = ?, status = ?, contactNumber = ?, password = ?, city = ?, pincode = ?, modifiedDate = ?, firstName = ?, lastName = ? where userId = ? and isDeleted = ?";
 
-            params = [User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, new Date(Date.now()), User.userId, 0];
+            params = [User.fullName, User.emailId, User.status, User.contactNumber, encPass, User.city, User.zipcode, new Date(Date.now()), User.firstName, User.lastName, User.userId, 0];
 
             db.query(query, params, function (errorUpdateUser, resultsUpdateUser, fieldsUpdateUser) {
                 if (errorUpdateUser) {
@@ -1439,8 +1604,16 @@ exports.deleteAdmin = function (req, res) {
     db.query(query, params, function (errorDeleteAdmin, resultsDeleteAdmin) {
         if (!errorDeleteAdmin) {
             if (resultsDeleteAdmin.affectedRows == 1) {
-                logger.info("Admin deleted successfully");
-                res.send(responseGenerator.getResponse(200, "Admin deleted successfully", admin));
+                functions.deleteJwtToken(admin.id, function (errDeleteJwtToken, sucessDeleteJwtToken) {
+                    if (!errDeleteJwtToken) {
+                        logger.info("Admin deleted successfully");
+                        res.send(responseGenerator.getResponse(200, "Admin deleted successfully", admin));
+                    }
+                    else {
+                        logger.error("Error while processing your request", errDeleteJwtToken);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, errDeleteJwtToken))
+                    }
+                })
             }
             else {
                 logger.info("deleteAdmin - Invalid id - " + admin.id);
@@ -1475,10 +1648,17 @@ exports.deleteUser = function (req, res) {
                     res.send(responseGenerator.getResponse(200, "User activated successfully", User));
                 }
                 else {
-                    logger.info("User deactivated successfully");
-                    res.send(responseGenerator.getResponse(200, "User deactivated successfully", User));
+                    functions.deleteJwtToken(User.id, function (errDeleteJwtToken, sucessDeleteJwtToken) {
+                        if (!errDeleteJwtToken) {
+                            logger.info("User deactivated successfully");
+                            res.send(responseGenerator.getResponse(200, "User deactivated successfully", User));
+                        }
+                        else {
+                            logger.error("Error while processing your request", errDeleteJwtToken);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errDeleteJwtToken))
+                        }
+                    })
                 }
-
             }
             else {
                 logger.info("deleteUser - Invalid id - " + User.id);
@@ -1531,9 +1711,9 @@ exports.getUserDetails = function (req, res) {
     }
 
     // parameter to be passed
-    params = [User.id, 3, 4];
+    params = [User.id];
 
-    var query = "select * from users where userId = ? and (roleId = ? or roleId = ?)";
+    var query = "select * from users where userId = ?";
 
     db.query(query, params, function (errorGetUserDetails, resultsGetUserDetails) {
         if (!errorGetUserDetails) {
@@ -1587,7 +1767,7 @@ exports.getAdmins = function (req, res) {
 
 
 exports.getUsers = function (req, res) {
-
+    var Users = [];
     var data = {
         'name': req.body.requestData.name ? ('%' + req.body.requestData.name + '%') : '%%',
         'status': req.body.requestData.status ? ((req.body.requestData.status == '1') ? '%1%' : '%0%') : '%%',
@@ -1601,16 +1781,40 @@ exports.getUsers = function (req, res) {
     db.query('call GetUsers(?,?,?,?,?)', params, function (errorGetUsers, resultsGetUsers) {
         if (!errorGetUsers) {
             logger.info("getUsers - success -" + req.result.userId);
-            var Users = [];
-            for (var i = 0; i < resultsGetUsers[0].length; i++) {
-                var obj = resultsGetUsers[0][i];
-                obj.serial_number = i + 1;
-                Users.push(obj);
-            }
-            res.send(responseGenerator.getResponse(200, "Success", Users))
+
+            // for (var i = 0; i < resultsGetUsers[0].length; i++) {
+            //     var obj = resultsGetUsers[0][i];
+            //     obj.serial_number = i + 1;
+            //     Users.push(obj);
+            // }
+            // params = [data.name, data.status, data.pageNumber, data.pageSize, data.type]
+            db.query('select userId, count(*) as businessCount from merchantdata group by userId', params, function (errorGetBusinessCount, resultsGetBusinessCount) {
+                if (!errorGetBusinessCount) {
+                    logger.info("getUsers - success -" + req.result.userId);
+                    var Users = [];
+                    for (var i = 0; i < resultsGetUsers[0].length; i++) {
+                        var obj = resultsGetUsers[0][i];
+                        obj.serial_number = i + 1;
+                        obj.businessCount = 0;
+                        // Users.push(obj);
+                        for (var j = 0; j < resultsGetBusinessCount.length; j++) {
+                            if (obj.userId == resultsGetBusinessCount[j].userId) {
+                                obj.businessCount = resultsGetBusinessCount[j].businessCount;
+                            }
+                        }
+                        Users.push(obj);
+                    }
+                    res.send(responseGenerator.getResponse(200, "Success", Users))
+                }
+                else {
+                    logger.error("getUsers - Error while processing your request", errorGetBusinessCount);
+                    res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                }
+            });
+            // res.send(responseGenerator.getResponse(200, "Success", Users))
         }
         else {
-            logger.error("getDealsWeb - Error while processing your request", errorGetUsers);
+            logger.error("getUsers - Error while processing your request", errorGetUsers);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         }
     });
