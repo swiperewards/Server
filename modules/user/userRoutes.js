@@ -13,6 +13,9 @@ router.post('/registerUser', functions.decryptDataMiddleWare, api.registerUser);
 // api to login for android / ios app user
 router.post("/loginUser", functions.decryptDataMiddleWare, api.loginUser);
 
+// api to logout user
+router.post("/logout", functions.decryptDataMiddleWare, encDecController.verifyToken, api.logout);
+
 // api to change password for user..
 router.post("/changePassword", functions.decryptDataMiddleWare, encDecController.verifyToken, api.changePassword);
 
@@ -65,7 +68,7 @@ router.post("/deleteUser", functions.decryptDataMiddleWare, encDecController.ver
 router.post("/getAdminDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isSuperAdminAuthorized, api.getAdminDetails);
 
 // api to get user details
-router.post("/getUserDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAdminAuthorized, api.getUserDetails);
+router.post("/getUserDetails", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isAuthorized, api.getUserDetails);
 
 // api to get admins
 router.post("/getAdmins", functions.decryptDataMiddleWare, encDecController.verifyToken, functions.isSuperAdminAuthorized, api.getAdmins);
