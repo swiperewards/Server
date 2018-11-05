@@ -182,26 +182,47 @@ function registerUserInternal(req, res) {
 
                 if (results[0][0].modifiedDate) {
                     logger.info("registerUser - Success " + results[0][0].userId);
+                    functions.addJwtToken(results[0][0].userId, token, function (errAddToken, successAddToken) {
+                        if (!errAddToken) {
+                            res.send(responseGenerator.getResponse(200, "Success", {
+                                token: token,
+                                name: results[0][0].fullName,
+                                emailId: results[0][0].emailId,
+                                userId: results[0][0].userId,
+                                isNewRecord: results[0][0].isNewRecord
+                            }))
+                        }
+                        else {
+                            logger.error("Error while processing your request", errAddToken);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                        }
 
-                    res.send(responseGenerator.getResponse(200, "Success", {
-                        token: token,
-                        name: results[0][0].fullName,
-                        emailId: results[0][0].emailId,
-                        userId: results[0][0].userId,
-                        isNewRecord: results[0][0].isNewRecord
-                    }))
+                    })
+
+                    
                 }
                 else {
                     if (user.isSocialLogin == "1") {
                         logger.info("register User - success " + user.emailId);
 
-                        res.send(responseGenerator.getResponse(200, "Success", {
-                            token: token,
-                            name: results[0][0].name,
-                            emailId: results[0][0].emailId,
-                            userId: results[0][0].userId,
-                            isNewRecord: results[0][0].isNewRecord
-                        }))
+                        functions.addJwtToken(results[0][0].userId, token, function (errAddToken, successAddToken) {
+                            if (!errAddToken) {
+                                res.send(responseGenerator.getResponse(200, "Success", {
+                                    token: token,
+                                    name: results[0][0].name,
+                                    emailId: results[0][0].emailId,
+                                    userId: results[0][0].userId,
+                                    isNewRecord: results[0][0].isNewRecord
+                                }))
+                            }
+                            else {
+                                logger.error("Error while processing your request", errAddToken);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                            }
+    
+                        })
+
+                        
                     }
                     else {
                         var msg = "";
@@ -393,12 +414,22 @@ exports.loginUser = function (req, res) {
                         });
                     // finalCallback(null, results)
                     if (results[0].isUserVerified) {
-                        res.send(responseGenerator.getResponse(200, "Login successful", {
-                            token: token,
-                            fullName: results[0].fullName,
-                            emailId: results[0].emailId,
-                            userId: results[0].userId
-                        }))
+                        functions.addJwtToken(results[0].userId, token, function (errAddToken, successAddToken) {
+                            if (!errAddToken) {
+                                res.send(responseGenerator.getResponse(200, "Login successful", {
+                                    token: token,
+                                    fullName: results[0].fullName,
+                                    emailId: results[0].emailId,
+                                    userId: results[0].userId
+                                }))
+                            }
+                            else {
+                                logger.error("Error while processing your request", errAddToken);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                            }
+
+                        })
+
                     }
                     else {
                         res.send(responseGenerator.getResponse(1002, "Verification pending", null))
@@ -520,6 +551,24 @@ exports.activateAccount = function (req, res) {
 
 
 
+exports.logout = function (req, res) {
+    var user = {
+        'userId': req.result.userId,
+        'auth': req.headers.auth
+    }
+    db.query("update jwt_tokens set isDeleted = ? where jwt_token = ?", [1, user.auth], function (error, results, fields) {
+        if (error) {
+            logger.error("Error while processing your request", error);
+            res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+        } else {
+            logger.info("User logout successfully");
+            res.send(responseGenerator.getResponse(200, "User logout successfully", null));
+        }
+    });
+}
+
+
+
 exports.changePassword = function (req, res) {
 
     var user = {
@@ -571,6 +620,7 @@ exports.changePassword = function (req, res) {
         }
     });
 }
+
 
 
 
@@ -886,7 +936,17 @@ exports.loginUserWeb = function (req, res) {
                                 }
 
                                 if (results[0].isUserVerified) {
-                                    res.send(responseGenerator.getResponse(200, "Login successful", userData))
+                                    functions.addJwtToken(userData.userId, userData.token, function (errAddToken, successAddToken) {
+                                        if (!errAddToken) {
+                                            res.send(responseGenerator.getResponse(200, "Login successful", userData))
+                                        }
+                                        else {
+                                            logger.error("Error while processing your request", errAddToken);
+                                            res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
+                                        }
+
+                                    })
+
                                 }
                                 else {
                                     res.send(responseGenerator.getResponse(1002, "Verification pending", { "email": req.body.requestData.emailId }))
@@ -1544,8 +1604,16 @@ exports.deleteAdmin = function (req, res) {
     db.query(query, params, function (errorDeleteAdmin, resultsDeleteAdmin) {
         if (!errorDeleteAdmin) {
             if (resultsDeleteAdmin.affectedRows == 1) {
-                logger.info("Admin deleted successfully");
-                res.send(responseGenerator.getResponse(200, "Admin deleted successfully", admin));
+                functions.deleteJwtToken(admin.id, function (errDeleteJwtToken, sucessDeleteJwtToken) {
+                    if (!errDeleteJwtToken) {
+                        logger.info("Admin deleted successfully");
+                        res.send(responseGenerator.getResponse(200, "Admin deleted successfully", admin));
+                    }
+                    else {
+                        logger.error("Error while processing your request", errDeleteJwtToken);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, errDeleteJwtToken))
+                    }
+                })
             }
             else {
                 logger.info("deleteAdmin - Invalid id - " + admin.id);
@@ -1580,10 +1648,17 @@ exports.deleteUser = function (req, res) {
                     res.send(responseGenerator.getResponse(200, "User activated successfully", User));
                 }
                 else {
-                    logger.info("User deactivated successfully");
-                    res.send(responseGenerator.getResponse(200, "User deactivated successfully", User));
+                    functions.deleteJwtToken(User.id, function (errDeleteJwtToken, sucessDeleteJwtToken) {
+                        if (!errDeleteJwtToken) {
+                            logger.info("User deactivated successfully");
+                            res.send(responseGenerator.getResponse(200, "User deactivated successfully", User));
+                        }
+                        else {
+                            logger.error("Error while processing your request", errDeleteJwtToken);
+                            res.send(responseGenerator.getResponse(1005, msg.dbError, errDeleteJwtToken))
+                        }
+                    })
                 }
-
             }
             else {
                 logger.info("deleteUser - Invalid id - " + User.id);

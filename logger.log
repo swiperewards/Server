@@ -16095,3 +16095,47 @@
 {"message":"Merchant added successfully by user - 24","level":"info"}
 {"message":"Created logger","level":"info"}
 {"message":"Merchant added successfully by user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?, ?)' at line 1","sqlState":"42000","index":0,"sql":"insert into jwt_tokens (userId, jwt_token) values (?, ?)","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Nov 01 2018 16:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'token' in 'where clause'","sqlState":"42S22","index":0,"sql":"select * from jwt_tokens where userId = 1 and token = 24","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'token' in 'where clause'","sqlState":"42S22","index":0,"sql":"select * from jwt_tokens where userId = 24 and token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbElkIjoic3VwZXJhZG1pbkBub3V2by5jb20iLCJmdWxsTmFtZSI6IlN1cGVyIEFkbWluIiwidXNlcklkIjoyNCwicm9sZUlkIjoxLCJpYXQiOjE1NDEwNjcwMDEsImV4cCI6MTU3MjYwMzAwMX0.YpMAMlQdVpPLLsaHIiF78-S2BmK-YcSzjOpGlsgJq8w'","level":"error","message":"Error while processing your request"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"No business added for merchant - 252","level":"info"}
+{"message":"getTicketTypes - ticketTypeName fetched successfully for user - 24","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"deleteUser - Invalid id - 24","level":"info"}
+{"message":"deleteUser - Invalid id - 24","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"Verification link sent to mail","level":"info"}
+{"message":"User deactivated successfully","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"getRedeemOptions - Redeem options fetched successfully for user - 454","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"deleteAdmin - Invalid id - 40","level":"info"}
+{"message":"Failed to authorize","level":"error"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Nov 01 2018 17:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"User logout successfully","level":"info"}
+{"message":"Created logger","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Nov 01 2018 18:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"configController - keep alive (mysql)- Thu Nov 01 2018 19:00:00 GMT+0530 (India Standard Time)","level":"info"}
+{"message":"Created logger","level":"info"}

@@ -13,6 +13,9 @@ router.post('/registerUser', functions.decryptDataMiddleWare, api.registerUser);
 // api to login for android / ios app user
 router.post("/loginUser", functions.decryptDataMiddleWare, api.loginUser);
 
+// api to logout user
+router.post("/logout", functions.decryptDataMiddleWare, encDecController.verifyToken, api.logout);
+
 // api to change password for user..
 router.post("/changePassword", functions.decryptDataMiddleWare, encDecController.verifyToken, api.changePassword);
 

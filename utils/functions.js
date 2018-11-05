@@ -190,6 +190,40 @@ function isAuthorized(req, res, next) {
     })
 }
 
+function addJwtToken(userId, token, callback) {
+    db.query("insert into jwt_tokens (userId, jwt_token) values (?, ?)", [userId, token], function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, true);
+        }
+    });
+}
+
+function deleteJwtToken(userId, callback) {
+    db.query("update jwt_tokens set isDeleted = ? where userId = ?", [1, userId], function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, true);
+        }
+    });
+}
+
+function verifyJwtToken(userId, token, callback) {
+    db.query("select * from jwt_tokens where userId = ? and jwt_token = ? and isDeleted = ?", [userId, token, 0], function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            if(results.length > 0) {
+                callback(null, true);
+            }
+            else {
+                callback(null, false);
+            }
+        }
+    });
+}
 
 module.exports = {
     decrypt: decrypt,
@@ -199,5 +233,8 @@ module.exports = {
     decryptDataMiddleWare: decryptDataMiddleWare,
     isAdminAuthorized: isAdminAuthorized,
     isAuthorized: isAuthorized,
-    isSuperAdminAuthorized: isSuperAdminAuthorized
+    isSuperAdminAuthorized: isSuperAdminAuthorized,
+    addJwtToken: addJwtToken,
+    verifyJwtToken: verifyJwtToken,
+    deleteJwtToken: deleteJwtToken
 };
