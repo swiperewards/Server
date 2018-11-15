@@ -6,7 +6,7 @@ var config = require(path.resolve('./', 'config'));
 var logger = require(path.resolve('./logger'));
 var msg = require(path.resolve('./', 'utils/errorMessages.js'));
 var firebaseAdmin = require('firebase-admin');
-var serviceAccount = require(path.resolve('.', 'nouvo-android-app-firebase-adminsdk-j1tge-8ee927998c.json'));
+var serviceAccount = require(path.resolve('.', 'nouvo-production-1541475714679-firebase-adminsdk-8b3p8-bcd7323a8b.json'));
 
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount),
