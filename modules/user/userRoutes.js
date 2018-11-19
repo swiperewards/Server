@@ -86,9 +86,9 @@ router.post("/applyReferralCode", functions.decryptDataMiddleWare, encDecControl
 router.post('/dashboard', functions.decryptDataMiddleWare, encDecController.verifyToken, api.dashboard);
 
 // test
-router.post("/testDecrypt", encDecController.verifyToken, api.test);
+router.post("/testDecrypt", api.test);
 
-router.post("/testEncrypt", encDecController.verifyToken, api.testEncrypt);
+router.post("/testEncrypt", api.testEncrypt);
 
 
 module.exports = router;
