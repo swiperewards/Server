@@ -199,7 +199,7 @@ function registerUserInternal(req, res) {
 
                     })
 
-                    
+
                 }
                 else {
                     if (user.isSocialLogin == "1") {
@@ -219,20 +219,20 @@ function registerUserInternal(req, res) {
                                 logger.error("Error while processing your request", errAddToken);
                                 res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
                             }
-    
+
                         })
 
-                        
+
                     }
                     else {
                         var msg = "";
                         if (results[0][0].sendNotif) {
-                            if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
+                            // if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
                                 msg = "Congratulations! You got 10 reward points for referral.";
-                            }
-                            else {
-                                msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
-                            }
+                            // }
+                            // else {
+                            //     msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
+                            // }
                             notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, function () {
                                 var reqId = randomstring.generate(6);
                                 var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
@@ -248,14 +248,51 @@ function registerUserInternal(req, res) {
                                                 logger.warn("Failed to send Verification link to linked mail");
                                                 res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
                                             } else {
-                                                logger.info("Verification link sent to mail");
 
-                                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                                    name: results[0][0].fullName,
-                                                    emailId: results[0][0].emailId,
-                                                    userId: results[0][0].userId,
-                                                    isNewRecord: results[0][0].isNewRecord
-                                                }))
+                                                var Reqbody = {};
+                                                Reqbody.requestData = {};
+                                                Reqbody.requestData.userId = results[0][0].userId;
+                                                Reqbody.requestData.availableXp = 10;
+                                                transaction.updateReferralXp(Reqbody, function (error) {
+                                                    if (error) {
+                                                        logger.error("Error while processing your request", error);
+                                                        res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+                                                    }
+                                                    else {
+                                                        Reqbody = {};
+                                                        Reqbody.requestData = {};
+                                                        Reqbody.requestData.userId = results[1][0].ip_referralUserId;
+                                                        Reqbody.requestData.availableXp = results[1][0].ip_referralUserXp;
+                                                        transaction.updateReferralXp(Reqbody, function (errorTwo) {
+                                                            if (errorTwo) {
+                                                                logger.error("Error while processing your request", errorTwo);
+                                                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
+                                                            }
+                                                            else {
+                                                                var msg = "Congrats! Your XP points are increased by 10";
+                                                                params = [4, results[0][0].userId, msg];
+                                                                // notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
+                                                                db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (errorInsertNotif) {
+                                                                    if (!errorInsertNotif) {
+                                                                        logger.info("Verification link sent to mail");
+
+                                                                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                                            name: results[0][0].fullName,
+                                                                            emailId: results[0][0].emailId,
+                                                                            userId: results[0][0].userId,
+                                                                            isNewRecord: results[0][0].isNewRecord
+                                                                        }))
+                                                                    } else {
+                                                                        logger.error("applyReferral - Error while processing your request", errorInsertNotif);
+                                                                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertNotif))
+                                                                    }
+                                                                })
+
+
+                                                            }
+                                                        });
+                                                    }
+                                                });
                                             }
                                         });
 
@@ -1089,12 +1126,12 @@ exports.resendVerificationEmail = function (req, res) {
 
 exports.addAdmin = function (req, res) {
     var admin =
-        {
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': req.body.requestData.contactNumber ? req.body.requestData.contactNumber : null,
-            'emailId': req.body.requestData.emailId,
-            'status': req.body.requestData.status
-        }
+    {
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': req.body.requestData.contactNumber ? req.body.requestData.contactNumber : null,
+        'emailId': req.body.requestData.emailId,
+        'status': req.body.requestData.status
+    }
 
     var query = {
         sql: "select userId, fullName from users where emailId = ?",
@@ -1210,14 +1247,14 @@ exports.addAdmin = function (req, res) {
 
 exports.updateAdmin = function (req, res) {
     var admin =
-        {
-            'userId': req.body.requestData.userId,
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
-            'emailId': req.body.requestData.emailId,
-            'status': (req.body.requestData.status == "1") ? "1" : "0",
-            'profilePic': req.body.requestData.profilePic
-        }
+    {
+        'userId': req.body.requestData.userId,
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+        'emailId': req.body.requestData.emailId,
+        'status': (req.body.requestData.status == "1") ? "1" : "0",
+        'profilePic': req.body.requestData.profilePic
+    }
 
     var nameArr = admin.fullName.split(" ");
 
@@ -1345,20 +1382,20 @@ exports.updateAdmin = function (req, res) {
 
 exports.updateUser = function (req, res) {
     var User =
-        {
-            'userId': req.body.requestData.userId,
-            'isEmailUpdated': req.body.requestData.isEmailUpdated,
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
-            'emailId': req.body.requestData.emailId,
-            'status': (req.body.requestData.status == "1") ? "1" : "0",
-            'profilePic': req.body.requestData.profilePic,
-            "password": req.body.requestData.password,
-            "city": req.body.requestData.city,
-            "zipcode": req.body.requestData.zipcode,
-            "roleId": req.body.requestData.roleId,
-            "isPasswordUpdated": req.body.requestData.isPasswordUpdated
-        }
+    {
+        'userId': req.body.requestData.userId,
+        'isEmailUpdated': req.body.requestData.isEmailUpdated,
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+        'emailId': req.body.requestData.emailId,
+        'status': (req.body.requestData.status == "1") ? "1" : "0",
+        'profilePic': req.body.requestData.profilePic,
+        "password": req.body.requestData.password,
+        "city": req.body.requestData.city,
+        "zipcode": req.body.requestData.zipcode,
+        "roleId": req.body.requestData.roleId,
+        "isPasswordUpdated": req.body.requestData.isPasswordUpdated
+    }
     var nameArr = User.fullName.split(" ");
 
     if (nameArr.length == 1) {
@@ -1836,7 +1873,45 @@ exports.applyReferralCode = function (req, res) {
         if (!errorApplyReferral) {
             if (resultsApplyReferral[0][0].Success == 1) {
                 logger.info("ApplyReferralCode - success");
-                res.send(responseGenerator.getResponse(200, "Success", null));
+                // res.send(responseGenerator.getResponse(200, "Success", null));
+                var Reqbody = {};
+                Reqbody.requestData = {};
+                Reqbody.requestData.userId = resultsApplyReferral[0][0].ip_userOneId;
+                Reqbody.requestData.availableXp = resultsApplyReferral[0][0].ip_userOneAvailableXp;
+                transaction.updateReferralXp(Reqbody, function (error) {
+                    if (error) {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+                    }
+                    else {
+                        Reqbody = {};
+                        Reqbody.requestData = {};
+                        Reqbody.requestData.userId = resultsApplyReferral[0][0].ip_userTwoId;
+                        Reqbody.requestData.availableXp = resultsApplyReferral[0][0].ip_userTwoAvailableXp;
+                        transaction.updateReferralXp(Reqbody, function (errorTwo) {
+                            if (errorTwo) {
+                                logger.error("Error while processing your request", errorTwo);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
+                            }
+                            else {
+                                var msg = "Congrats! Your XP points are increased by 10";
+                                params = [4, resultsApplyReferral[0][0].ip_userOneId, msg, 4, resultsApplyReferral[0][0].ip_userTwoId, msg];
+                                notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
+                                db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?); insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (error, results) {
+                                    if (!error) {
+                                        logger.info("applyReferral - notification recorded successfully");
+                                        res.send(responseGenerator.getResponse(200, "Success", null));
+                                    } else {
+                                        logger.error("applyReferral - Error while processing your request", error);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                })
+
+
+                            }
+                        });
+                    }
+                });
             }
             else if (resultsApplyReferral[0][0].InvalidReferralCode == 1) {
                 logger.warn("Invalid referral code");
@@ -1940,11 +2015,13 @@ exports.test = function (req, res) {
 }
 
 exports.testEncrypt = function (req, res) {
-    var data = req.body.requestData;
-    var encrypted = functions.encryptData(data);
+
+    var data = JSON.stringify(req.body.requestData);
+    var encrypted = CryptoJS.AES.encrypt(data, config.secretKeyDataEncryption);
+    var encryptedText = encrypted.toString();
     // var decrypted = functions.decryptData(data);
 
-    res.send(encrypted);
+    res.send(encryptedText);
 }
 
 

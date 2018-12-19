@@ -36,6 +36,7 @@ exports.addCard = function (req, res) {
                 // Reqbody.userId = req.result.userId;
                 Reqbody.requestData.userId = req.result.userId;
                 Reqbody.requestData.id = results[0][0].id
+                Reqbody.requestData.availableXp = results[0][0].ip_AvailableXp;
                 transaction.addCard(Reqbody, function (error, response) {
                     if (error) {
                         logger.info("Error while adding card - " + req.result.userId);

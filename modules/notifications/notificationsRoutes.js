@@ -20,5 +20,11 @@ router.post("/unsubscribeFromTopic", functions.decryptDataMiddleWare, encDecCont
 
 // router.post("/sendNotifToTopic", functions.decryptDataMiddleWare, encDecController.verifyToken, api.sendNotifToTopic);
 
+// api to send notifications to users, called from transaction server
+router.post("/sendNotifToUsers", functions.decryptDataMiddleWare, api.sendNotifToUsers);
+
+router.post("/sendNotifLevelUp", api.sendNotifLevelUp);
+
+router.post("/sendNotifLevelUpAfterTxns", api.sendNotifLevelUpAfterTxns);
 
 module.exports = router;
