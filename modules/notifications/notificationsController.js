@@ -143,13 +143,13 @@ exports.sendNotifToTokenFunction = function (token, notifBody, callback) {
         android: {
             ttl: 3600 * 1000, // 1 hour in milliseconds
             priority: 'normal',
-            notification: { "title": fcmToken.notifBody, "body": fcmToken.notifBody }
+            notification: { "title": "Nouvo", "body": fcmToken.notifBody }
         },
         apns: {
             payload: {
                 aps: {
                     alert: {
-                        title: fcmToken.notifBody,
+                        title: "Nouvo",
                         body: fcmToken.notifBody
                     },
                     sound: "default"
@@ -177,7 +177,7 @@ exports.sendNotifPasswordChanged = function (userId, callback) {
             if (results.length > 0) {
                 var fcmToken = {
                     'token': results[0].fcm_token,
-                    'notifBody': "Your password has been changed"
+                    'notifBody': " Your password has been successfully reset. "
                 }
 
                 sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, function () {
@@ -199,7 +199,7 @@ exports.sendNotifPasswordChanged = function (userId, callback) {
 
 
 
-exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, callback) {
+exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, amount, callback) {
     // select fcm_token into ip_referralToken from fcm_tokens where userId = ip_referralUserId;
     db.query('select userId from redeem_requests where id = ?', [redeemReqId], function (errorGetUserId, resultsGetUserId) {
         if (!errorGetUserId) {
@@ -209,7 +209,7 @@ exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, call
                         if (results.length > 0) {
                             var fcmToken = {
                                 'token': results[0].fcm_token,
-                                'notifBody': "Redeem request status changed to " + newStatus
+                                'notifBody': " Your redeem request for $"+ amount + " has been" + newStatus
                             }
 
                             sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, function () {
@@ -254,13 +254,13 @@ function sendNotifToTokenInternal(token, notifBody, callback) {
         android: {
             ttl: 3600 * 1000, // 1 hour in milliseconds
             priority: 'normal',
-            notification: { "title": fcmToken.notifBody, "body": fcmToken.notifBody }
+            notification: { "title": "Nouvo", "body": fcmToken.notifBody }
         },
         apns: {
             payload: {
                 aps: {
                     alert: {
-                        title: fcmToken.notifBody,
+                        title: "Nouvo",
                         body: fcmToken.notifBody
                     },
                     sound: "default"
@@ -409,11 +409,11 @@ exports.sendNotifLevelUp = function (reqData) {
     var levelData = reqData.body;
     db.query('select f.userId, f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId = ?', [levelData.userId], function (errorGetFcmToken, resultGetFcmToken) {
         if (!errorGetFcmToken) {
-            var msg = "Congratulations! You went up one level " + levelData.level;
+            var msg = "Congratulations! You are now at level " + levelData.level + ". Keep shopping to keep leveling up and earning cash.";
             params = [2, levelData.userId, msg];
             db.query("insert into event_notification (eventType, userId, notificationDetails) values (?, ?, ?)", params, function (err, res) {
                 if(resultGetFcmToken[0].isNotificationEnabled){
-                    sendMultipleNotifications("Congratulations! You went up one level " + levelData.level, resultGetFcmToken[0].fcm_token, function(){
+                    sendMultipleNotifications("Congratulations! You are now at level " + levelData.level + ". Keep shopping to keep leveling up and earning cash.", resultGetFcmToken[0].fcm_token, function(){
                     })
                 }
             })
@@ -488,11 +488,12 @@ exports.sendNotifReferralApplied = function (data) {
     db.query('select userId, fcm_token from fcm_tokens where userId in (' + userIds + ')', function (errorGetFcmTokens, resultsGetFcmTokens) {
         if (!errorGetFcmTokens) {
             var arr = [];
-            var msg = "Congrats! Your XP points are increased by 10";
+            var msg = data.ip_userOnefullName + " has signed up with your friend code. You both get 10 points.";
+            var msg2 = "You signed up with your friend code. You both get 10 points.";
             for (var i = 0; i < resultsGetFcmTokens.length; i++) {
                 if (resultsGetFcmTokens[i].userId == data.ip_userOneId) {
                     if (data.ip_userOneIsNotifEnabled) {
-                        arr.push({ "message": msg, "token": resultsGetFcmTokens[i].fcm_token })
+                        arr.push({ "message": msg2, "token": resultsGetFcmTokens[i].fcm_token })
                     }
                 }
                 else {
@@ -581,13 +582,13 @@ function sendMultipleNotifications(msg, token, callback) {
         android: {
             ttl: 3600 * 1000, // 1 hour in milliseconds
             priority: 'normal',
-            notification: { "title": msg, "body": msg }
+            notification: { "title": "Nouvo", "body": msg }
         },
         apns: {
             payload: {
                 aps: {
                     alert: {
-                        title: msg,
+                        title: "Nouvo",
                         body: msg
                     },
                     sound: "default"

@@ -228,7 +228,8 @@ function registerUserInternal(req, res) {
                         var msg = "";
                         if (results[0][0].sendNotif) {
                             // if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
-                                msg = "Congratulations! You got 10 reward points for referral.";
+                                // msg = "Congratulations! You got 10 reward points for referral.";
+                                msg = results[0][0].fullName+ " has signed up with your friend code. You both get 10 points.";
                             // }
                             // else {
                             //     msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
@@ -240,8 +241,8 @@ function registerUserInternal(req, res) {
                                 db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
                                     if (!errorInsertActivateToken) {
                                         var message;
-                                        template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
-                                            message = msg;
+                                        template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msge) {
+                                            message = msge;
                                         })
                                         emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
                                             if (errorEmailHandler) {
@@ -269,7 +270,7 @@ function registerUserInternal(req, res) {
                                                                 res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
                                                             }
                                                             else {
-                                                                var msg = "Congrats! Your XP points are increased by 10";
+                                                                var msg = "You signed up with your friend code. You both get 10 points.";
                                                                 params = [4, results[0][0].userId, msg];
                                                                 // notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
                                                                 db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (errorInsertNotif) {
@@ -1894,8 +1895,9 @@ exports.applyReferralCode = function (req, res) {
                                 res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
                             }
                             else {
-                                var msg = "Congrats! Your XP points are increased by 10";
-                                params = [4, resultsApplyReferral[0][0].ip_userOneId, msg, 4, resultsApplyReferral[0][0].ip_userTwoId, msg];
+                                var msg = resultsApplyReferral[0][0].ip_userOnefullName + " has signed up with your friend code. You both get 10 points.";
+                                var msg2 = "You signed up with your friend code. You both get 10 points.";
+                                params = [4, resultsApplyReferral[0][0].ip_userOneId, msg2, 4, resultsApplyReferral[0][0].ip_userTwoId, msg];
                                 notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
                                 db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?); insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (error, results) {
                                     if (!error) {

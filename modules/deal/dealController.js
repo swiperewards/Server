@@ -469,7 +469,7 @@ exports.distributeRewards = function (req, res) {
                                             notifUser.userId = userStake.userId;
                                             reward = parseFloat(resultsRewardDistribute[0][0].distributedReward).toFixed(2);
                                             notifUser.reward = reward;
-                                            notifUser.message = "Congratulations, you have received $" + reward + "  from your purchase at " + deal.entityName;
+                                            notifUser.message = " You have received $ " + reward + "  from your purchase at " + deal.entityName + ".";
                                             notifUsers.push(notifUser);
                                         }
 
