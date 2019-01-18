@@ -58,7 +58,7 @@ app.use("/member", memberRoutes);
 app.use("/account", accountRoutes);
 app.use("/notifications", notificationsRoutes);
 
-notificationsRoutes
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');

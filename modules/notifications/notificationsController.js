@@ -209,7 +209,7 @@ exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, amou
                         if (results.length > 0) {
                             var fcmToken = {
                                 'token': results[0].fcm_token,
-                                'notifBody': " Your redeem request for $"+ amount + " has been" + newStatus
+                                'notifBody': " Your redeem request for $" + amount + " has been" + newStatus
                             }
 
                             sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, function () {
@@ -412,8 +412,8 @@ exports.sendNotifLevelUp = function (reqData) {
             var msg = "Congratulations! You are now at level " + levelData.level + ". Keep shopping to keep leveling up and earning cash.";
             params = [2, levelData.userId, msg];
             db.query("insert into event_notification (eventType, userId, notificationDetails) values (?, ?, ?)", params, function (err, res) {
-                if(resultGetFcmToken[0].isNotificationEnabled){
-                    sendMultipleNotifications("Congratulations! You are now at level " + levelData.level + ". Keep shopping to keep leveling up and earning cash.", resultGetFcmToken[0].fcm_token, function(){
+                if (resultGetFcmToken[0].isNotificationEnabled) {
+                    sendMultipleNotifications("Congratulations! You are now at level " + levelData.level + ". Keep shopping to keep leveling up and earning cash.", resultGetFcmToken[0].fcm_token, function () {
                     })
                 }
             })
@@ -527,36 +527,35 @@ exports.sendNotifRewardDistributed = function (userNotifData) {
         var transactionNotifArray = [];
         db.query('select f.userId, f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId in (' + userIds + ')', function (errorGetFcmTokens, resultsGetFcmTokens) {
             if (!errorGetFcmTokens) {
-                var objRewardDistributionNotif = {};
+                var objRewardDistributionNotif;
                 for (var j = 0; j < resultsGetFcmTokens.length; j++) {
+                    objRewardDistributionNotif = {};
+                    objRewardDistributionNotif.userId = resultsGetFcmTokens[j].userId;
+                    objRewardDistributionNotif.token = resultsGetFcmTokens[j].fcm_token;
+                    objRewardDistributionNotif.isNotificationEnabled = resultsGetFcmTokens[j].isNotificationEnabled
+                    objRewardDistributionNotif.eventTypeId = 1;
                     for (var k = 0; k < userNotifData.length; k++) {
                         if (resultsGetFcmTokens[j].userId == userNotifData[k].userId) {
-                            objRewardDistributionNotif.userId = resultsGetFcmTokens[j].userId;
                             objRewardDistributionNotif.message = userNotifData[k].message;
-                            objRewardDistributionNotif.token = resultsGetFcmTokens[j].fcm_token;
-                            objRewardDistributionNotif.isNotificationEnabled = resultsGetFcmTokens[j].isNotificationEnabled
-                            objRewardDistributionNotif.eventTypeId = 1;
-                            transactionNotifArray.push(objRewardDistributionNotif);
                         }
                     }
+                    transactionNotifArray.push(objRewardDistributionNotif);
                 }
-
+                var query = "";
                 var transactionNotifEnabled = [];
                 for (var x = 0; x < transactionNotifArray.length; x++) {
                     if (transactionNotifArray[x].isNotificationEnabled) {
                         transactionNotifEnabled.push(transactionNotifArray[x]);
                     }
+                    query = query + "INSERT INTO event_notification (eventType,userId,notificationDetails)VALUES(" + transactionNotifArray[x].eventTypeId + ", " + transactionNotifArray[x].userId + ", '" + transactionNotifArray[x].message + "'); "
                 }
-                each(transactionNotifArray,
-                    function (txn, next) {
-                        params = [txn.eventTypeId, txn.userId, txn.message];
-                        db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?)", params, function (error, results) {
-                            next(error);
-                        })
-                    },
-                    function (err) {
-                        sendMultipleNotifToTokenInternal(transactionNotifEnabled);
-                    })
+                console.log(query)
+                db.query(query, function (error, results) {
+                    if (error)
+                        console.log(error);
+                    sendMultipleNotifToTokenInternal(transactionNotifEnabled);
+                });
+
             }
             else {
                 logger.error("Error while processing your request", errorGetFcmTokens);
