@@ -339,47 +339,47 @@ function sendNotifications(message, eventTypeId) {
     })
 }
 
-
-
+ 
 exports.sendNotifToUsers = function (reqData) {
-    // arrUserNotifData = reqData.body;
-    // select fcm_token into ip_referralToken from fcm_tokens where userId = ip_referralUserId;
+
     if (reqData.body.length > 0) {
-        var userIds = "";
-        for (var i = 0; i < reqData.body.length; i++) {
-            if (i == 0)
-                userIds = reqData.body[i].userId;
-            else
-                userIds = userIds + ", " + reqData.body[i].userId;
-        }
+
         var transactionNotifArray = [];
-        db.query('select f.userId, f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId in (' + userIds + ')', function (errorGetFcmTokens, resultsGetFcmTokens) {
-            if (!errorGetFcmTokens) {
-                var objTxnNotif = {};
+		
+		each(reqData.body,
+		function (rec, next) {
+			params = [rec.userId];
+			db.query("select f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId = ?", params, function (errorGetFcmTokens, resultsGetFcmTokens) {
+				var objTxnNotif = {};
                 var objXpIncreaseNotif = {};
-                for (var j = 0; j < resultsGetFcmTokens.length; j++) {
-                    for (var k = 0; k < reqData.body.length; k++) {
-                        if (resultsGetFcmTokens[j].userId == reqData.body[k].userId) {
-                            objTxnNotif.userId = resultsGetFcmTokens[j].userId;
-                            objTxnNotif.message = reqData.body[k].msgTxnMade;
-                            objTxnNotif.token = resultsGetFcmTokens[j].fcm_token;
-                            objTxnNotif.isNotificationEnabled = resultsGetFcmTokens[j].isNotificationEnabled
+				if (!errorGetFcmTokens) {
+					if (resultsGetFcmTokens.length > 0) {
+						
+                            objTxnNotif.userId = rec.userId;
+                            objTxnNotif.message = rec.msgTxnMade;
+                            objTxnNotif.token = resultsGetFcmTokens[0].fcm_token;
+                            objTxnNotif.isNotificationEnabled = resultsGetFcmTokens[0].isNotificationEnabled
                             objTxnNotif.eventTypeId = 3;
-                            objTxnNotif.transactionAmount = reqData.body[k].total / 100;
+                            objTxnNotif.transactionAmount = rec.total / 100;
                             transactionNotifArray.push(objTxnNotif);
-                            objXpIncreaseNotif.userId = resultsGetFcmTokens[j].userId;
-                            objXpIncreaseNotif.message = reqData.body[k].msgXpIncrease;
-                            objXpIncreaseNotif.token = resultsGetFcmTokens[j].fcm_token;
-                            objXpIncreaseNotif.token = resultsGetFcmTokens[j].fcm_token;
-                            objXpIncreaseNotif.isNotificationEnabled = resultsGetFcmTokens[j].isNotificationEnabled
+                            objXpIncreaseNotif.userId = rec.userId;
+                            objXpIncreaseNotif.message = rec.msgXpIncrease;
+                            objXpIncreaseNotif.token = resultsGetFcmTokens[0].fcm_token;
+                            objXpIncreaseNotif.isNotificationEnabled = resultsGetFcmTokens[0].isNotificationEnabled
                             objXpIncreaseNotif.eventTypeId = 4;
                             objXpIncreaseNotif.transactionAmount = null;
                             transactionNotifArray.push(objXpIncreaseNotif);
-                        }
-                    }
-                }
-
-                var transactionNotifEnabled = [];
+							next();
+					}
+				}
+				else {
+					logger.error("Error while processing your request", errorGetFcmTokens);
+				}
+			})
+		},
+		function (err) {
+			
+			var transactionNotifEnabled = [];
                 for (var x = 0; x < transactionNotifArray.length; x++) {
                     if (transactionNotifArray[x].isNotificationEnabled) {
                         transactionNotifEnabled.push(transactionNotifArray[x]);
@@ -395,13 +395,10 @@ exports.sendNotifToUsers = function (reqData) {
                     function (err) {
                         sendMultipleNotifToTokenInternal(transactionNotifEnabled);
                     })
-            }
-            else {
-                logger.error("Error while processing your request", errorGetFcmTokens);
-            }
-        });
+		})
     }
 }
+
 
 
 

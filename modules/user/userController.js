@@ -774,8 +774,8 @@ exports.updateUserProfile = function (req, res) {
 
 exports.forgotPassword = function (req, res) {
     var strQuery = {
-        sql: "select userId, fullName from users where emailId = ? and isDeleted = ?",
-        values: [req.body.requestData.emailId, 0]
+        sql: "select userId, fullName, roleId from users where emailId = ? and isDeleted = ? and platformId = ?",
+        values: [req.body.requestData.emailId, 0, req.body.platform]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -792,13 +792,13 @@ exports.forgotPassword = function (req, res) {
                     'deviceId': req.body.deviceId
                 };
                 var reqIdGenerated = randomstring.generate(6);
-                var query = "insert into password_reset_requests (requestId, emailId) values (?,?)";
-                var params = [reqIdGenerated, user.emailId];
+                var query = "insert into password_reset_requests (requestId, emailId, platform) values (?,?,?)";
+                var params = [reqIdGenerated, user.emailId, req.body.platform];
 
-                db.query(query, params, function (error, results) {
-                    if (!error) {
+                db.query(query, params, function (errorInsert, resultsInsert) {
+                    if (!errorInsert) {
                         var message;
-                        template.forgotPassword(user.fullName, reqIdGenerated, function (err, msg) {
+                        template.forgotPassword(user.fullName, reqIdGenerated, results[0].roleId, function (err, msg) {
                             message = msg;
                         })
                         emailHandler.sendEmail(user.emailId, "Nouvo, Forgot password link", message, function (error, callback) {
@@ -811,7 +811,7 @@ exports.forgotPassword = function (req, res) {
                             }
                         });
                     } else {
-                        logger.error("Error while processing your request", error);
+                        logger.error("Error while processing your request", errorInsert);
                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                     }
                 })
@@ -828,60 +828,63 @@ exports.forgotPassword = function (req, res) {
 exports.setPassword = function (req, res) {
 
     var strQuery = {
-        sql: "select emailId, createdDate from password_reset_requests where requestId = ? and isDeleted = ?",
+        sql: "select emailId, createdDate, platform from password_reset_requests where requestId = ? and isDeleted = ?",
         values: [req.body.requestData.resetToken, 0]
     };
 
-    db.query(strQuery, function (error, results, fields) {
-        if (error) {
-            logger.error("Error while processing your request", error);
+    db.query(strQuery, function (errorSelect, resultsSelect, fields) {
+        if (errorSelect) {
+            logger.error("Error while processing your request", errorSelect);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
-            if (results && (results.length > 0)) {
-                var tokenCreatedDate = new Date(results[0].createdDate);
+            if (resultsSelect && (resultsSelect.length > 0)) {
+                var tokenCreatedDate = new Date(resultsSelect[0].createdDate);
                 var currentDate = Date.now();
                 var diff = new DateDiff(currentDate, tokenCreatedDate);
                 var diffInMinutes = diff.minutes();
                 if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
 
                     var user = {
-                        'emailId': results[0].emailId,
+                        'emailId': resultsSelect[0].emailId,
                         'password': req.body.requestData.password
                     }
                     // parameter to be passed to update password
                     var encPass = functions.encrypt(user.password);
-                    params = [encPass, user.emailId]
-                    db.query("update users set password = ? where emailId = ?", params, function (error, results) {
-                        if (!error) {
-                            if (results.affectedRows == 0) {
+                    params = [encPass, user.emailId, resultsSelect[0].platform]
+                    db.query("update users set password = ? where emailId = ? and platformId = ?", params, function (errorUpdate, resultsUpdate) {
+                        if (!errorUpdate) {
+                            if (resultsUpdate.affectedRows == 0) {
                                 logger.info("setPassword - email not found - " + user.emailId);
                                 res.send(responseGenerator.getResponse(1012, "No email found", null))
                             }
                             else {
                                 // parameter to be passed to update password
-                                params = [1, user.emailId]
-                                db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
+                                params = [1, user.emailId, req.body.requestData.resetToken]
+                                db.query("update password_reset_requests set isDeleted = ? where emailId = ? and requestId = ?", params, function (error, results) {
                                     if (!error) {
                                         if (results.affectedRows == 0) {
                                             logger.info("setPassword - email not found - " + user.emailId);
                                             res.send(responseGenerator.getResponse(1012, "No email found", null))
                                         }
                                         else {
-                                            db.query('select userId from users where emailId = ?', [user.emailId], function (errorGetUserId, resultsGetUserId) {
-                                                if (!errorGetUserId) {
-                                                    if (resultsGetUserId.length > 0) {
-                                                        notifController.sendNotifPasswordChanged(resultsGetUserId[0].userId, function () {
-
-                                                        });
+                                            if(resultsSelect[0].platform != "Web") {
+                                                db.query('select userId from users where emailId = ? and platformId = ?', [user.emailId, resultsSelect[0].platform], function (errorGetUserId, resultsGetUserId) {
+                                                    if (!errorGetUserId) {
+                                                        if (resultsGetUserId.length > 0) {
+                                                            notifController.sendNotifPasswordChanged(resultsGetUserId[0].userId, function () {
+    
+                                                            });
+                                                        }
+                                                        else {
+                                                            logger.info("sendNotifToToken - invalid userId");
+                                                        }
                                                     }
                                                     else {
-                                                        logger.info("sendNotifToToken - invalid userId");
+                                                        logger.error("Error while processing your request", errorGetUserId);
                                                     }
-                                                }
-                                                else {
-                                                    logger.error("Error while processing your request", errorGetUserId);
-                                                }
-                                            });
+                                                });
+                                            }
+                                            
                                             logger.info("Password updated successfully for user - " + user.emailId);
                                             res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
 
@@ -893,7 +896,7 @@ exports.setPassword = function (req, res) {
                                 })
                             }
                         } else {
-                            logger.error("Error while processing your request", error);
+                            logger.error("Error while processing your request", errorUpdate);
                             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                         }
                     })

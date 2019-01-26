@@ -14,13 +14,13 @@ exports.welcome = function (username, token, callback) {
 exports.activateAccount = function (username, token, roleId, password, callback) {
   if (roleId == 4) {
     if (password) {
-      link = config.frontEndHost + "/#/activateAccount/" + token;
+      link = config.frontEndHostForUser + "/#/activateAccount/" + token;
       var template = fs.readFileSync('./static/activateAccountUserWithPassword.html', 'utf8').toString();
       template = template.replace("$link", link).replace("$password", password);
       callback(null, template)
     }
     else {
-      link = config.frontEndHost + "/#/activateAccount/" + token;
+      link = config.frontEndHostForUser + "/#/activateAccount/" + token;
       var template = fs.readFileSync('./static/activateAccountUser.html', 'utf8').toString();
       template = template.replace("$link", link)
       callback(null, template)
@@ -51,13 +51,6 @@ exports.activateAccount = function (username, token, roleId, password, callback)
   }
 }
 
-exports.forgotPassword = function (fullname, token, callback) {
-  link = config.frontEndHost + "/#/setPassword/" + token;
-  var template = fs.readFileSync('./static/forgotPassword.html', 'utf8').toString();
-  template = template.replace("$fullname", fullname).replace("$link", link).replace("$token", token);
-  callback(null, template)
-}
-
 exports.contactUsReqAck = function (username, callback) {
   var template = fs.readFileSync('./static/contactUsReqAck.html', 'utf8').toString();
   template = template.replace("$username", username)
@@ -77,7 +70,7 @@ exports.redeemReqApproved = function (username, callback) {
 }
 
 exports.redeemReqRejected = function (username, callback) {
-  link = config.frontEndHost;
+  link = config.frontEndHostForUser;
   var template = fs.readFileSync('./static/redeemReqRejected.html', 'utf8').toString();
   template = template.replace("$username", username).replace("$link", link)
   callback(null, template)
@@ -88,8 +81,27 @@ exports.accountDeleted = function (callback) {
   callback(null, template)
 }
 
-exports.ticketResolved = function (username, ticketNumber, callback) {
-  link = config.frontEndHost;
+exports.forgotPassword = function (fullname, token, roleId, callback) {
+  var link;
+  if (roleId == 4) {
+    link = config.frontEndHostForUser + "/#/setPassword/" + token;
+  }
+  else {
+    link = config.frontEndHost + "/#/setPassword/" + token;
+  }
+  var template = fs.readFileSync('./static/forgotPassword.html', 'utf8').toString();
+  template = template.replace("$fullname", fullname).replace("$link", link).replace("$token", token);
+  callback(null, template)
+}
+
+exports.ticketResolved = function (username, ticketNumber, roleId, callback) {
+  var link;
+  if (roleId == 4) {
+    link = config.frontEndHostForUser;
+  }
+  else {
+    link = config.frontEndHost;
+  }
   var template = fs.readFileSync('./static/ticketResolved.html', 'utf8').toString();
   template = template.replace("$username", username).replace("$link", link).replace("$ticketNumber", ticketNumber).replace("$link", link);
   callback(null, template)
