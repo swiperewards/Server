@@ -256,7 +256,7 @@ exports.resolveTicket = function (req, res) {
             }
             else {
                 var message;
-                template.ticketResolved(results[0][0].fullName, results[0][0].ip_ticketNumber, function (err, msg) {
+                template.ticketResolved(results[0][0].fullName, results[0][0].ip_ticketNumber, req.result.roleId, function (err, msg) {
                     message = msg;
                 })
                 emailHandler.sendEmail(results[0][0].emailId, 'Query Resolution #' + results[0][0].ip_ticketNumber, message, function (errorEmailHandler) {

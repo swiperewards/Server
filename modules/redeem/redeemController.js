@@ -383,7 +383,7 @@ exports.approveRedeemRequest = function (req, res) {
                 res.send(responseGenerator.getResponse(1097, "Insufficient balance", null));
             }
             else {
-                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, "Approved", function () {
+                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, " approved.", req.body.requestData.amount, function () {
                     var message;
                     template.redeemReqApproved(results[0][0].p_userName, function (err, msg) {
                         message = msg;
@@ -424,7 +424,7 @@ exports.rejectRedeemRequest = function (req, res) {
                 res.send(responseGenerator.getResponse(1085, "Invalid id", null));
             }
             else {
-                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, "Rejected", function () {
+                notifController.sendNotifRedeemReqStatusChanged(redeemRequest.id, " rejected.", results[0][0].rejectedAmount, function () {
                     var message;
                     template.redeemReqRejected(results[0][0].fullName, function (err, msg) {
                         message = msg;

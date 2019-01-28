@@ -7,7 +7,7 @@ var config = require(path.resolve('./', 'config'))
 var logger = require(path.resolve('./logger'))
 var msg = require(path.resolve('./', 'utils/errorMessages.js'))
 var each = require('sync-each');
-
+var notifController = require(path.resolve('.', 'modules/notifications/notificationsController.js'));
 
 exports.getDealsWithPaging = function (req, res) {
 
@@ -356,7 +356,7 @@ exports.updatePoolAmounts = function (req, res) {
                                         var oldPool = resultGetDeal[0].totalPoolAmount;
                                         var totalPool = (parseFloat(resultGetDeal[0].cashBonus) * 100) + ((parseFloat(resultGetDeal[0].tBasis) / 100) * (totalSwipeAmount / 100));
                                         var increaseInPool = totalPool - oldPool;
-                                        var updateQuery = 'update deals d set d.registeredUserSwipeAmt=?, d.nonRegisteredUserSwipeAmt=?, d.increasedPool = "'+increaseInPool+
+                                        var updateQuery = 'update deals d set d.registeredUserSwipeAmt=?, d.nonRegisteredUserSwipeAmt=?, d.increasedPool = "' + increaseInPool +
                                             '", d.totalPoolAmount=(d.cashBonus * 100) + (d.tBasis/100) * ((?)/100) where d.id=?';
 
                                         db.query(updateQuery, params, function (err, result) {
@@ -414,9 +414,9 @@ exports.getExpiredDeals = function (req, res) {
     var dayBeforeYesterday = new Date();
     yesterday = (new Date(yesterday.setDate(today.getDate() - 1))).toISOString();
     dayBeforeYesterday = (new Date(dayBeforeYesterday.setDate(today.getDate() - 2))).toISOString();
-    var query = 'select d.id, m.merchantId, d.startDate, d.endDate from deals d' +
+    var query = 'select d.id, m.merchantId, m.entityName, d.startDate, d.endDate from deals d' +
         ' inner join merchantdata m on d.merchantId=m.merchantId' +
-        ' where d.endDate between "' + dayBeforeYesterday + '" and "' + yesterday + '"';
+        ' where d.isPoolDistributed = 0 and d.endDate between "' + dayBeforeYesterday + '" and "' + yesterday + '"';
 
     db.query(query, function (error, results) {
         if (!error) {
@@ -441,6 +441,7 @@ exports.getExpiredDeals = function (req, res) {
  */
 exports.distributeRewards = function (req, res) {
     // saveTransactionToDatabase(res,splashResponse.body.data)
+    var notifUsers = [];
     if (req.body != null) {
 
         db.beginTransaction(function (errBeginTxn) {
@@ -463,6 +464,15 @@ exports.distributeRewards = function (req, res) {
                                     params = [deal.merchantId, userStake.userId, userStake.stake, deal.endDate, deal.id];
                                     db.query(query, params, function (errorRewardDistribute, resultsRewardDistribute) {
                                         nextUserStake(errorRewardDistribute);
+                                        notifUser = {};
+                                        if (userStake.stake > 0) {
+                                            notifUser.userId = userStake.userId;
+                                            reward = parseFloat(resultsRewardDistribute[0][0].distributedReward).toFixed(2);
+                                            notifUser.reward = reward;
+                                            notifUser.message = " You have received $ " + reward + "  from your purchase at " + deal.entityName + ".";
+                                            notifUsers.push(notifUser);
+                                        }
+
                                     })
                                 },
                                 function (errorRewardDistribute) {
@@ -496,6 +506,7 @@ exports.distributeRewards = function (req, res) {
                                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                                     });
                                 } else {
+                                    notifController.sendNotifRewardDistributed(notifUsers);
                                     console.log('Reward distribution completed at server 1.');
                                     res.send(responseGenerator.getResponse(200, "Success", null))
                                 }

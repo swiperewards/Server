@@ -199,7 +199,7 @@ function registerUserInternal(req, res) {
 
                     })
 
-                    
+
                 }
                 else {
                     if (user.isSocialLogin == "1") {
@@ -219,43 +219,81 @@ function registerUserInternal(req, res) {
                                 logger.error("Error while processing your request", errAddToken);
                                 res.send(responseGenerator.getResponse(1005, msg.dbError, errAddToken))
                             }
-    
+
                         })
 
-                        
+
                     }
                     else {
                         var msg = "";
                         if (results[0][0].sendNotif) {
-                            if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
-                                msg = "Congratulations! You got 10 reward points for referral.";
-                            }
-                            else {
-                                msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
-                            }
-                            notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, function () {
+                            // if (results[1][0].ip_oldLevel == results[1][0].ip_newLevel) {
+                                // msg = "Congratulations! You got 10 reward points for referral.";
+                                msg = results[0][0].fullName+ " has signed up with your friend code. You both get 10 points.";
+                            // }
+                            // else {
+                            //     msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
+                            // }
+                            notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, results[1][0].ip_referralUserId, function () {
                                 var reqId = randomstring.generate(6);
                                 var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
                                 var params = [reqId, results[0][0].emailId];
                                 db.query(query, params, function (errorInsertActivateToken, resultsInsertActivateToken) {
                                     if (!errorInsertActivateToken) {
                                         var message;
-                                        template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msg) {
-                                            message = msg;
+                                        template.activateAccount(results[0][0].fullName, reqId, 4, null, function (err, msge) {
+                                            message = msge;
                                         })
                                         emailHandler.sendEmail(results[0][0].emailId, "Welcome to Nouvo!", message, function (errorEmailHandler) {
                                             if (errorEmailHandler) {
                                                 logger.warn("Failed to send Verification link to linked mail");
                                                 res.send(responseGenerator.getResponse(1001, "Failed to send Verification link to linked mail", null))
                                             } else {
-                                                logger.info("Verification link sent to mail");
 
-                                                res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
-                                                    name: results[0][0].fullName,
-                                                    emailId: results[0][0].emailId,
-                                                    userId: results[0][0].userId,
-                                                    isNewRecord: results[0][0].isNewRecord
-                                                }))
+                                                var Reqbody = {};
+                                                Reqbody.requestData = {};
+                                                Reqbody.requestData.userId = results[0][0].userId;
+                                                Reqbody.requestData.availableXp = 10;
+                                                transaction.updateReferralXp(Reqbody, function (error) {
+                                                    if (error) {
+                                                        logger.error("Error while processing your request", error);
+                                                        res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+                                                    }
+                                                    else {
+                                                        Reqbody = {};
+                                                        Reqbody.requestData = {};
+                                                        Reqbody.requestData.userId = results[1][0].ip_referralUserId;
+                                                        Reqbody.requestData.availableXp = results[1][0].ip_referralUserXp;
+                                                        transaction.updateReferralXp(Reqbody, function (errorTwo) {
+                                                            if (errorTwo) {
+                                                                logger.error("Error while processing your request", errorTwo);
+                                                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
+                                                            }
+                                                            else {
+                                                                var msg = "You signed up with your friend code. You both get 10 points.";
+                                                                params = [4, results[0][0].userId, msg];
+                                                                // notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
+                                                                db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (errorInsertNotif) {
+                                                                    if (!errorInsertNotif) {
+                                                                        logger.info("Verification link sent to mail");
+
+                                                                        res.send(responseGenerator.getResponse(200, "Please click on the verification link you received in registered email", {
+                                                                            name: results[0][0].fullName,
+                                                                            emailId: results[0][0].emailId,
+                                                                            userId: results[0][0].userId,
+                                                                            isNewRecord: results[0][0].isNewRecord
+                                                                        }))
+                                                                    } else {
+                                                                        logger.error("applyReferral - Error while processing your request", errorInsertNotif);
+                                                                        res.send(responseGenerator.getResponse(1005, msg.dbError, errorInsertNotif))
+                                                                    }
+                                                                })
+
+
+                                                            }
+                                                        });
+                                                    }
+                                                });
                                             }
                                         });
 
@@ -736,8 +774,8 @@ exports.updateUserProfile = function (req, res) {
 
 exports.forgotPassword = function (req, res) {
     var strQuery = {
-        sql: "select userId, fullName from users where emailId = ? and isDeleted = ?",
-        values: [req.body.requestData.emailId, 0]
+        sql: "select userId, fullName, roleId from users where emailId = ? and isDeleted = ? and platformId = ?",
+        values: [req.body.requestData.emailId, 0, req.body.platform]
     };
 
     db.query(strQuery, function (error, results, fields) {
@@ -754,13 +792,13 @@ exports.forgotPassword = function (req, res) {
                     'deviceId': req.body.deviceId
                 };
                 var reqIdGenerated = randomstring.generate(6);
-                var query = "insert into password_reset_requests (requestId, emailId) values (?,?)";
-                var params = [reqIdGenerated, user.emailId];
+                var query = "insert into password_reset_requests (requestId, emailId, platform) values (?,?,?)";
+                var params = [reqIdGenerated, user.emailId, req.body.platform];
 
-                db.query(query, params, function (error, results) {
-                    if (!error) {
+                db.query(query, params, function (errorInsert, resultsInsert) {
+                    if (!errorInsert) {
                         var message;
-                        template.forgotPassword(user.fullName, reqIdGenerated, function (err, msg) {
+                        template.forgotPassword(user.fullName, reqIdGenerated, results[0].roleId, function (err, msg) {
                             message = msg;
                         })
                         emailHandler.sendEmail(user.emailId, "Nouvo, Forgot password link", message, function (error, callback) {
@@ -773,7 +811,7 @@ exports.forgotPassword = function (req, res) {
                             }
                         });
                     } else {
-                        logger.error("Error while processing your request", error);
+                        logger.error("Error while processing your request", errorInsert);
                         res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                     }
                 })
@@ -790,60 +828,63 @@ exports.forgotPassword = function (req, res) {
 exports.setPassword = function (req, res) {
 
     var strQuery = {
-        sql: "select emailId, createdDate from password_reset_requests where requestId = ? and isDeleted = ?",
+        sql: "select emailId, createdDate, platform from password_reset_requests where requestId = ? and isDeleted = ?",
         values: [req.body.requestData.resetToken, 0]
     };
 
-    db.query(strQuery, function (error, results, fields) {
-        if (error) {
-            logger.error("Error while processing your request", error);
+    db.query(strQuery, function (errorSelect, resultsSelect, fields) {
+        if (errorSelect) {
+            logger.error("Error while processing your request", errorSelect);
             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
         } else {
-            if (results && (results.length > 0)) {
-                var tokenCreatedDate = new Date(results[0].createdDate);
+            if (resultsSelect && (resultsSelect.length > 0)) {
+                var tokenCreatedDate = new Date(resultsSelect[0].createdDate);
                 var currentDate = Date.now();
                 var diff = new DateDiff(currentDate, tokenCreatedDate);
                 var diffInMinutes = diff.minutes();
                 if ((diffInMinutes > 0) && (diffInMinutes < 1441)) {
 
                     var user = {
-                        'emailId': results[0].emailId,
+                        'emailId': resultsSelect[0].emailId,
                         'password': req.body.requestData.password
                     }
                     // parameter to be passed to update password
                     var encPass = functions.encrypt(user.password);
-                    params = [encPass, user.emailId]
-                    db.query("update users set password = ? where emailId = ?", params, function (error, results) {
-                        if (!error) {
-                            if (results.affectedRows == 0) {
+                    params = [encPass, user.emailId, resultsSelect[0].platform]
+                    db.query("update users set password = ? where emailId = ? and platformId = ?", params, function (errorUpdate, resultsUpdate) {
+                        if (!errorUpdate) {
+                            if (resultsUpdate.affectedRows == 0) {
                                 logger.info("setPassword - email not found - " + user.emailId);
                                 res.send(responseGenerator.getResponse(1012, "No email found", null))
                             }
                             else {
                                 // parameter to be passed to update password
-                                params = [1, user.emailId]
-                                db.query("update password_reset_requests set isDeleted = ? where emailId = ?", params, function (error, results) {
+                                params = [1, user.emailId, req.body.requestData.resetToken]
+                                db.query("update password_reset_requests set isDeleted = ? where emailId = ? and requestId = ?", params, function (error, results) {
                                     if (!error) {
                                         if (results.affectedRows == 0) {
                                             logger.info("setPassword - email not found - " + user.emailId);
                                             res.send(responseGenerator.getResponse(1012, "No email found", null))
                                         }
                                         else {
-                                            db.query('select userId from users where emailId = ?', [user.emailId], function (errorGetUserId, resultsGetUserId) {
-                                                if (!errorGetUserId) {
-                                                    if (resultsGetUserId.length > 0) {
-                                                        notifController.sendNotifPasswordChanged(resultsGetUserId[0].userId, function () {
-
-                                                        });
+                                            if(resultsSelect[0].platform != "Web") {
+                                                db.query('select userId from users where emailId = ? and platformId = ?', [user.emailId, resultsSelect[0].platform], function (errorGetUserId, resultsGetUserId) {
+                                                    if (!errorGetUserId) {
+                                                        if (resultsGetUserId.length > 0) {
+                                                            notifController.sendNotifPasswordChanged(resultsGetUserId[0].userId, function () {
+    
+                                                            });
+                                                        }
+                                                        else {
+                                                            logger.info("sendNotifToToken - invalid userId");
+                                                        }
                                                     }
                                                     else {
-                                                        logger.info("sendNotifToToken - invalid userId");
+                                                        logger.error("Error while processing your request", errorGetUserId);
                                                     }
-                                                }
-                                                else {
-                                                    logger.error("Error while processing your request", errorGetUserId);
-                                                }
-                                            });
+                                                });
+                                            }
+                                            
                                             logger.info("Password updated successfully for user - " + user.emailId);
                                             res.send(responseGenerator.getResponse(200, "Password updated successfully", null))
 
@@ -855,7 +896,7 @@ exports.setPassword = function (req, res) {
                                 })
                             }
                         } else {
-                            logger.error("Error while processing your request", error);
+                            logger.error("Error while processing your request", errorUpdate);
                             res.send(responseGenerator.getResponse(1005, msg.dbError, null))
                         }
                     })
@@ -1089,12 +1130,12 @@ exports.resendVerificationEmail = function (req, res) {
 
 exports.addAdmin = function (req, res) {
     var admin =
-        {
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': req.body.requestData.contactNumber ? req.body.requestData.contactNumber : null,
-            'emailId': req.body.requestData.emailId,
-            'status': req.body.requestData.status
-        }
+    {
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': req.body.requestData.contactNumber ? req.body.requestData.contactNumber : null,
+        'emailId': req.body.requestData.emailId,
+        'status': req.body.requestData.status
+    }
 
     var query = {
         sql: "select userId, fullName from users where emailId = ?",
@@ -1210,14 +1251,14 @@ exports.addAdmin = function (req, res) {
 
 exports.updateAdmin = function (req, res) {
     var admin =
-        {
-            'userId': req.body.requestData.userId,
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
-            'emailId': req.body.requestData.emailId,
-            'status': (req.body.requestData.status == "1") ? "1" : "0",
-            'profilePic': req.body.requestData.profilePic
-        }
+    {
+        'userId': req.body.requestData.userId,
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+        'emailId': req.body.requestData.emailId,
+        'status': (req.body.requestData.status == "1") ? "1" : "0",
+        'profilePic': req.body.requestData.profilePic
+    }
 
     var nameArr = admin.fullName.split(" ");
 
@@ -1345,20 +1386,20 @@ exports.updateAdmin = function (req, res) {
 
 exports.updateUser = function (req, res) {
     var User =
-        {
-            'userId': req.body.requestData.userId,
-            'isEmailUpdated': req.body.requestData.isEmailUpdated,
-            'fullName': req.body.requestData.fullName,
-            'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
-            'emailId': req.body.requestData.emailId,
-            'status': (req.body.requestData.status == "1") ? "1" : "0",
-            'profilePic': req.body.requestData.profilePic,
-            "password": req.body.requestData.password,
-            "city": req.body.requestData.city,
-            "zipcode": req.body.requestData.zipcode,
-            "roleId": req.body.requestData.roleId,
-            "isPasswordUpdated": req.body.requestData.isPasswordUpdated
-        }
+    {
+        'userId': req.body.requestData.userId,
+        'isEmailUpdated': req.body.requestData.isEmailUpdated,
+        'fullName': req.body.requestData.fullName,
+        'contactNumber': !req.body.requestData.contactNumber ? null : req.body.requestData.contactNumber,
+        'emailId': req.body.requestData.emailId,
+        'status': (req.body.requestData.status == "1") ? "1" : "0",
+        'profilePic': req.body.requestData.profilePic,
+        "password": req.body.requestData.password,
+        "city": req.body.requestData.city,
+        "zipcode": req.body.requestData.zipcode,
+        "roleId": req.body.requestData.roleId,
+        "isPasswordUpdated": req.body.requestData.isPasswordUpdated
+    }
     var nameArr = User.fullName.split(" ");
 
     if (nameArr.length == 1) {
@@ -1836,7 +1877,46 @@ exports.applyReferralCode = function (req, res) {
         if (!errorApplyReferral) {
             if (resultsApplyReferral[0][0].Success == 1) {
                 logger.info("ApplyReferralCode - success");
-                res.send(responseGenerator.getResponse(200, "Success", null));
+                // res.send(responseGenerator.getResponse(200, "Success", null));
+                var Reqbody = {};
+                Reqbody.requestData = {};
+                Reqbody.requestData.userId = resultsApplyReferral[0][0].ip_userOneId;
+                Reqbody.requestData.availableXp = resultsApplyReferral[0][0].ip_userOneAvailableXp;
+                transaction.updateReferralXp(Reqbody, function (error) {
+                    if (error) {
+                        logger.error("Error while processing your request", error);
+                        res.send(responseGenerator.getResponse(1005, msg.dbError, error))
+                    }
+                    else {
+                        Reqbody = {};
+                        Reqbody.requestData = {};
+                        Reqbody.requestData.userId = resultsApplyReferral[0][0].ip_userTwoId;
+                        Reqbody.requestData.availableXp = resultsApplyReferral[0][0].ip_userTwoAvailableXp;
+                        transaction.updateReferralXp(Reqbody, function (errorTwo) {
+                            if (errorTwo) {
+                                logger.error("Error while processing your request", errorTwo);
+                                res.send(responseGenerator.getResponse(1005, msg.dbError, errorTwo))
+                            }
+                            else {
+                                var msg = resultsApplyReferral[0][0].ip_userOnefullName + " has signed up with your friend code. You both get 10 points.";
+                                var msg2 = "You signed up with your friend code. You both get 10 points.";
+                                params = [4, resultsApplyReferral[0][0].ip_userOneId, msg2, 4, resultsApplyReferral[0][0].ip_userTwoId, msg];
+                                notifController.sendNotifReferralApplied(resultsApplyReferral[0][0]);
+                                db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?); insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?);", params, function (error, results) {
+                                    if (!error) {
+                                        logger.info("applyReferral - notification recorded successfully");
+                                        res.send(responseGenerator.getResponse(200, "Success", null));
+                                    } else {
+                                        logger.error("applyReferral - Error while processing your request", error);
+                                        res.send(responseGenerator.getResponse(1005, msg.dbError, null))
+                                    }
+                                })
+
+
+                            }
+                        });
+                    }
+                });
             }
             else if (resultsApplyReferral[0][0].InvalidReferralCode == 1) {
                 logger.warn("Invalid referral code");
@@ -1940,11 +2020,13 @@ exports.test = function (req, res) {
 }
 
 exports.testEncrypt = function (req, res) {
-    var data = req.body.requestData;
-    var encrypted = functions.encryptData(data);
+
+    var data = JSON.stringify(req.body.requestData);
+    var encrypted = CryptoJS.AES.encrypt(data, config.secretKeyDataEncryption);
+    var encryptedText = encrypted.toString();
     // var decrypted = functions.decryptData(data);
 
-    res.send(encrypted);
+    res.send(encryptedText);
 }
 
 

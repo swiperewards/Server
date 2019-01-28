@@ -272,6 +272,25 @@ function addCard(Reqbody, callback) {
 }
 
 
+function updateReferralXp(Reqbody, callback) {
+    Reqbody.requestData = functions.encryptData(Reqbody.requestData);
+    request({
+        url: config.transactionApiUrl + "/customer/updateReferralXp",
+        method: 'POST',
+        headers:
+            {
+                'Content-Type': 'application/json'
+            },
+        json: true,
+        body: Reqbody
+    }, function (err, res) {
+        callback(err, res);
+    })
+
+}
+
+
+
 
 
 
@@ -288,6 +307,7 @@ module.exports = {
     updateAccount: updateAccount,
     createCustomer: createCustomer,
     createToken: createToken,
-    addCard: addCard
+    addCard: addCard,
+    updateReferralXp: updateReferralXp
 }
 
