@@ -234,7 +234,7 @@ function registerUserInternal(req, res) {
                             // else {
                             //     msg = "Congratulations! You got 10 reward points for referral, and you went up one level " + results[1][0].ip_newLevel;
                             // }
-                            notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, function () {
+                            notifController.sendNotifToTokenFunction(results[1][0].ip_referralToken, msg, results[1][0].ip_referralUserId, function () {
                                 var reqId = randomstring.generate(6);
                                 var query = "insert into account_activation_requests (requestId, emailId) values (?,?)";
                                 var params = [reqId, results[0][0].emailId];

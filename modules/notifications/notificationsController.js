@@ -133,7 +133,7 @@ exports.unsubscribeFromTopic = function (req, res) {
 //Functions
 
 
-exports.sendNotifToTokenFunction = function (token, notifBody, callback) {
+exports.sendNotifToTokenFunction = function (token, notifBody, userId, callback) {
     var fcmToken = {
         'token': token,
         'notifBody': notifBody
@@ -158,7 +158,7 @@ exports.sendNotifToTokenFunction = function (token, notifBody, callback) {
         },
         token: fcmToken.token
     };
-    sendNotifications(message, 4)
+    sendNotifications(message, 4, userId)
         .then(() => {
             logger.info("sendNotifToToken - ");
             callback();
@@ -180,7 +180,7 @@ exports.sendNotifPasswordChanged = function (userId, callback) {
                     'notifBody': " Your password has been successfully reset. "
                 }
 
-                sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, function () {
+                sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, userId, function () {
                     callback();
                 })
             }
@@ -212,7 +212,7 @@ exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, amou
                                 'notifBody': " Your redeem request for $" + amount + " has been" + newStatus
                             }
 
-                            sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, function () {
+                            sendNotifToTokenInternal(fcmToken.token, fcmToken.notifBody, resultsGetUserId[0].userId, function () {
                                 callback();
                             })
                         }
@@ -244,7 +244,7 @@ exports.sendNotifRedeemReqStatusChanged = function (redeemReqId, newStatus, amou
 
 
 
-function sendNotifToTokenInternal(token, notifBody, callback) {
+function sendNotifToTokenInternal(token, notifBody, userId, callback) {
     var fcmToken = {
         'token': token,
         'notifBody': notifBody
@@ -269,7 +269,7 @@ function sendNotifToTokenInternal(token, notifBody, callback) {
         },
         token: fcmToken.token
     };
-    sendNotifications(message, 0)
+    sendNotifications(message, 0, userId)
         .then(() => {
             logger.info("sendNotifToToken - ");
             callback();
@@ -282,79 +282,66 @@ function sendNotifToTokenInternal(token, notifBody, callback) {
 
 
 
-function sendNotifications(message, eventTypeId) {
+function sendNotifications(message, eventTypeId, userId) {
     var msg = message.android.notification.body;
     var token = message.token;
     return new Promise((resolve, reject) => {
         console.info('Sending notification!')
+        params = [eventTypeId, userId, msg];
+        db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?)", params, function (error, results) {
+            if (!error) {
 
-        db.query('select userId from fcm_tokens where fcm_token = ?', [token], function (errorGetUserId, resultsGetUserId) {
-            if (!errorGetUserId) {
-                if (resultsGetUserId.length > 0) {
-                    params = [eventTypeId, resultsGetUserId[0].userId, msg];
-                    db.query("insert into event_notification(eventType, userId, notificationDetails) values (?, ?, ?)", params, function (error, results) {
-                        if (!error) {
-
-                            db.query("select * from users where userId = ?", [resultsGetUserId[0].userId], function (errorUserData, userData) {
-                                if (!errorUserData) {
-                                    if (userData[0].isNotificationEnabled) {
-                                        logger.info("sendNotifications - notification recorded successfully for user - " + resultsGetUserId[0].userId);
-                                        firebaseAdmin.messaging().send(message)
-                                            .then((response) => {
-                                                console.info('Notification message successfully sent:', response);
-                                                resolve();
-                                            })
-                                            .catch((error) => {
-                                                console.error('Error while sending notification: ', error);
-                                                reject({ code: 500, message: "Error while sending notification", error: error });
-                                                // return ({ code: 500, message: "Error while sending notification", error: error });
-                                            });
-                                    }
-                                    else {
-                                        resolve();
-                                    }
-                                } else {
-                                    logger.error("sendNotifications - Error while processing your request", errorUserData);
-                                    reject({ code: 500, message: "Error while sending notification", error: errorUserData });
-                                }
-                            })
-
-                        } else {
-                            logger.error("sendNotifications - Error while processing your request", error);
+                db.query("select * from users where userId = ?", [userId], function (errorUserData, userData) {
+                    if (!errorUserData) {
+                        if (userData[0].isNotificationEnabled) {
+                            logger.info("sendNotifications - notification recorded successfully for user - " + userId);
+                            firebaseAdmin.messaging().send(message)
+                                .then((response) => {
+                                    console.info('Notification message successfully sent:', response);
+                                    resolve();
+                                })
+                                .catch((error) => {
+                                    console.error('Error while sending notification: ', error);
+                                    reject({ code: 500, message: "Error while sending notification", error: error });
+                                    // return ({ code: 500, message: "Error while sending notification", error: error });
+                                });
                         }
-                    })
-                }
-                else {
-                    logger.error("sendNotifications - user id not found for fcm token", null);
-                    resolve();
-                }
+                        else {
+                            resolve();
+                        }
+                    } else {
+                        logger.error("sendNotifications - Error while processing your request", errorUserData);
+                        reject({ code: 500, message: "Error while sending notification", error: errorUserData });
+                    }
+                })
+
+            } else {
+                logger.error("sendNotifications - Error while processing your request", error);
             }
-            else {
-                logger.error("sendNotifications - Error while processing your request", errorGetUserId);
-                resolve();
-            }
-        });
+        })
+
+
 
 
     })
 }
 
- 
+
 exports.sendNotifToUsers = function (reqData) {
 
     if (reqData.body.length > 0) {
 
         var transactionNotifArray = [];
-		
-		each(reqData.body,
-		function (rec, next) {
-			params = [rec.userId];
-			db.query("select f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId = ?", params, function (errorGetFcmTokens, resultsGetFcmTokens) {
-				var objTxnNotif = {};
-                var objXpIncreaseNotif = {};
-				if (!errorGetFcmTokens) {
-					if (resultsGetFcmTokens.length > 0) {
-						
+
+        each(reqData.body,
+            function (rec, next) {
+                params = [rec.userId];
+                db.query("select f.fcm_token, u.isNotificationEnabled from users u join fcm_tokens f on u.userId = f.userId where u.userId = ?", params, function (errorGetFcmTokens, resultsGetFcmTokens) {
+                    var objTxnNotif = {};
+                    var objXpIncreaseNotif = {};
+                    if (!errorGetFcmTokens) {
+                        if (resultsGetFcmTokens.length > 0) {
+
                             objTxnNotif.userId = rec.userId;
                             objTxnNotif.message = rec.msgTxnMade;
                             objTxnNotif.token = resultsGetFcmTokens[0].fcm_token;
@@ -369,17 +356,17 @@ exports.sendNotifToUsers = function (reqData) {
                             objXpIncreaseNotif.eventTypeId = 4;
                             objXpIncreaseNotif.transactionAmount = null;
                             transactionNotifArray.push(objXpIncreaseNotif);
-							next();
-					}
-				}
-				else {
-					logger.error("Error while processing your request", errorGetFcmTokens);
-				}
-			})
-		},
-		function (err) {
-			
-			var transactionNotifEnabled = [];
+                            next();
+                        }
+                    }
+                    else {
+                        logger.error("Error while processing your request", errorGetFcmTokens);
+                    }
+                })
+            },
+            function (err) {
+
+                var transactionNotifEnabled = [];
                 for (var x = 0; x < transactionNotifArray.length; x++) {
                     if (transactionNotifArray[x].isNotificationEnabled) {
                         transactionNotifEnabled.push(transactionNotifArray[x]);
@@ -395,7 +382,7 @@ exports.sendNotifToUsers = function (reqData) {
                     function (err) {
                         sendMultipleNotifToTokenInternal(transactionNotifEnabled);
                     })
-		})
+            })
     }
 }
 
