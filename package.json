@@ -16,7 +16,7 @@
     "date-diff": "^0.2.0",
     "debug": "~2.6.9",
     "express": "^4.16.3",
-    "firebase-admin": "^6.0.0",
+    "firebase-admin": "^8.3.0",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.3.0",
     "morgan": "~1.9.0",
