@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "all": "0.0.0",
-    "aws-sdk": "^2.300.0",
+    "aws-sdk": "^2.814.0",
     "body-parser": "^1.18.3",
     "connect-multiparty": "^2.1.1",
     "cookie-parser": "~1.4.3",
@@ -16,21 +18,23 @@
     "date-diff": "^0.2.0",
     "debug": "~2.6.9",
     "express": "^4.16.3",
-    "firebase-admin": "^6.0.0",
+    "firebase-admin": "^10.0.2",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.3.0",
-    "morgan": "~1.9.0",
+    "morgan": "~1.9.1",
     "multer": "^1.3.1",
     "multer-s3": "^2.7.0",
     "mysql": "^2.15.0",
     "node-cron": "^1.2.1",
-    "nodemailer": "^4.6.7",
-    "pug": "^2.0.3",
+    "nodemailer": "^6.6.1",
+    "pug": "^3.0.1",
     "randomstring": "^1.1.5",
-    "request": "^2.87.0",
+    "request": "^2.88.0",
     "serve-favicon": "~2.4.5",
     "sync-each": "^1.0.1",
-    "uglify-js": "^2.6.0",
-    "winston": "^3.0.0"
-  }
+    "uglify-js": "^3.14.3",
+    "winston": "^3.0.0",
+    "@snyk/protect": "latest"
+  },
+  "snyk": true
 }
