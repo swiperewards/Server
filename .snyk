@@ -1,0 +1,45 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-AXIOS-174505:
+    - firebase-admin > @google-cloud/firestore > google-gax > google-auth-library > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/firestore > google-gax > google-auth-library > gcp-metadata > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > google-auto-auth > gcp-metadata > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > gcp-metadata > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/firestore > google-gax > google-auth-library > gtoken > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > google-auto-auth > google-auth-library > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > google-auth-library > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > google-auto-auth > google-auth-library > gcp-metadata > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > google-auth-library > gcp-metadata > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > google-auto-auth > google-auth-library > gtoken > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > google-auth-library > gtoken > axios:
+        patched: '2022-10-05T19:39:19.468Z'
+  SNYK-JS-LODASH-567746:
+    - winston > async > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/firestore > google-gax > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > async > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/firestore > google-gax > @grpc/proto-loader > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/firestore > google-gax > grpc > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > google-auto-auth > async > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > async > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
+    - firebase-admin > @google-cloud/storage > @google-cloud/common > split-array-stream > async > lodash:
+        patched: '2022-10-05T19:39:19.468Z'
