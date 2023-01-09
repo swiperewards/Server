@@ -14,7 +14,7 @@
     "cors": "^2.8.4",
     "crypto-js": "^3.1.9-1",
     "date-diff": "^0.2.0",
-    "debug": "~2.6.9",
+    "debug": "~3.1.0",
     "express": "^4.16.3",
     "firebase-admin": "^6.0.0",
     "fs": "0.0.1-security",
