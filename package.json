@@ -27,7 +27,7 @@
     "nodemailer": "^4.6.7",
     "pug": "^2.0.3",
     "randomstring": "^1.1.5",
-    "request": "^2.87.0",
+    "request": "^2.88.2",
     "serve-favicon": "~2.4.5",
     "sync-each": "^1.0.1",
     "uglify-js": "^2.6.0",
